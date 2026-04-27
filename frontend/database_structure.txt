@@ -1,0 +1,529 @@
+================================================================================
+  RETRAINEX — ESTRUCTURA DE BASE DE DATOS
+  Se actualiza con cada nueva pantalla creada.
+================================================================================
+
+────────────────────────────────────────────────────────────────────────────────
+PANTALLA: welcome_ini_screen  (pantalla de bienvenida / estado sin notificaciones)
+────────────────────────────────────────────────────────────────────────────────
+
+TABLA: notifications
+  Propósito : Almacena las notificaciones que el fisio o el sistema envían al paciente.
+
+  Campos:
+    id          UUID / String   OBLIGATORIO   Identificador único
+    user_id     UUID / String   OBLIGATORIO   FK → users.id
+    type        String          OBLIGATORIO   'email' | 'message' | 'exercise' | 'progress'
+    title       String          OBLIGATORIO   Título corto de la notificación
+    body        Text            OBLIGATORIO   Cuerpo / mensaje completo
+    is_read     Boolean         OBLIGATORIO   false por defecto
+    created_at  DateTime        OBLIGATORIO   Fecha y hora de creación
+
+  Relaciones:
+    → users.id  (cada notificación pertenece a un usuario)
+
+  JSON que RECIBE la app desde la API:
+    [
+      {
+        "id": "n1",
+        "user_id": "u1",
+        "type": "exercise",
+        "title": "Nueva sesión disponible",
+        "body": "Tu fisio ha programado una sesión para hoy.",
+        "is_read": false,
+        "created_at": "2026-04-25T09:00:00.000Z"
+      }
+    ]
+
+  JSON que ENVÍA la app a la API (marcar como leída):
+    PATCH /notifications/{id}
+    { "is_read": true }
+
+  Endpoint sugerido:
+    GET  /notifications          → lista de notificaciones del usuario autenticado
+    PATCH /notifications/{id}   → marcar como leída
+
+  Datos que se MUESTRAN en pantalla:
+    - Número de notificaciones no leídas (badge en campana)
+    - Lista de notificaciones (en welcome_not_screen, aún por crear)
+
+  Estado de la pantalla:
+    - Sin notificaciones → estado vacío ("NO HAS RECIBIDO NINGUNA NOTIFICACIÓN")
+    - Con notificaciones → welcome_not_screen (cards de notificaciones)
+    - Cargando          → LoadingWidget
+    - Error             → ErrorMessageWidget + botón reintentar
+
+────────────────────────────────────────────────────────────────────────────────
+PANTALLA: routines_list_screen  (lista semanal de rutinas)
+────────────────────────────────────────────────────────────────────────────────
+
+TABLA: routines
+  Propósito : Almacena las rutinas semanales asignadas a cada paciente por el fisio.
+
+  Campos:
+    id          UUID / String   OBLIGATORIO   Identificador único
+    user_id     UUID / String   OBLIGATORIO   FK → users.id
+    day         String          OBLIGATORIO   'LUNES' | 'MARTES' | 'MIÉRCOLES' | ...
+    title       String          OBLIGATORIO   Nombre descriptivo de la rutina
+    minutes     Integer         OBLIGATORIO   Duración total en minutos
+    difficulty  String          OBLIGATORIO   'BAJA' | 'MEDIA' | 'ALTA'
+    status      String          OBLIGATORIO   'completed' | 'today' | 'upcoming'
+    created_at  DateTime        OBLIGATORIO   Fecha de creación
+    updated_at  DateTime        OBLIGATORIO   Última actualización de estado
+
+  Relaciones:
+    → users.id         (cada rutina pertenece a un usuario/paciente)
+    → sessions.routine_id  (una rutina tiene un detalle de sesión)
+
+  JSON que RECIBE la app desde la API:
+    [
+      {
+        "id": "r1",
+        "day": "LUNES",
+        "title": "Movilidad de Hombro",
+        "minutes": 15,
+        "difficulty": "BAJA",
+        "status": "completed"
+      },
+      {
+        "id": "r2",
+        "day": "MIÉRCOLES",
+        "title": "Fortalecimiento Escapular",
+        "minutes": 20,
+        "difficulty": "MEDIA",
+        "status": "today"
+      },
+      {
+        "id": "r3",
+        "day": "VIERNES",
+        "title": "Estiramiento Pectoral",
+        "minutes": 10,
+        "difficulty": "BAJA",
+        "status": "upcoming"
+      }
+    ]
+
+  Endpoint sugerido:
+    GET /routines/weekly   → rutinas de la semana actual del usuario autenticado
+
+  Datos que se MUESTRAN en pantalla:
+    - Tarjeta de progreso: X de Y sesiones completadas
+    - Lista de tarjetas con día, título, duración, dificultad y estado
+
+  Estado de la pantalla:
+    - Cargando  → LoadingWidget
+    - Error     → ErrorMessageWidget + botón reintentar
+    - Datos ok  → lista de RoutineCardWidget
+
+────────────────────────────────────────────────────────────────────────────────
+PANTALLA: routine_detail_screen  (detalle de una sesión / rutina)
+────────────────────────────────────────────────────────────────────────────────
+
+TABLA: sessions  (detalle de cada sesión de una rutina)
+  Propósito : Almacena la descripción e información de cada sesión programada.
+
+  Campos:
+    id          UUID / String   OBLIGATORIO   Identificador único
+    routine_id  UUID / String   OBLIGATORIO   FK → routines.id
+    session_id  String          OBLIGATORIO   Código técnico (ej. 'KINETIC_RECOVERY')
+    description Text            OBLIGATORIO   Explicación de la sesión para el paciente
+    created_at  DateTime        OBLIGATORIO   Fecha de creación
+
+  Relaciones:
+    → routines.id   (cada sesión pertenece a una rutina)
+    → exercises.session_id  (una sesión tiene múltiples ejercicios)
+
+TABLA: exercises  (ejercicios de cada sesión)
+  Propósito : Lista de ejercicios individuales que componen una sesión.
+
+  Campos:
+    id           UUID / String   OBLIGATORIO   Identificador único
+    session_id   UUID / String   OBLIGATORIO   FK → sessions.id
+    name         String          OBLIGATORIO   Nombre del ejercicio
+    series       Integer         OPCIONAL      Número de series (null si es por tiempo)
+    reps         Integer         OPCIONAL      Repeticiones por serie (null si es por tiempo)
+    minutes      Integer         OPCIONAL      Duración en minutos (null si es por series/reps)
+    image_url    String          OPCIONAL      URL imagen o vídeo ilustrativo
+    order_index  Integer         OBLIGATORIO   Orden dentro de la sesión (1, 2, 3...)
+    created_at   DateTime        OBLIGATORIO   Fecha de creación
+
+  Relaciones:
+    → sessions.id  (cada ejercicio pertenece a una sesión)
+
+  JSON que RECIBE la app desde la API:
+    {
+      "id": "rd1",
+      "session_id": "KINETIC_RECOVERY",
+      "description": "Hoy nos enfocaremos en la movilidad articular...",
+      "exercises": [
+        {
+          "id": "e1",
+          "name": "Rotación de hombros",
+          "series": 3,
+          "reps": 10,
+          "minutes": null,
+          "image_url": null,
+          "order_index": 1
+        },
+        {
+          "id": "e2",
+          "name": "Estiramiento Pectoral",
+          "series": null,
+          "reps": null,
+          "minutes": 2,
+          "image_url": null,
+          "order_index": 2
+        }
+      ]
+    }
+
+  Endpoint sugerido:
+    GET /routines/{routineId}/detail   → devuelve sesión + lista de ejercicios
+
+  Datos que se MUESTRAN en pantalla:
+    - Código de sesión (SESSION: KINETIC_RECOVERY)
+    - Descripción de la misión
+    - Lista de ejercicios con nombre, duración/series y miniatura
+
+  Datos que se ENVÍAN al iniciar:
+    POST /sessions/{sessionId}/start
+    { "started_at": "2026-04-25T10:00:00.000Z" }
+
+  Estado de la pantalla:
+    - Cargando  → LoadingWidget
+    - Error     → ErrorMessageWidget + botón reintentar
+    - Datos ok  → detalle completo + botón INICIAR activo
+    - Sin datos → botón INICIAR desactivado
+
+────────────────────────────────────────────────────────────────────────────────
+PANTALLA: workout_preparation_screen  (cuenta atrás de preparación antes de ejercicio)
+────────────────────────────────────────────────────────────────────────────────
+
+TABLA: workout_session_logs  (registro de ejecución real de una sesión)
+  Propósito : Almacena cuándo el paciente inició, ejecutó y completó cada sesión
+              y cada ejercicio individual dentro de ella.
+
+  Campos:
+    id              UUID / String   OBLIGATORIO   Identificador único del log
+    session_id      UUID / String   OBLIGATORIO   FK → sessions.id
+    user_id         UUID / String   OBLIGATORIO   FK → users.id
+    started_at      DateTime        OBLIGATORIO   Momento en que el paciente pulsó INICIAR
+    completed_at    DateTime        OPCIONAL      Null si no terminó
+    status          String          OBLIGATORIO   'in_progress' | 'completed' | 'abandoned'
+
+  Relaciones:
+    → sessions.id  (log vinculado a una sesión de la rutina)
+    → users.id     (log vinculado al paciente)
+    → exercise_logs.session_log_id  (detalle por ejercicio)
+
+TABLA: exercise_logs  (progreso por ejercicio dentro de una sesión activa)
+  Propósito : Registra cuándo el paciente empezó y terminó cada ejercicio.
+
+  Campos:
+    id                  UUID / String   OBLIGATORIO   Identificador único
+    workout_session_id  UUID / String   OBLIGATORIO   FK → workout_session_logs.id
+    exercise_id         UUID / String   OBLIGATORIO   FK → exercises.id
+    started_at          DateTime        OPCIONAL      Momento de inicio del ejercicio
+    completed_at        DateTime        OPCIONAL      Momento de finalización
+    skipped             Boolean         OBLIGATORIO   true si omitió la preparación
+
+  Relaciones:
+    → workout_session_logs.id  (pertenece a un log de sesión)
+    → exercises.id             (qué ejercicio se registra)
+
+  JSON que ENVÍA la app cuando el paciente pulsa INICIAR:
+    POST /workout-sessions
+    {
+      "session_id": "rd1",
+      "started_at": "2026-04-25T10:00:00.000Z"
+    }
+
+  JSON que ENVÍA la app al completar la preparación de un ejercicio:
+    POST /workout-sessions/{sessionLogId}/exercises/{exerciseId}/start
+    {
+      "started_at": "2026-04-25T10:00:08.000Z",
+      "skipped": false
+    }
+
+  Endpoint sugerido:
+    POST  /workout-sessions                                          → iniciar sesión
+    POST  /workout-sessions/{id}/exercises/{exerciseId}/start       → empezar ejercicio
+    PATCH /workout-sessions/{id}/exercises/{exerciseId}/complete    → completar ejercicio
+    PATCH /workout-sessions/{id}/complete                           → completar sesión
+
+  Datos que se MUESTRAN en pantalla:
+    - Nombre del ejercicio (de ExerciseModel)
+    - Segundos de cuenta atrás (8 por defecto, configurable desde la API)
+    - Progreso visual del anillo
+
+  Estado de la pantalla:
+    - Cuenta atrás activa  → anillo animado + número decreciente
+    - Cuenta finalizada    → navega a pantalla de ejecución (próxima)
+    - Omitir pulsado       → salta la cuenta y navega directamente
+
+────────────────────────────────────────────────────────────────────────────────
+PANTALLA: workout_exercise_screen  (ejecución del ejercicio con temporizador)
+────────────────────────────────────────────────────────────────────────────────
+
+  Usa las mismas tablas de workout_session_logs y exercise_logs definidas arriba.
+  No requiere tablas nuevas, solo campos nuevos en ExerciseModel/exercises.
+
+  Campos NUEVOS en tabla: exercises
+    video_url              String    OPCIONAL   URL del vídeo demostrativo (futuro)
+    angle                  String    OPCIONAL   Ángulo de cámara ('FRONTAL', 'LATERAL')
+    total_duration_seconds Integer   OPCIONAL   Duración total en segundos fijada por fisio
+    rhythm                 String    OPCIONAL   Ritmo ('LENTO', 'NORMAL', 'INTENSO')
+    rest_after_seconds     Integer   OPCIONAL   Segundos de descanso tras este ejercicio (null = 15 s por defecto)
+
+  Lógica de duración (prioridad de mayor a menor):
+    1. total_duration_seconds del backend   → usa ese valor directamente
+    2. minutes (ejercicio de mantenimiento) → minutes × 60 segundos
+    3. series × reps (por repeticiones)     → series × reps × 3 segundos/rep (default)
+
+  JSON actualizado que RECIBE la app desde la API (ejercicio con todos los campos):
+    {
+      "id": "e1",
+      "name": "Rotación de hombros",
+      "series": 3,
+      "reps": 10,
+      "minutes": null,
+      "image_url": null,
+      "video_url": null,
+      "angle": "FRONTAL",
+      "total_duration_seconds": null,
+      "rhythm": "NORMAL",
+      "rest_after_seconds": null,
+      "order_index": 1
+    }
+
+  JSON que ENVÍA la app al completar el ejercicio:
+    PATCH /workout-sessions/{sessionLogId}/exercises/{exerciseId}/complete
+    {
+      "completed_at": "2026-04-25T10:01:30.000Z",
+      "skipped": false
+    }
+
+  JSON que ENVÍA la app si el paciente para la sesión:
+    PATCH /workout-sessions/{sessionLogId}/complete
+    {
+      "completed_at": "2026-04-25T10:01:30.000Z",
+      "status": "abandoned"
+    }
+
+  Datos que se MUESTRAN en pantalla:
+    - Nombre del ejercicio
+    - Área de vídeo (placeholder hasta que haya vídeo real)
+    - Tags: VIDEO HD + ángulo de cámara
+    - Temporizador circular con segundos restantes
+    - RITMO: valor del backend (default NORMAL)
+    - PROGRESO: ejercicio X / total de ejercicios en la sesión
+    - Botón pausar / reanudar
+    - Botón detener sesión
+
+  Estado de la pantalla:
+    - Activo   → temporizador corriendo, botón Pausa visible
+    - Pausado  → temporizador detenido, botón Play visible
+    - Completo → navega a workout_rest_screen (si hay siguiente) o cierra la sesión
+    - Detenido → popUntil pantalla principal, sesión marcada como abandoned
+
+────────────────────────────────────────────────────────────────────────────────
+PANTALLA: workout_rest_screen  (descanso entre ejercicios)
+────────────────────────────────────────────────────────────────────────────────
+
+  Usa las mismas tablas de workout_session_logs y exercise_logs definidas arriba.
+  No requiere tablas nuevas. El campo rest_after_seconds ya fue añadido a exercises.
+
+  Flujo de navegación:
+    workout_exercise_screen → workout_rest_screen → workout_preparation_screen
+    (se repite hasta el último ejercicio, que cierra la sesión)
+
+  Duración del descanso (prioridad):
+    1. rest_after_seconds del ejercicio completado (campo del backend)
+    2. 15 segundos por defecto (defaultRestSeconds en el widget)
+
+  Datos que se MUESTRAN en pantalla:
+    - Temporizador circular con segundos restantes (anillo cian)
+    - Título: TIEMPO DE DESCANSO
+    - Botón +20 SEGUNDOS (añade 20 s al contador sin reiniciarlo)
+    - Tarjeta con nombre y subtítulo del próximo ejercicio
+    - Botón OMITIR DESCANSO (salta directamente a preparación)
+    - Icono de bandera en AppBar (detiene la sesión completa)
+
+  Estado de la pantalla:
+    - Activo   → cuenta atrás corriendo, sin pausa (descanso = flujo pasivo)
+    - +20s     → _secondsRemaining += 20 (el timer continúa sin reiniciarse)
+    - Completo → pushReplacement a WorkoutPreparationScreen (siguiente ejercicio)
+    - Omitir   → igual que Completo pero inmediato
+    - Bandera  → popUntil pantalla principal
+
+────────────────────────────────────────────────────────────────────────────────
+PANTALLA: workout_complete_screen  (resumen de sesión completada)
+────────────────────────────────────────────────────────────────────────────────
+
+  No requiere tablas nuevas. La duración se calcula en cliente a partir de
+  WorkoutSessionService.markStart() (llamado al pulsar INICIAR en routine_detail)
+  y WorkoutSessionService.elapsedSeconds (leído en initState de esta pantalla).
+
+  Datos que se MUESTRAN en pantalla:
+    - Icono trofeo + "¡EXCELENTE!" + "DÍA COMPLETADO"
+    - Tarjeta EJERCICIOS: cantidad de ejercicios completados
+    - Tarjeta DURACIÓN: tiempo transcurrido en formato MM:SS
+    - Tarjeta felicitaciones con texto motivacional
+    - Tarjeta racha: "RACHA DE X DÍAS" + puntos indicadores
+      (mock: 5 días — futuro: GET /users/me/streak)
+    - Tarjeta logro: "NUEVO LOGRO" + nombre del logro + avatar medalla
+      (mock: "Madrugador de Acero" — futuro: GET /users/me/achievements/latest)
+    - Botón "VOLVER AL INICIO" → popUntil pantalla principal
+
+  Flujo de navegación:
+    workout_exercise_screen (último ejercicio) → workout_complete_screen → home
+
+  Estado de la pantalla:
+    - Estático (sin carga, sin error): todos los datos vienen de la sesión local
+    - "VOLVER AL INICIO" / botón X / nav tap fuera de RUTINAS → popUntil(isFirst)
+
+================================================================================
+TABLA COMPARTIDA (se usará en múltiples pantallas)
+================================================================================
+
+TABLA: users
+  Propósito : Almacena los datos del paciente autenticado.
+
+  Campos previstos:
+    id          UUID / String   OBLIGATORIO   Identificador único
+    name        String          OBLIGATORIO   Nombre del paciente (se muestra en bienvenida)
+    email       String          OBLIGATORIO   Email de acceso
+    created_at  DateTime        OBLIGATORIO   Fecha de registro
+
+================================================================================
+LISTA DE ENDPOINTS – APP RETRAINEX
+================================================================================
+
+  Todos los endpoints usan la base URL del servidor. El token de autenticación
+  se pasa en el header Authorization: Bearer <token>.
+
+────────────────────────────────────────────────────────────────────────────────
+AUTH / USUARIO
+────────────────────────────────────────────────────────────────────────────────
+
+  POST /auth/login
+    Iniciar sesión. Recibe email y contraseña.
+    Devuelve datos del usuario y estado de la app (si tiene rutina nueva o activa).
+
+  POST /auth/register
+    Registro de usuario. Crea un nuevo usuario en el sistema.
+
+  GET /me
+    Obtener datos del usuario. Devuelve nombre, email y datos básicos.
+
+────────────────────────────────────────────────────────────────────────────────
+DASHBOARD
+────────────────────────────────────────────────────────────────────────────────
+
+  GET /me/dashboard
+    Obtener datos principales del usuario.
+    Devuelve: nombre, status (none | newAssignment | active), progreso,
+    sesiones completadas, total sesiones, próxima sesión y recordatorio.
+
+    Respuesta JSON:
+    {
+      "user_name": "MARÍA",
+      "status": "active",
+      "progress_percentage": 0,
+      "completed_sessions": 0,
+      "total_sessions": 10,
+      "has_unread_notification": false,
+      "next_session": {
+        "date": "15 OCT",
+        "time": "10:30 AM",
+        "duration_minutes": 15,
+        "type": "FISIOTERAPIA"
+      },
+      "reminder": "Mantén tu hidratación antes de la sesión con el Dr. Pérez.",
+      "assignment_title": null,
+      "physio_name": null
+    }
+
+  Estados de la pantalla INICIO según `status`:
+    "none"          → pantalla vacía (sin rutina asignada)
+    "newAssignment" → tarjeta "NUEVA ASIGNACIÓN" del fisio → SchedulePlanningScreen
+    "active"        → dashboard con anillo de progreso + próxima sesión
+
+────────────────────────────────────────────────────────────────────────────────
+ONBOARDING / RUTINA NUEVA
+────────────────────────────────────────────────────────────────────────────────
+
+  GET /me/onboarding
+    Devuelve rutina en estado "new" para configurar (status: newAssignment).
+
+  POST /routines/{id}/schedule
+    Configurar rutina. Recibe días seleccionados y hora.
+    El backend valida, guarda la planificación, genera sesiones automáticamente
+    y cambia el estado a "active".
+    Body: { "days": [0, 2, 4], "time": "10:30", "is_am": true }
+    (días en índice 0=LUN … 6=DOM)
+
+    Nota: esta llamada es la que haría el botón "EMPEZAR" en SchedulePlanningScreen.
+    De momento la pantalla es local y no llama al backend.
+
+────────────────────────────────────────────────────────────────────────────────
+SESIONES
+────────────────────────────────────────────────────────────────────────────────
+
+  GET /me/today-session
+    Obtener sesión de hoy. Devuelve id, estado y lista de ejercicios.
+
+  GET /me/next-session
+    Obtener próxima sesión. Devuelve día y hora.
+
+  GET /routines/{id}/sessions
+    Obtener calendario completo. Devuelve lista de sesiones con estado
+    (pending | completed).
+
+────────────────────────────────────────────────────────────────────────────────
+EJERCICIOS
+────────────────────────────────────────────────────────────────────────────────
+
+  GET /routines/{id}/exercises
+    Obtener ejercicios de una rutina. Devuelve lista base de ejercicios.
+
+  GET /exercises/{id}
+    Obtener detalle de ejercicio. Devuelve nombre, descripción, series,
+    repeticiones, duración y contenido multimedia.
+
+────────────────────────────────────────────────────────────────────────────────
+ENTRENAMIENTO / EJECUCIÓN
+────────────────────────────────────────────────────────────────────────────────
+
+  PATCH /sessions/{id}/start
+    Iniciar sesión. Cambia el estado a "in_progress".
+
+  PATCH /sessions/{id}/exercise-progress
+    Guardar progreso de ejercicio. Recibe ejercicio_id y series completadas.
+
+  PATCH /sessions/{id}/complete
+    Completar sesión. Cambia estado a "completed", actualiza progreso
+    y calcula la siguiente sesión.
+
+────────────────────────────────────────────────────────────────────────────────
+PROGRESO / HISTORIAL
+────────────────────────────────────────────────────────────────────────────────
+
+  GET /me/progress
+    Obtener resumen de progreso. Devuelve porcentaje completado, nivel
+    y sesiones realizadas.
+
+  GET /me/history
+    Obtener historial de sesiones. Devuelve lista de sesiones pasadas.
+
+────────────────────────────────────────────────────────────────────────────────
+NOTIFICACIONES
+────────────────────────────────────────────────────────────────────────────────
+
+  POST /me/push-token
+    Guardar token del dispositivo para notificaciones push.
+
+  PATCH /me/notifications
+    Activar o desactivar notificaciones.
+
+================================================================================

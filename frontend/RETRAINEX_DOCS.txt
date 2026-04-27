@@ -1,0 +1,516 @@
+================================================================================
+  RETRAINEX — DOCUMENTACIÓN TÉCNICA FRONTEND
+  Generado: 2026-04-26
+================================================================================
+
+  App Flutter de rehabilitación para pacientes guiados por fisioterapeutas.
+  Diseñada para personas mayores: texto grande, alto contraste, flujo simple.
+
+================================================================================
+1. ARQUITECTURA Y ESTRUCTURA DE CARPETAS
+================================================================================
+
+  lib/
+  ├── core/
+  │   └── theme/
+  │       └── app_colors.dart            Paleta de colores centralizada
+  │
+  ├── shared/
+  │   └── widgets/
+  │       ├── app_bottom_nav.dart        Barra de navegación inferior compartida
+  │       ├── loading_widget.dart        Spinner de carga reutilizable
+  │       └── error_message_widget.dart  Widget de error + botón reintentar
+  │
+  └── features/
+      ├── welcome/                       Pantallas de inicio y onboarding
+      │   ├── models/
+      │   │   ├── dashboard_model.dart   DashboardModel, NextSessionModel, RoutineStatus
+      │   │   └── notification_model.dart NotificationModel, NotificationType
+      │   ├── services/
+      │   │   ├── dashboard_service.dart  GET /me/dashboard
+      │   │   └── notification_service.dart GET /notifications
+      │   └── presentation/screens/
+      │       ├── welcome_ini_screen.dart     Pantalla principal con 3 estados
+      │       ├── notifications_screen.dart   Lista de notificaciones
+      │       └── schedule_planning_screen.dart Planificación local (días + hora)
+      │
+      └── routines/                      Flujo completo de entrenamiento
+          ├── models/
+          │   ├── routine_model.dart      RoutineModel, RoutineStatus
+          │   └── routine_detail_model.dart RoutineDetailModel, ExerciseModel
+          ├── services/
+          │   ├── routine_service.dart      GET /routines/weekly, GET /routines/{id}/detail
+          │   └── workout_session_service.dart POST/PATCH /workout-sessions/*
+          ├── widgets/
+          │   ├── countdown_ring_widget.dart  Anillo circular animado (prep + ejercicio + descanso)
+          │   ├── progress_card_widget.dart   Tarjeta de progreso semanal
+          │   ├── routine_card_widget.dart    Tarjeta de rutina en la lista
+          │   └── exercise_card_widget.dart   Tarjeta de ejercicio en el detalle
+          └── presentation/screens/
+              ├── routines_list_screen.dart       Lista semanal de rutinas
+              ├── routine_detail_screen.dart      Detalle de sesión + ejercicios
+              ├── workout_preparation_screen.dart Cuenta atrás antes del ejercicio (8 s)
+              ├── workout_exercise_screen.dart    Temporizador del ejercicio activo
+              ├── workout_rest_screen.dart        Descanso entre ejercicios (15 s)
+              └── workout_complete_screen.dart    Resumen de sesión completada
+
+================================================================================
+2. NAVEGACIÓN PRINCIPAL
+================================================================================
+
+  main.dart
+    └── WelcomeIniScreen (pantalla raíz, gestiona 4 tabs)
+         ├── Tab 0 INICIO  → WelcomeIniScreen body (estado según RoutineStatus)
+         ├── Tab 1 RUTINAS → RoutinesListScreen (inline, sin push)
+         ├── Tab 2 PROGRESO → Placeholder
+         └── Tab 3 AJUSTES → Placeholder
+
+  Navegación push desde INICIO:
+    Bell icon → NotificationsScreen
+    Tarjeta asignación → SchedulePlanningScreen
+
+  Navegación push desde RUTINAS:
+    Tarjeta rutina → RoutineDetailScreen
+      └── Botón INICIAR → WorkoutPreparationScreen
+            └── (auto / skip) → WorkoutExerciseScreen
+                  ├── (si hay siguiente) → WorkoutRestScreen
+                  │     └── (auto / skip) → WorkoutPreparationScreen [siguiente]
+                  └── (último ejercicio) → WorkoutCompleteScreen → home (popUntil)
+
+  RESPONSIVE:
+    < 600 px  → BottomNavigationBar abajo (móvil)
+    ≥ 600 px  → NavigationRail izquierda + contenido en el resto (web/tablet)
+    Todas las pantallas usan ConstrainedBox(maxWidth: 480–680) en wide mode.
+
+================================================================================
+3. PALETA DE COLORES (app_colors.dart)
+================================================================================
+
+  background   #0A0D14   Fondo principal de todas las pantallas
+  surface      #121826   Fondo de elementos elevados (CircleAvatar, tags)
+  card         #1A2233   Fondo de tarjetas
+  primary      #2F80FF   Azul principal (botones, acentos, RUTINAS)
+  secondary    #00C2FF   Cian (RECOVERY, progreso, gradient fin)
+  textSecondary #9AA4B2  Texto secundario, etiquetas, subtítulos
+  border       #263248   Bordes de tarjetas y separadores
+
+================================================================================
+4. PANTALLAS — DETALLE Y ENDPOINTS
+================================================================================
+
+────────────────────────────────────────────────────────────────────────────────
+PANTALLA: welcome_ini_screen  (Tab INICIO — pantalla raíz)
+────────────────────────────────────────────────────────────────────────────────
+
+  Endpoint: GET /me/dashboard
+  Servicio: DashboardService.getDashboard()
+  Modelo:   DashboardModel
+
+  Estados según DashboardModel.status (enum RoutineStatus):
+
+  ┌─────────────────┬────────────────────────────────────────────────────────┐
+  │ Status          │ UI mostrada                                            │
+  ├─────────────────┼────────────────────────────────────────────────────────┤
+  │ none            │ Icono correo + "NO HAS RECIBIDO NINGUNA NOTIFICACIÓN"  │
+  │ newAssignment   │ Tarjeta "NUEVA ASIGNACIÓN" con título y nombre fisio   │
+  │ active          │ Dashboard: anillo progreso + próxima sesión + recorda. │
+  └─────────────────┴────────────────────────────────────────────────────────┘
+
+  Para simular un estado diferente, cambiar `status:` en DashboardService:
+    RoutineStatus.none          → pantalla vacía
+    RoutineStatus.newAssignment → tarjeta del fisio
+    RoutineStatus.active        → dashboard con progreso (estado por defecto)
+
+  Respuesta JSON esperada de /me/dashboard:
+  {
+    "user_name": "MARÍA",
+    "status": "active",              // "none" | "newAssignment" | "active"
+    "progress_percentage": 0,        // 0–100
+    "completed_sessions": 0,
+    "total_sessions": 10,
+    "has_unread_notification": false,
+    "next_session": {
+      "date": "15 OCT",
+      "time": "10:30 AM",
+      "duration_minutes": 15,
+      "type": "FISIOTERAPIA"
+    },
+    "reminder": "Mantén tu hidratación antes de la sesión con el Dr. Pérez.",
+    "assignment_title": null,        // solo si status == newAssignment
+    "physio_name": null              // solo si status == newAssignment
+  }
+
+────────────────────────────────────────────────────────────────────────────────
+PANTALLA: notifications_screen  (push desde campana)
+────────────────────────────────────────────────────────────────────────────────
+
+  Endpoint: GET /notifications
+  Servicio: NotificationService.getNotifications()
+  Modelo:   NotificationModel
+
+  Tipos de notificación (enum NotificationType):
+    message         → Mensaje del fisio       (icono: chat azul)
+    questionnaire   → Cuestionario pendiente  (icono: documento naranja)
+    reminder        → Recordatorio sesión     (icono: campana cian)
+    sessionComplete → Sesión completada       (icono: calendario verde)
+
+  Agrupación visual:
+    NUEVAS (N)  → notificaciones con isRead: false (fondo azul oscuro)
+    ANTERIORES  → notificaciones con isRead: true  (fondo surface)
+
+  Marcar como leída:
+    PATCH /notifications/{id}   { "is_read": true }
+    Servicio: NotificationService.markAsRead(id)
+
+  Respuesta JSON esperada de GET /notifications:
+  [
+    {
+      "id": "n1",
+      "type": "message",
+      "title": "Mensaje del Dr. Pérez",
+      "body": "...",
+      "is_read": false,
+      "has_action": false,
+      "created_at": "2026-04-26T10:00:00.000Z"
+    },
+    {
+      "id": "n2",
+      "type": "questionnaire",
+      "title": "Cuestionario WOMAC pendiente",
+      "body": "...",
+      "is_read": false,
+      "has_action": true,
+      "action_label": "Abrir",
+      "created_at": "2026-04-26T07:00:00.000Z"
+    }
+  ]
+
+────────────────────────────────────────────────────────────────────────────────
+PANTALLA: schedule_planning_screen  (push desde tarjeta asignación)
+────────────────────────────────────────────────────────────────────────────────
+
+  SIN llamada al backend — planificación local únicamente.
+
+  Estado local (no persiste):
+    _selectedDays: Set<int>   Índices 0–6 (0=LUN … 6=DOM)
+    _hour: int                Hora seleccionada (1–12)
+    _minute: int              Minuto seleccionado (0–55, saltos de 5)
+    _isAm: bool               AM/PM
+
+  Endpoint pendiente: POST /routines/{id}/schedule
+  Body cuando se integre con API:
+  {
+    "days": [0, 2, 4],    // índices de días seleccionados
+    "time": "10:30",
+    "is_am": true
+  }
+  Respuesta: cambia status de la rutina a "active" y genera sesiones.
+
+────────────────────────────────────────────────────────────────────────────────
+PANTALLA: routines_list_screen  (Tab RUTINAS, inline en WelcomeIniScreen)
+────────────────────────────────────────────────────────────────────────────────
+
+  Endpoint: GET /routines/weekly
+  Servicio: RoutineService.getWeeklyRoutines()
+  Modelo:   RoutineModel
+
+  Campos de RoutineModel:
+    id, day (LUNES|MARTES|…), title, minutes, difficulty (BAJA|MEDIA|ALTA),
+    status (completed|today|upcoming)
+
+  Tarjeta de progreso: X de Y sesiones completadas
+  Lista de RoutineCardWidget por día de la semana
+
+  Respuesta JSON esperada:
+  [
+    { "id": "r1", "day": "LUNES", "title": "Movilidad de Hombro",
+      "minutes": 15, "difficulty": "BAJA", "status": "completed" },
+    { "id": "r2", "day": "MIÉRCOLES", "title": "Fortalecimiento Escapular",
+      "minutes": 20, "difficulty": "MEDIA", "status": "today" }
+  ]
+
+────────────────────────────────────────────────────────────────────────────────
+PANTALLA: routine_detail_screen  (push desde tarjeta de rutina)
+────────────────────────────────────────────────────────────────────────────────
+
+  Endpoint: GET /routines/{routineId}/detail
+  Servicio: RoutineService.getRoutineDetail(routineId)
+  Modelo:   RoutineDetailModel + List<ExerciseModel>
+
+  Campos de ExerciseModel:
+    id, name, series?, reps?, minutes?, imageUrl?, videoUrl?, angle?,
+    totalDurationSeconds?, rhythm?, restAfterSeconds?
+
+  Lógica de duración del temporizador (prioridad):
+    1. totalDurationSeconds  → valor directo del fisio
+    2. minutes               → minutes × 60 segundos
+    3. series × reps         → series × reps × 3 s/rep
+
+  Botón INICIAR: llama WorkoutSessionService.markStart() y navega a
+  WorkoutPreparationScreen(exercises: lista, currentIndex: 0)
+
+  Respuesta JSON esperada:
+  {
+    "id": "rd1",
+    "session_id": "KINETIC_RECOVERY",
+    "description": "Hoy nos enfocaremos en la movilidad articular...",
+    "exercises": [
+      { "id": "e1", "name": "Rotación de hombros", "series": 3, "reps": 10,
+        "minutes": null, "angle": "FRONTAL", "rhythm": "NORMAL",
+        "rest_after_seconds": null, "order_index": 1 }
+    ]
+  }
+
+────────────────────────────────────────────────────────────────────────────────
+PANTALLA: workout_preparation_screen  (cuenta atrás 8 s)
+────────────────────────────────────────────────────────────────────────────────
+
+  Sin carga de datos. Recibe List<ExerciseModel> + currentIndex.
+  Al completar la cuenta: WorkoutSessionService.onPreparationComplete(exerciseId)
+  Navega a: WorkoutExerciseScreen(exercises, currentIndex)
+
+  Endpoint pendiente al completar:
+  POST /workout-sessions/{id}/exercises/{exerciseId}/start
+  { "started_at": "...", "skipped": false }
+
+────────────────────────────────────────────────────────────────────────────────
+PANTALLA: workout_exercise_screen  (temporizador de ejercicio)
+────────────────────────────────────────────────────────────────────────────────
+
+  Sin carga de datos. Recibe List<ExerciseModel> + currentIndex.
+
+  Al completar ejercicio: WorkoutSessionService.completeExercise(exerciseId)
+  Si hasNext → WorkoutRestScreen(exercises, completedIndex)
+  Si último  → WorkoutSessionService.completeSession() → WorkoutCompleteScreen
+
+  Flag _isStopped: evita que el timer navegue a completeScreen si el usuario
+  pulsó STOP justo cuando el timer llegó a 0.
+
+  Botón STOP → _isStopped = true → popUntil(isFirst) → home (sesión abandonada)
+
+  Endpoints pendientes:
+  PATCH /workout-sessions/{id}/exercises/{exerciseId}/complete
+  { "completed_at": "...", "skipped": false }
+
+  PATCH /workout-sessions/{id}/complete
+  { "completed_at": "...", "status": "abandoned" }   ← solo si STOP
+
+────────────────────────────────────────────────────────────────────────────────
+PANTALLA: workout_rest_screen  (descanso entre ejercicios)
+────────────────────────────────────────────────────────────────────────────────
+
+  Sin carga de datos. Recibe List<ExerciseModel> + completedIndex.
+  Duración: exercise.restAfterSeconds ?? 15 segundos por defecto.
+
+  Botón +20s: añade 20 s sin reiniciar el timer.
+  Al completar/omitir → WorkoutPreparationScreen(exercises, completedIndex + 1)
+  Flag icon (stop) → popUntil(isFirst) → home
+
+────────────────────────────────────────────────────────────────────────────────
+PANTALLA: workout_complete_screen  (resumen de sesión)
+────────────────────────────────────────────────────────────────────────────────
+
+  Sin carga de datos. Recibe exerciseCount: int.
+  Duración: WorkoutSessionService.elapsedSeconds (estático, calculado desde markStart).
+
+  Datos mock temporales (hasta integrar API):
+    Racha: 5 días  → futuro: GET /me/progress → streak_days
+    Logro: "Madrugador de Acero" → futuro: GET /me/achievements/latest
+
+  Botón VOLVER AL INICIO / X / nav → popUntil(isFirst)
+
+================================================================================
+5. LISTA COMPLETA DE ENDPOINTS
+================================================================================
+
+  AUTH
+  ─────
+  POST /auth/login
+    Body:     { "email": "...", "password": "..." }
+    Response: { "token": "...", "user": {...}, "routine_status": "active" }
+
+  POST /auth/register
+    Body:     { "name": "...", "email": "...", "password": "..." }
+    Response: { "token": "...", "user": {...} }
+
+  GET /me
+    Response: { "id": "...", "name": "MARÍA", "email": "..." }
+
+  DASHBOARD
+  ──────────
+  GET /me/dashboard
+    Response: DashboardModel JSON (ver sección 4)
+
+  ONBOARDING
+  ───────────
+  GET /me/onboarding
+    Response: rutina en estado "newAssignment" con assignmentTitle y physioName
+
+  POST /routines/{id}/schedule
+    Body:     { "days": [0,2,4], "time": "10:30", "is_am": true }
+    Response: { "status": "active", "sessions_generated": 10 }
+
+  RUTINAS
+  ────────
+  GET /routines/weekly
+    Response: List<RoutineModel>
+
+  GET /routines/{id}/detail
+    Response: RoutineDetailModel con exercises[]
+
+  GET /routines/{id}/sessions
+    Response: lista de sesiones { id, date, status: "pending"|"completed" }
+
+  SESIONES
+  ─────────
+  GET /me/today-session
+    Response: { "id": "...", "status": "...", "exercises": [...] }
+
+  GET /me/next-session
+    Response: { "date": "15 OCT", "time": "10:30 AM" }
+
+  POST /workout-sessions
+    Body:     { "session_id": "rd1", "started_at": "..." }
+    Response: { "id": "mock-session-id" }
+
+  POST /workout-sessions/{id}/exercises/{exerciseId}/start
+    Body:     { "started_at": "...", "skipped": false }
+
+  PATCH /workout-sessions/{id}/exercises/{exerciseId}/complete
+    Body:     { "completed_at": "...", "skipped": false }
+
+  PATCH /workout-sessions/{id}/complete
+    Body:     { "completed_at": "...", "status": "completed"|"abandoned" }
+
+  EJERCICIOS
+  ───────────
+  GET /routines/{id}/exercises
+    Response: List<ExerciseModel>
+
+  GET /exercises/{id}
+    Response: ExerciseModel completo con multimedia
+
+  PROGRESO
+  ─────────
+  GET /me/progress
+    Response: { "percentage": 0, "level": "...", "streak_days": 5, "sessions_done": 0 }
+
+  GET /me/history
+    Response: lista de sesiones pasadas con fecha y duración
+
+  NOTIFICACIONES
+  ───────────────
+  GET /notifications
+    Response: List<NotificationModel>
+
+  PATCH /notifications/{id}
+    Body:     { "is_read": true }
+
+  POST /me/push-token
+    Body:     { "token": "..." }
+
+  PATCH /me/notifications
+    Body:     { "enabled": true }
+
+================================================================================
+6. MODELOS DE DATOS PRINCIPALES
+================================================================================
+
+  DashboardModel
+    userName: String
+    status: RoutineStatus (none | newAssignment | active)
+    progressPercentage: int (0–100)
+    completedSessions: int
+    totalSessions: int
+    hasUnreadNotification: bool
+    nextSession: NextSessionModel?
+    reminder: String?
+    assignmentTitle: String?   (solo si newAssignment)
+    physioName: String?        (solo si newAssignment)
+
+  NextSessionModel
+    date: String       "15 OCT"
+    time: String       "10:30 AM"
+    durationMinutes: int
+    type: String       "FISIOTERAPIA"
+
+  NotificationModel
+    id: String
+    type: NotificationType (message|questionnaire|reminder|sessionComplete)
+    title: String
+    body: String
+    createdAt: DateTime
+    isRead: bool
+    hasAction: bool
+    actionLabel: String?
+    timeAgoText: String (getter calculado)
+
+  RoutineModel
+    id, day, title, minutes, difficulty (BAJA|MEDIA|ALTA),
+    status (completed|today|upcoming)
+
+  ExerciseModel
+    id, name
+    series: int?           null si es por tiempo
+    reps: int?             null si es por tiempo
+    minutes: int?          null si es por series
+    imageUrl: String?
+    videoUrl: String?
+    angle: String?         "FRONTAL" | "LATERAL"
+    totalDurationSeconds: int?   override del fisio
+    rhythm: String?        "LENTO" | "NORMAL" | "INTENSO"
+    restAfterSeconds: int? segundos de descanso tras el ejercicio
+    effectiveDurationSeconds: int (getter con prioridad: total > min×60 > series×reps×3)
+
+================================================================================
+7. SERVICIOS — PATRÓN MOCK → API
+================================================================================
+
+  Todos los servicios siguen el mismo patrón:
+
+  1. Future.delayed (simula latencia de red)
+  2. return datos mock
+  3. Comentario con la llamada real a reemplazar:
+     // final response = await apiClient.get('/endpoint');
+     // return Model.fromJson(response);
+
+  Para integrar con la API real:
+  1. Crear una clase ApiClient con el token de auth en headers
+  2. Sustituir el bloque mock por la llamada HTTP real
+  3. El resto del código (modelos, pantallas) no necesita cambios
+
+================================================================================
+8. PATRONES DE UI COMPARTIDOS
+================================================================================
+
+  LoadingWidget(message: '...')
+    → CircularProgressIndicator centrado con mensaje opcional
+
+  ErrorMessageWidget(message: '...', onRetry: callback)
+    → Icono de error + mensaje + botón "Reintentar"
+
+  AppBottomNav(currentIndex: N, onTap: callback)
+    → 4 tabs: INICIO(0), RUTINAS(1), PROGRESO(2), AJUSTES(3)
+    → Usado en todas las pantallas del flujo de workout (currentIndex: 1)
+    → En welcome_ini_screen gestiona la navegación entre tabs
+
+  CountdownRingWidget(progress: 0.0–1.0, size: double, strokeWidth?, color?)
+    → Anillo con gradiente azul→cian (o color sólido si se pasa color)
+    → Reutilizado en: workout_preparation, workout_exercise, workout_rest,
+      welcome_ini (anillo de progreso del dashboard)
+
+================================================================================
+9. CONVENCIONES DE CÓDIGO
+================================================================================
+
+  - Todos los widgets de pantalla son StatefulWidget
+  - Estado de carga: _isLoading, _errorMessage, datos?
+  - initState() llama al método de carga (_loadXxx())
+  - _buildBody() retorna LoadingWidget / ErrorMessageWidget / contenido real
+  - Responsive: final isWide = MediaQuery.of(context).size.width >= 600;
+  - Wide content: ConstrainedBox(constraints: BoxConstraints(maxWidth: 480–680))
+  - Colores SIEMPRE desde AppColors (nunca hardcoded excepto gradientes específicos)
+  - Sin comentarios en el código salvo WHY no obvios
+  - fromJson/toJson en todos los modelos para integración API
+
+================================================================================

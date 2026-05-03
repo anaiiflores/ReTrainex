@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'core/theme/app_theme.dart';
-import 'features/auth/presentation/screens/login_screen.dart';
+import 'features/welcome/presentation/screens/welcome_ini_screen.dart';
 
 void main() {
   runApp(const ReTrainexApp());
@@ -14,7 +14,7 @@ class ReTrainexApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: AppTheme.darkTheme,
-      home: const LoginScreen(),
+      home: const WelcomeIniScreen(userName: 'MARÍA'),
     );
   }
 }

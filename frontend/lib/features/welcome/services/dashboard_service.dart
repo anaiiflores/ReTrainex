@@ -20,13 +20,12 @@ class DashboardService {
       totalSessions: 10,
       hasUnreadNotification: false,
       nextSession: const NextSessionModel(
-        date: '15 OCT',
+        date: '20 OCT',
         time: '10:30 AM',
         durationMinutes: 15,
         type: 'FISIOTERAPIA',
       ),
-      reminder:
-          'Mantén tu hidratación antes de la sesión con el Dr. Pérez.',
+      reminder: 'Mantén tu hidratación antes de la sesión con el Dr. Pérez.',
       // Activos solo cuando status == newAssignment:
       assignmentTitle: 'Nuevo tratamiento de ejercicios',
       physioName: 'Dr. Pérez',

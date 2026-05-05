@@ -8,6 +8,7 @@ import '../../../routines/widgets/countdown_ring_widget.dart';
 import '../../models/dashboard_model.dart';
 import '../../services/dashboard_service.dart';
 import 'notifications_screen.dart';
+import 'progress_screen.dart';
 import 'schedule_planning_screen.dart';
 
 class WelcomeIniScreen extends StatefulWidget {
@@ -31,10 +32,26 @@ class _WelcomeIniScreenState extends State<WelcomeIniScreen> {
 
   // ── AppBar configs por tab ────────────────────────────────────────────────
   static const List<_AppBarConfig> _appBarConfigs = [
-    _AppBarConfig(icon: Icons.bolt, label: 'RETRAINEX', color: AppColors.primary, showBell: true),
-    _AppBarConfig(icon: Icons.route_rounded, label: 'MIS RUTINAS', color: AppColors.secondary, showBell: false),
-    _AppBarConfig(icon: Icons.trending_up_rounded, label: 'MI PROGRESO', color: AppColors.secondary, showBell: false),
-    _AppBarConfig(icon: Icons.settings_rounded, label: 'AJUSTES', color: AppColors.textSecondary, showBell: false),
+    _AppBarConfig(
+        icon: Icons.bolt,
+        label: 'RETRAINEX',
+        color: AppColors.primary,
+        showBell: true),
+    _AppBarConfig(
+        icon: Icons.route_rounded,
+        label: 'MIS RUTINAS',
+        color: AppColors.secondary,
+        showBell: false),
+    _AppBarConfig(
+        icon: Icons.trending_up_rounded,
+        label: 'MI PROGRESO',
+        color: AppColors.secondary,
+        showBell: false),
+    _AppBarConfig(
+        icon: Icons.settings_rounded,
+        label: 'AJUSTES',
+        color: AppColors.secondary,
+        showBell: false),
   ];
 
   @override
@@ -147,7 +164,8 @@ class _WelcomeIniScreenState extends State<WelcomeIniScreen> {
           selectedIndex: _currentIndex,
           onDestinationSelected: (i) => setState(() => _currentIndex = i),
           labelType: NavigationRailLabelType.all,
-          selectedIconTheme: const IconThemeData(color: AppColors.primary, size: 28),
+          selectedIconTheme:
+              const IconThemeData(color: AppColors.primary, size: 28),
           unselectedIconTheme:
               const IconThemeData(color: AppColors.textSecondary, size: 26),
           selectedLabelTextStyle: const TextStyle(
@@ -180,6 +198,8 @@ class _WelcomeIniScreenState extends State<WelcomeIniScreen> {
     switch (_currentIndex) {
       case 1:
         return const RoutinesListScreen();
+      case 2:
+        return const ProgressScreen();
       case 0:
         if (_isLoading) {
           return const LoadingWidget(message: 'Cargando...');
@@ -390,8 +410,8 @@ class _WelcomeIniScreenState extends State<WelcomeIniScreen> {
             backgroundColor: Colors.transparent,
             foregroundColor: Colors.white,
             shadowColor: Colors.transparent,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             elevation: 0,
           ),
           child: const Text(

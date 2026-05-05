@@ -15,6 +15,7 @@ class ReTrainexApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.darkTheme,
       home: const WelcomeIniScreen(userName: 'MARÍA'),
+      //home: const SettingsScreen(),
     );
   }
 }

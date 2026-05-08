@@ -10,6 +10,7 @@ import '../../services/dashboard_service.dart';
 import 'notifications_screen.dart';
 import 'progress_screen.dart';
 import 'schedule_planning_screen.dart';
+import 'settings_screen.dart';
 
 class WelcomeIniScreen extends StatefulWidget {
   final String userName;
@@ -200,6 +201,8 @@ class _WelcomeIniScreenState extends State<WelcomeIniScreen> {
         return const RoutinesListScreen();
       case 2:
         return const ProgressScreen();
+      case 3:
+        return const SettingsScreen();
       case 0:
         if (_isLoading) {
           return const LoadingWidget(message: 'Cargando...');

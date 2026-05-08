@@ -157,13 +157,21 @@ class _RoutineDetailScreenState extends State<RoutineDetailScreen> {
         const SizedBox(height: 28),
         _buildExerciseListHeader(detail),
         const SizedBox(height: 14),
-        ...detail.exercises.map(
-          (e) => Padding(
+        ...detail.exercises.asMap().entries.map(
+          (entry) => Padding(
             padding: const EdgeInsets.only(bottom: 12),
             child: ExerciseCardWidget(
-              exercise: e,
+              exercise: entry.value,
               onPlayTap: () {
-                // TODO: reproducir vídeo o instrucciones del ejercicio
+                WorkoutSessionService.markStart();
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => WorkoutPreparationScreen(
+                      exercises: detail.exercises,
+                      currentIndex: entry.key,
+                    ),
+                  ),
+                );
               },
             ),
           ),

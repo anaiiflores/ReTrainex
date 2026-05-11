@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/strings/locale_manager.dart';
 
 class ProgressScreen extends StatefulWidget {
   const ProgressScreen({super.key});
@@ -90,7 +91,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
   }
 
   Widget _buildWeekDayLabels() {
-    const labels = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
+    final labels = LocaleManager.strings.weekDayShort;
     return Row(
       children: labels
           .map((l) => Expanded(
@@ -185,24 +186,12 @@ class _ProgressScreenState extends State<ProgressScreen> {
   }
 
   Widget _buildSelectedDayInfo() {
-    final months = [
-      'enero',
-      'febrero',
-      'marzo',
-      'abril',
-      'mayo',
-      'junio',
-      'julio',
-      'agosto',
-      'septiembre',
-      'octubre',
-      'noviembre',
-      'diciembre',
-    ];
     final day = _selectedDay;
     if (day == null) return const SizedBox.shrink();
-    final label =
-        '${day.day} de ${months[day.month - 1]} de ${day.year}';
+    final monthName = LocaleManager.strings.monthNames[day.month - 1];
+    final label = LocaleManager.current == AppLocale.es
+        ? '${day.day} de $monthName de ${day.year}'
+        : '$monthName ${day.day}, ${day.year}';
 
     return Container(
       width: double.infinity,
@@ -225,9 +214,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
             ),
           ),
           const SizedBox(height: 8),
-          const Text(
-            'Sin sesiones programadas',
-            style: TextStyle(
+          Text(
+            LocaleManager.strings.noSessionsScheduled,
+            style: const TextStyle(
               color: AppColors.textSecondary,
               fontSize: 14,
             ),
@@ -251,11 +240,7 @@ class _MonthHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const months = [
-      'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
-    ];
-    final label = '${months[focusedMonth.month - 1]} ${focusedMonth.year}';
+    final label = '${LocaleManager.strings.monthNames[focusedMonth.month - 1]} ${focusedMonth.year}';
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,

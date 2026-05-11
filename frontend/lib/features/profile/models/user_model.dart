@@ -1,20 +1,26 @@
 import '../../routines/models/routine_model.dart';
 
 class UserModel {
+  String _id;
   String _userName;
   RoutineModel? _routine;
   int? _age;
   double? _weight;
 
   UserModel({
+    required String id,
     required String userName,
     RoutineModel? routine,
     int? age,
     double? weight,
-  })  : _userName = userName,
+  })  : _id = id,
+        _userName = userName,
         _routine = routine,
         _age = age,
         _weight = weight;
+
+  String get id => _id;
+  set id(String value) => _id = value;
 
   String get userName => _userName;
   set userName(String value) => _userName = value;
@@ -30,6 +36,7 @@ class UserModel {
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
+      id: json['id'] as String,
       userName: json['userName'] as String,
       routine: json['routine'] != null
           ? RoutineModel.fromJson(json['routine'] as Map<String, dynamic>)
@@ -40,6 +47,7 @@ class UserModel {
   }
 
   Map<String, dynamic> toJson() => {
+        'id': _id,
         'userName': _userName,
         'routine': _routine?.toJson(),
         'age': _age,

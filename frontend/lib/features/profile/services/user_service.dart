@@ -3,6 +3,7 @@ import '../models/user_model.dart';
 
 class UserService {
   static final UserModel _mockUser = UserModel(
+    id: 'u1',
     userName: 'María',
     routine: RoutineModel(
       id: 'r2',

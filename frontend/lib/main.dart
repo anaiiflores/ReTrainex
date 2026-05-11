@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:retrainex/features/routines/presentation/screens/routine_detail_screen.dart';
 import 'core/theme/app_theme.dart';
 import 'features/welcome/presentation/screens/welcome_ini_screen.dart';
 

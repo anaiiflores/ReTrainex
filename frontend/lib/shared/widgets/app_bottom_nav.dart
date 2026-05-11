@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/strings/locale_manager.dart';
 
 class AppNavItem {
   final IconData icon;
@@ -42,13 +43,12 @@ class AppBottomNav extends StatelessWidget {
         letterSpacing: 0.8,
       ),
       unselectedLabelStyle: const TextStyle(letterSpacing: 0.8),
-      items: kAppNavItems
-          .map((n) => BottomNavigationBarItem(
-                icon: Icon(n.icon, size: 26),
-                activeIcon: Icon(n.icon, size: 28),
-                label: n.label,
-              ))
-          .toList(),
+      items: [
+        BottomNavigationBarItem(icon: Icon(kAppNavItems[0].icon, size: 26), activeIcon: Icon(kAppNavItems[0].icon, size: 28), label: LocaleManager.strings.navHome),
+        BottomNavigationBarItem(icon: Icon(kAppNavItems[1].icon, size: 26), activeIcon: Icon(kAppNavItems[1].icon, size: 28), label: LocaleManager.strings.navRoutines),
+        BottomNavigationBarItem(icon: Icon(kAppNavItems[2].icon, size: 26), activeIcon: Icon(kAppNavItems[2].icon, size: 28), label: LocaleManager.strings.navProgress),
+        BottomNavigationBarItem(icon: Icon(kAppNavItems[3].icon, size: 26), activeIcon: Icon(kAppNavItems[3].icon, size: 28), label: LocaleManager.strings.navSettings),
+      ],
     );
   }
 }

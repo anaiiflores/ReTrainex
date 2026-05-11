@@ -7,6 +7,7 @@ import '../../../routines/presentation/screens/routines_list_screen.dart';
 import '../../../routines/widgets/countdown_ring_widget.dart';
 import '../../models/dashboard_model.dart';
 import '../../services/dashboard_service.dart';
+import '../../../../core/strings/locale_manager.dart';
 import 'notifications_screen.dart';
 import 'progress_screen.dart';
 import 'schedule_planning_screen.dart';
@@ -32,25 +33,25 @@ class _WelcomeIniScreenState extends State<WelcomeIniScreen> {
   final DashboardService _dashboardService = DashboardService();
 
   // ── AppBar configs por tab ────────────────────────────────────────────────
-  static const List<_AppBarConfig> _appBarConfigs = [
+  List<_AppBarConfig> get _appBarConfigs => [
     _AppBarConfig(
         icon: Icons.bolt,
-        label: 'RETRAINEX',
+        label: LocaleManager.strings.appName,
         color: AppColors.primary,
         showBell: true),
     _AppBarConfig(
         icon: Icons.route_rounded,
-        label: 'MIS RUTINAS',
+        label: LocaleManager.strings.navRoutines,
         color: AppColors.secondary,
         showBell: false),
     _AppBarConfig(
         icon: Icons.trending_up_rounded,
-        label: 'MI PROGRESO',
+        label: LocaleManager.strings.navProgress,
         color: AppColors.secondary,
         showBell: false),
     _AppBarConfig(
         icon: Icons.settings_rounded,
-        label: 'AJUSTES',
+        label: LocaleManager.strings.navSettings,
         color: AppColors.secondary,
         showBell: false),
   ];
@@ -72,7 +73,7 @@ class _WelcomeIniScreenState extends State<WelcomeIniScreen> {
       final result = await _dashboardService.getDashboard();
       setState(() => _dashboard = result);
     } catch (_) {
-      setState(() => _errorMessage = 'No se pudo cargar la información');
+      setState(() => _errorMessage = LocaleManager.strings.errorLoadingInfo);
     } finally {
       setState(() => _isLoading = false);
     }
@@ -125,33 +126,32 @@ class _WelcomeIniScreenState extends State<WelcomeIniScreen> {
           ),
         ],
       ),
-      actions: cfg.showBell
-          ? [
-              Text(
-                widget.userName,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 0.5,
-                ),
+      actions: [
+        if (cfg.showBell) ...[
+          Text(
+            widget.userName,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.5,
+            ),
+          ),
+          const SizedBox(width: 4),
+          IconButton(
+            icon: Badge(
+              isLabelVisible: hasUnread,
+              child: const Icon(Icons.notifications_none_rounded,
+                  color: AppColors.textSecondary, size: 28),
+            ),
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => const NotificationsScreen(),
               ),
-              const SizedBox(width: 4),
-              IconButton(
-                icon: Badge(
-                  isLabelVisible: hasUnread,
-                  child: const Icon(Icons.notifications_none_rounded,
-                      color: AppColors.textSecondary, size: 28),
-                ),
-                onPressed: () => Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => const NotificationsScreen(),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 4),
-            ]
-          : null,
+            ),
+          ),
+        ],
+      ],
     );
   }
 
@@ -180,12 +180,12 @@ class _WelcomeIniScreenState extends State<WelcomeIniScreen> {
             fontSize: 12,
             letterSpacing: 1,
           ),
-          destinations: kAppNavItems
-              .map((n) => NavigationRailDestination(
-                    icon: Icon(n.icon),
-                    label: Text(n.label),
-                  ))
-              .toList(),
+          destinations: [
+            NavigationRailDestination(icon: Icon(kAppNavItems[0].icon), label: Text(LocaleManager.strings.navHome)),
+            NavigationRailDestination(icon: Icon(kAppNavItems[1].icon), label: Text(LocaleManager.strings.navRoutines)),
+            NavigationRailDestination(icon: Icon(kAppNavItems[2].icon), label: Text(LocaleManager.strings.navProgress)),
+            NavigationRailDestination(icon: Icon(kAppNavItems[3].icon), label: Text(LocaleManager.strings.navSettings)),
+          ],
         ),
         const VerticalDivider(width: 1, thickness: 1, color: AppColors.border),
         Expanded(child: _buildBody(wide: true)),
@@ -202,10 +202,10 @@ class _WelcomeIniScreenState extends State<WelcomeIniScreen> {
       case 2:
         return const ProgressScreen();
       case 3:
-        return const SettingsScreen();
+        return SettingsScreen(onLocaleChanged: () => setState(() {}));
       case 0:
         if (_isLoading) {
-          return const LoadingWidget(message: 'Cargando...');
+          return LoadingWidget(message: LocaleManager.strings.loading);
         }
         if (_errorMessage != null) {
           return ErrorMessageWidget(
@@ -262,7 +262,7 @@ class _WelcomeIniScreenState extends State<WelcomeIniScreen> {
 
   Widget _buildDashGreeting(bool wide) {
     return Text(
-      '¡HOLA, ${widget.userName}!',
+      LocaleManager.strings.greeting(widget.userName),
       textAlign: TextAlign.center,
       style: TextStyle(
         color: Colors.white,
@@ -298,10 +298,10 @@ class _WelcomeIniScreenState extends State<WelcomeIniScreen> {
                 ),
               ),
               const SizedBox(height: 6),
-              const Text(
-                'TRATAMIENTO\nCOMPLETADO',
+              Text(
+                LocaleManager.strings.treatmentCompleted,
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   color: AppColors.textSecondary,
                   fontSize: 11,
                   letterSpacing: 1.5,
@@ -334,9 +334,9 @@ class _WelcomeIniScreenState extends State<WelcomeIniScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'PRÓXIMA SESIÓN',
-                        style: TextStyle(
+                      Text(
+                        LocaleManager.strings.nextSession,
+                        style: const TextStyle(
                           color: AppColors.textSecondary,
                           fontSize: 10,
                           letterSpacing: 2,
@@ -375,11 +375,11 @@ class _WelcomeIniScreenState extends State<WelcomeIniScreen> {
             child: Row(
               children: [
                 Expanded(
-                  child: _DateTimeCard(label: 'FECHA', value: session.date),
+                  child: _DateTimeCard(label: LocaleManager.strings.date, value: session.date),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
-                  child: _DateTimeCard(label: 'HORA', value: session.time),
+                  child: _DateTimeCard(label: LocaleManager.strings.hour, value: session.time),
                 ),
               ],
             ),
@@ -417,9 +417,9 @@ class _WelcomeIniScreenState extends State<WelcomeIniScreen> {
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             elevation: 0,
           ),
-          child: const Text(
-            'VER DETALLES',
-            style: TextStyle(
+          child: Text(
+            LocaleManager.strings.viewDetails,
+            style: const TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w800,
               letterSpacing: 2,
@@ -446,9 +446,9 @@ class _WelcomeIniScreenState extends State<WelcomeIniScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'RECORDATORIO',
-                  style: TextStyle(
+                Text(
+                  LocaleManager.strings.reminder,
+                  style: const TextStyle(
                     color: AppColors.textSecondary,
                     fontSize: 10,
                     letterSpacing: 2,
@@ -507,27 +507,19 @@ class _WelcomeIniScreenState extends State<WelcomeIniScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        RichText(
-          text: TextSpan(
-            style: TextStyle(
-              fontSize: wide ? 36 : 30,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 1,
-            ),
-            children: [
-              const TextSpan(
-                  text: '¡HOLA, ', style: TextStyle(color: Colors.white)),
-              TextSpan(
-                text: '${widget.userName}!',
-                style: const TextStyle(color: AppColors.primary),
-              ),
-            ],
+        Text(
+          LocaleManager.strings.greeting(widget.userName),
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: wide ? 36 : 30,
+            fontWeight: FontWeight.w900,
+            letterSpacing: 1,
           ),
         ),
         const SizedBox(height: 8),
-        const Text(
-          'TU FISIOTERAPIA COMIENZA HOY',
-          style: TextStyle(
+        Text(
+          LocaleManager.strings.physiotherapyStartsToday,
+          style: const TextStyle(
             color: AppColors.textSecondary,
             fontSize: 12,
             letterSpacing: 1.8,
@@ -570,9 +562,9 @@ class _WelcomeIniScreenState extends State<WelcomeIniScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'ASIGNACIÓN ACTUAL',
-                    style: TextStyle(
+                  Text(
+                    LocaleManager.strings.currentAssignment,
+                    style: const TextStyle(
                       color: AppColors.secondary,
                       fontSize: 11,
                       letterSpacing: 2,
@@ -611,9 +603,9 @@ class _WelcomeIniScreenState extends State<WelcomeIniScreen> {
                           ),
                         ),
                         const SizedBox(height: 2),
-                        const Text(
-                          'FISIOTERAPEUTA SENIOR',
-                          style: TextStyle(
+                        Text(
+                          LocaleManager.strings.seniorPhysiotherapist,
+                          style: const TextStyle(
                             color: AppColors.textSecondary,
                             fontSize: 11,
                             letterSpacing: 1.2,
@@ -650,9 +642,9 @@ class _WelcomeIniScreenState extends State<WelcomeIniScreen> {
         ),
         borderRadius: BorderRadius.circular(20),
       ),
-      child: const Text(
-        'NUEVA ASIGNACIÓN',
-        style: TextStyle(
+      child: Text(
+        LocaleManager.strings.newAssignment,
+        style: const TextStyle(
           color: AppColors.secondary,
           fontSize: 11,
           fontWeight: FontWeight.w700,
@@ -689,7 +681,7 @@ class _WelcomeIniScreenState extends State<WelcomeIniScreen> {
             ),
             const SizedBox(height: 10),
             Text(
-              'ESTÁS A PUNTO DE COMENZAR ESTA AVENTURA',
+              LocaleManager.strings.aboutToBegin,
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: AppColors.textSecondary,
@@ -713,7 +705,7 @@ class _WelcomeIniScreenState extends State<WelcomeIniScreen> {
             ),
             SizedBox(height: wide ? 36 : 28),
             Text(
-              'NO HAS RECIBIDO\nNINGUNA NOTIFICACIÓN\nDE MOMENTO',
+              LocaleManager.strings.noNotificationsYet,
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: AppColors.textSecondary,

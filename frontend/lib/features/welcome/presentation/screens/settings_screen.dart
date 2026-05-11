@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import '../../../../core/strings/locale_manager.dart';
 import '../../../../core/theme/app_colors.dart';
 
 class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({super.key});
+  final VoidCallback? onLocaleChanged;
+  const SettingsScreen({super.key, this.onLocaleChanged});
 
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
@@ -85,17 +87,21 @@ class _SettingsScreenState extends State<SettingsScreen>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _tile(0, const _SectionLabel(
-                icon: Icons.notifications_rounded,
-                label: 'Notificaciones',
-              )),
+              _tile(
+                  0,
+                  _SectionLabel(
+                    icon: Icons.notifications_rounded,
+                    label: LocaleManager.strings.settingsNotifications,
+                  )),
               const SizedBox(height: 10),
               _tile(1, _buildNotifCard()),
               const SizedBox(height: 28),
-              _tile(4, const _SectionLabel(
-                icon: Icons.person_rounded,
-                label: 'Perfil',
-              )),
+              _tile(
+                  4,
+                  _SectionLabel(
+                    icon: Icons.person_rounded,
+                    label: LocaleManager.strings.settingsProfile,
+                  )),
               const SizedBox(height: 10),
               _tile(5, _buildProfileCard()),
               const SizedBox(height: 36),
@@ -113,48 +119,53 @@ class _SettingsScreenState extends State<SettingsScreen>
   Widget _buildNotifCard() {
     return _Card(
       children: [
-        _tile(2, _RemindersRow(
-          value: _remindersEnabled,
-          onChanged: (v) {
-            setState(() => _remindersEnabled = v);
-            if (v && mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: const Row(
-                    children: [
-                      Text('⚡', style: TextStyle(fontSize: 18)),
-                      SizedBox(width: 8),
-                      Text(
-                        '¡Recordatorios activados!',
-                        style: TextStyle(
-                            fontWeight: FontWeight.w700, color: Colors.white),
+        _tile(
+            2,
+            _RemindersRow(
+              value: _remindersEnabled,
+              onChanged: (v) {
+                setState(() => _remindersEnabled = v);
+                if (v && mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Row(
+                        children: [
+                          Text('⚡', style: TextStyle(fontSize: 18)),
+                          SizedBox(width: 8),
+                          Text(
+                            LocaleManager.strings.remindersEnabled,
+                            style: TextStyle(
+                                fontWeight: FontWeight.w700,
+                                color: Colors.white),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  backgroundColor: AppColors.primary,
-                  behavior: SnackBarBehavior.floating,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
-                  duration: const Duration(seconds: 2),
-                ),
-              );
-            }
-          },
-        )),
+                      backgroundColor: AppColors.primary,
+                      behavior: SnackBarBehavior.floating,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                      duration: const Duration(seconds: 2),
+                    ),
+                  );
+                }
+              },
+            )),
         const _TileDivider(),
-        _tile(3, _SettingsTile(
-          icon: Icons.access_time_rounded,
-          iconColor: AppColors.secondary,
-          title: 'Horario',
-          subtitle: _remindersEnabled ? _notificationTime : '—',
-          enabled: _remindersEnabled,
-          onTap: _remindersEnabled ? _pickTime : null,
-        )),
+        _tile(
+            3,
+            _SettingsTile(
+              icon: Icons.access_time_rounded,
+              iconColor: AppColors.secondary,
+              title: LocaleManager.strings.settingsSchedule,
+              subtitle: _remindersEnabled ? _notificationTime : '—',
+              enabled: _remindersEnabled,
+              onTap: _remindersEnabled ? _pickTime : null,
+            )),
         const _TileDivider(),
         _SettingsTile(
           icon: Icons.help_outline_rounded,
           iconColor: AppColors.textSecondary,
-          title: 'Preguntas frecuentes',
+          title: LocaleManager.strings.settingsFaq,
           onTap: _showFaq,
         ),
       ],
@@ -170,25 +181,32 @@ class _SettingsScreenState extends State<SettingsScreen>
           icon: Icons.account_circle_rounded,
           iconColor: AppColors.primary,
           iconBg: true,
-          title: 'Datos personales',
-          subtitle: 'Nombre, edad, peso',
+          title: LocaleManager.strings.settingsPersonalData,
+          subtitle: LocaleManager.strings.settingsPersonalDataSub,
           onTap: () {},
         ),
         const _TileDivider(),
         _SettingsTile(
           icon: Icons.visibility_rounded,
           iconColor: AppColors.textSecondary,
-          title: 'Accesibilidad',
-          subtitle: 'Tamaño de texto, contraste',
+          title: LocaleManager.strings.settingsAccessibility,
+          subtitle: LocaleManager.strings.settingsAccessibilitySub,
           onTap: () {},
         ),
         const _TileDivider(),
         _SettingsTile(
           icon: Icons.language_rounded,
           iconColor: AppColors.textSecondary,
-          title: 'Idioma',
-          subtitle: 'Español',
-          onTap: () {},
+          title: LocaleManager.strings.settingsLanguage,
+          subtitle: LocaleManager.current == AppLocale.es ? '🇪🇸 Español' : '🇬🇧 English',
+          onTap: () {
+            setState(() {
+              LocaleManager.setLocale(
+                LocaleManager.current == AppLocale.es ? AppLocale.en : AppLocale.es,
+              );
+            });
+            widget.onLocaleChanged?.call();
+          },
         ),
       ],
     );
@@ -219,8 +237,7 @@ class _SettingsScreenState extends State<SettingsScreen>
                   borderRadius: BorderRadius.circular(18),
                   boxShadow: [
                     BoxShadow(
-                      color:
-                          AppColors.primary.withValues(alpha: glow * 0.65),
+                      color: AppColors.primary.withValues(alpha: glow * 0.65),
                       blurRadius: 18 + 14 * _pulseCtrl.value,
                       spreadRadius: 1,
                     ),
@@ -241,13 +258,13 @@ class _SettingsScreenState extends State<SettingsScreen>
             ),
           ),
           const SizedBox(height: 4),
-          const Text(
-            'Versión 1.0.0',
-            style: TextStyle(color: AppColors.textSecondary, fontSize: 13),
+          Text(
+            LocaleManager.strings.settingsVersion,
+            style: const TextStyle(color: AppColors.textSecondary, fontSize: 13),
           ),
           const SizedBox(height: 4),
-          const Text(
-            '© 2026 ReTrainex. Todos los derechos reservados.',
+          Text(
+            LocaleManager.strings.settingsCopyright,
             style: TextStyle(color: AppColors.textSecondary, fontSize: 11),
             textAlign: TextAlign.center,
           ),
@@ -268,8 +285,7 @@ class _SettingsScreenState extends State<SettingsScreen>
 
     final picked = await showTimePicker(
       context: context,
-      initialTime:
-          TimeOfDay(hour: hour, minute: int.parse(hm[1])),
+      initialTime: TimeOfDay(hour: hour, minute: int.parse(hm[1])),
       builder: (ctx, child) => Theme(
         data: Theme.of(ctx).copyWith(
           colorScheme: const ColorScheme.dark(
@@ -407,17 +423,17 @@ class _RemindersRowState extends State<_RemindersRow>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Recordatorios',
-                  style: TextStyle(
+                Text(
+                  LocaleManager.strings.reminders,
+                  style: const TextStyle(
                       color: Colors.white,
                       fontSize: 15,
                       fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 3),
-                const Text(
-                  'Recibe alertas para tus ejercicios',
-                  style: TextStyle(
+                Text(
+                  LocaleManager.strings.remindersSubtitle,
+                  style: const TextStyle(
                       color: AppColors.textSecondary, fontSize: 13),
                 ),
               ],
@@ -435,9 +451,7 @@ class _RemindersRowState extends State<_RemindersRow>
                 height: 30,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15),
-                  color: widget.value
-                      ? AppColors.primary
-                      : AppColors.border,
+                  color: widget.value ? AppColors.primary : AppColors.border,
                   boxShadow: widget.value
                       ? [
                           BoxShadow(
@@ -545,15 +559,13 @@ class _SettingsTileState extends State<_SettingsTile>
                         width: 38,
                         height: 38,
                         decoration: BoxDecoration(
-                          color:
-                              widget.iconColor.withValues(alpha: 0.15),
+                          color: widget.iconColor.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Icon(widget.icon,
                             color: widget.iconColor, size: 20),
                       )
-                    : Icon(widget.icon,
-                        color: widget.iconColor, size: 22),
+                    : Icon(widget.icon, color: widget.iconColor, size: 22),
                 const SizedBox(width: 14),
                 Expanded(
                   child: Column(
@@ -595,26 +607,22 @@ class _SettingsTileState extends State<_SettingsTile>
 class _FaqSheet extends StatelessWidget {
   const _FaqSheet();
 
-  static const List<_FaqData> _faqs = [
+  List<_FaqData> get _faqs => [
     _FaqData(
-      question: '¿Puedo saltar ejercicios?',
-      answer:
-          'Sí, puedes omitir cualquier ejercicio. Sin embargo, te recomendamos hablar con tu fisioterapeuta antes de hacerlo con frecuencia.',
+      question: LocaleManager.strings.faq1Question,
+      answer: LocaleManager.strings.faq1Answer,
     ),
     _FaqData(
-      question: '¿Qué pasa si me duele?',
-      answer:
-          'Para inmediatamente el ejercicio y contacta con tu fisioterapeuta. Nunca fuerces un movimiento que cause dolor agudo.',
+      question: LocaleManager.strings.faq2Question,
+      answer: LocaleManager.strings.faq2Answer,
     ),
     _FaqData(
-      question: '¿Con qué frecuencia debo hacer las sesiones?',
-      answer:
-          'Tu fisioterapeuta ha diseñado un plan específico para ti. Sigue los días asignados para mejores resultados.',
+      question: LocaleManager.strings.faq3Question,
+      answer: LocaleManager.strings.faq3Answer,
     ),
     _FaqData(
-      question: '¿Cómo cambio mi horario de recordatorio?',
-      answer:
-          'Ve a Ajustes → Notificaciones → Horario y selecciona la hora que prefieras.',
+      question: LocaleManager.strings.faq4Question,
+      answer: LocaleManager.strings.faq4Answer,
     ),
   ];
 
@@ -641,8 +649,8 @@ class _FaqSheet extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 18),
-            const Text(
-              'PREGUNTAS FRECUENTES',
+            Text(
+              LocaleManager.strings.faqTitle,
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 14,

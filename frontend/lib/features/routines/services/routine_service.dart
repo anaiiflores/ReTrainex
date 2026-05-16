@@ -64,4 +64,12 @@ class RoutineService {
     // final response = await apiClient.get('/routines/$routineId/detail');
     // return RoutineDetailModel.fromJson(response);
   }
+
+  Future<ExerciseModel> getExerciseDetail(String id) async {
+    await Future.delayed(const Duration(milliseconds: 400));
+    return _mockDetail.exercises.firstWhere((e) => e.id == id);
+    // Reemplazar con:
+    // final response = await apiClient.get('/exercises/$id');
+    // return ExerciseModel.fromJson(response);
+  }
 }

@@ -56,6 +56,20 @@ class _RoutineDetailScreenState extends State<RoutineDetailScreen> {
 
   // ── Acción principal ──────────────────────────────────────────────────────
 
+  Future<void> _onExerciseTap(String exerciseId, List<ExerciseModel> exercises, int index) async {
+    final exercise = await _routineService.getExerciseDetail(exerciseId);
+    if (!mounted) return;
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => SessionPausedScreen(
+          exercise: exercise,
+          exercises: exercises,
+          currentIndex: index,
+        ),
+      ),
+    );
+  }
+
   Future<void> _onStartSession() async {
     if (_detail == null || _detail!.exercises.isEmpty) return;
 
@@ -163,17 +177,11 @@ class _RoutineDetailScreenState extends State<RoutineDetailScreen> {
             padding: const EdgeInsets.only(bottom: 12),
             child: ExerciseCardWidget(
               exercise: entry.value,
-              onPlayTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => SessionPausedScreen(
-                      exercise: entry.value,
-                      exercises: detail.exercises,
-                      currentIndex: entry.key,
-                    ),
-                  ),
-                );
-              },
+              onPlayTap: () => _onExerciseTap(
+                entry.value.id,
+                detail.exercises,
+                entry.key,
+              ),
             ),
           ),
         ),

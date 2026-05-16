@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/strings/locale_manager.dart';
+import '../../models/dashboard_model.dart';
+import '../../services/dashboard_service.dart';
 
 class ProgressScreen extends StatefulWidget {
   const ProgressScreen({super.key});
@@ -12,6 +14,28 @@ class ProgressScreen extends StatefulWidget {
 class _ProgressScreenState extends State<ProgressScreen> {
   DateTime _focusedMonth = DateTime.now();
   DateTime? _selectedDay = DateTime.now();
+  List<CalendarSessionModel> _sessions = [];
+
+  final DashboardService _dashboardService = DashboardService();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSessions();
+  }
+
+  Future<void> _loadSessions() async {
+    final sessions = await _dashboardService.getCalendarSessions();
+    if (mounted) setState(() => _sessions = sessions);
+  }
+
+  List<CalendarSessionModel> _sessionsForDay(DateTime day) {
+    return _sessions.where((s) =>
+      s.date.year == day.year &&
+      s.date.month == day.month &&
+      s.date.day == day.day,
+    ).toList();
+  }
 
   void _previousMonth() {
     setState(() {
@@ -134,7 +158,8 @@ class _ProgressScreenState extends State<ProgressScreen> {
             selected.year == date.year &&
             selected.month == date.month &&
             selected.day == date.day;
-        cells.add(_buildDayCell(date, day, isToday, isSelected));
+        final daySessions = _sessionsForDay(date);
+        cells.add(_buildDayCell(date, day, isToday, isSelected, daySessions));
       }
     }
 
@@ -148,7 +173,8 @@ class _ProgressScreenState extends State<ProgressScreen> {
     );
   }
 
-  Widget _buildDayCell(DateTime date, int day, bool isToday, bool isSelected) {
+  Widget _buildDayCell(DateTime date, int day, bool isToday, bool isSelected,
+      List<CalendarSessionModel> daySessions) {
     Color bgColor = Colors.transparent;
     Color textColor = Colors.white;
 
@@ -160,6 +186,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
       textColor = AppColors.primary;
     }
 
+    final hasCompleted = daySessions.any((s) => s.completed);
+    final hasUpcoming = daySessions.any((s) => !s.completed);
+
     return GestureDetector(
       onTap: () => setState(() {
         _selectedDay = isSelected ? null : date;
@@ -170,16 +199,41 @@ class _ProgressScreenState extends State<ProgressScreen> {
           color: bgColor,
           shape: BoxShape.circle,
         ),
-        child: Center(
-          child: Text(
-            '$day',
-            style: TextStyle(
-              color: textColor,
-              fontSize: 10,
-              fontWeight:
-                  isToday || isSelected ? FontWeight.w700 : FontWeight.w400,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (hasCompleted)
+                  Icon(
+                    Icons.check_rounded,
+                    size: 14,
+                    color: isSelected ? Colors.white : Colors.greenAccent,
+                  )
+                else
+                  Text(
+                    '$day',
+                    style: TextStyle(
+                      color: textColor,
+                      fontSize: 10,
+                      fontWeight:
+                          isToday || isSelected ? FontWeight.w700 : FontWeight.w400,
+                    ),
+                  ),
+                if (!hasCompleted && hasUpcoming)
+                  Container(
+                    width: 4,
+                    height: 4,
+                    margin: const EdgeInsets.only(top: 1),
+                    decoration: BoxDecoration(
+                      color: isSelected ? Colors.white : AppColors.secondary,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+              ],
             ),
-          ),
+          ],
         ),
       ),
     );
@@ -192,6 +246,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
     final label = LocaleManager.current == AppLocale.es
         ? '${day.day} de $monthName de ${day.year}'
         : '$monthName ${day.day}, ${day.year}';
+    final daySessions = _sessionsForDay(day);
 
     return Container(
       width: double.infinity,
@@ -213,12 +268,49 @@ class _ProgressScreenState extends State<ProgressScreen> {
               letterSpacing: 1.5,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 10),
+          if (daySessions.isEmpty)
+            Text(
+              LocaleManager.strings.noSessionsScheduled,
+              style: const TextStyle(
+                color: AppColors.textSecondary,
+                fontSize: 14,
+              ),
+            )
+          else
+            ...daySessions.map((s) => _buildSessionRow(s)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSessionRow(CalendarSessionModel session) {
+    final dotColor = session.completed ? Colors.greenAccent : AppColors.secondary;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        children: [
+          Container(
+            width: 8,
+            height: 8,
+            decoration: BoxDecoration(color: dotColor, shape: BoxShape.circle),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              session.title,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
           Text(
-            LocaleManager.strings.noSessionsScheduled,
+            '${session.time}  ·  ${session.durationMinutes} min',
             style: const TextStyle(
               color: AppColors.textSecondary,
-              fontSize: 14,
+              fontSize: 12,
             ),
           ),
         ],

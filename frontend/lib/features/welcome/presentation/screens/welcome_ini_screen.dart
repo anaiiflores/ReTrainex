@@ -71,7 +71,7 @@ class _WelcomeIniScreenState extends State<WelcomeIniScreen> {
       _errorMessage = null;
     });
     try {
-      final result = await _dashboardService.getDashboard();
+      final result = await _dashboardService.getDashboardData();
       setState(() => _dashboard = result);
     } catch (_) {
       setState(() => _errorMessage = LocaleManager.strings.errorLoadingInfo);

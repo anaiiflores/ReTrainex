@@ -1,5 +1,21 @@
 enum RoutineStatus { none, newAssignment, active }
 
+class CalendarSessionModel {
+  final DateTime date;
+  final String title;
+  final String time;
+  final int durationMinutes;
+  final bool completed;
+
+  const CalendarSessionModel({
+    required this.date,
+    required this.title,
+    required this.time,
+    required this.durationMinutes,
+    required this.completed,
+  });
+}
+
 class NextSessionModel {
   final String date;          // "15 OCT"
   final String time;          // "10:30 AM"

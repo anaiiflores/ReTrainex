@@ -441,13 +441,6 @@ class _WelcomeIniScreenState extends State<WelcomeIniScreen> {
               ],
             ),
           ),
-          const SizedBox(width: 12),
-          const CircleAvatar(
-            radius: 20,
-            backgroundColor: AppColors.surface,
-            child: Icon(Icons.person_rounded,
-                color: AppColors.textSecondary, size: 20),
-          ),
         ],
       ),
     );
@@ -587,16 +580,6 @@ class _WelcomeIniScreenState extends State<WelcomeIniScreen> {
                         ),
                       ],
                     ),
-                  ),
-                  Container(
-                    width: 36,
-                    height: 36,
-                    decoration: const BoxDecoration(
-                      color: AppColors.primary,
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(Icons.arrow_forward_rounded,
-                        color: Colors.white, size: 18),
                   ),
                 ],
               ),

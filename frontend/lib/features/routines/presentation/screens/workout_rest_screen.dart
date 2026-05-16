@@ -332,8 +332,6 @@ class _WorkoutRestScreenState extends State<WorkoutRestScreen> {
               ],
             ),
           ),
-          const Icon(Icons.chevron_right_rounded,
-              color: AppColors.textSecondary, size: 20),
         ],
       ),
     );

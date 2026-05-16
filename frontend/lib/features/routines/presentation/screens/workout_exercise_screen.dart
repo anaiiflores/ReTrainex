@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/widgets/app_bottom_nav.dart';
+import '../../../../shared/widgets/video_area_widget.dart';
+import '../../../../shared/widgets/workout_controls_widget.dart';
 import '../../models/routine_detail_model.dart';
 import '../../services/workout_session_service.dart';
 import '../../widgets/countdown_ring_widget.dart';
@@ -152,9 +154,12 @@ class _WorkoutExerciseScreenState extends State<WorkoutExerciseScreen> {
                   const SizedBox(height: 24),
                   _buildStatsRow(),
                   const SizedBox(height: 28),
-                  _buildControlButtons(),
-                  const SizedBox(height: 12),
-                  _buildSkipLink(),
+                  WorkoutControlsWidget(
+                    isPaused: _isPaused,
+                    onPause: _togglePause,
+                    onStop: _stopSession,
+                    onSkip: _skipExercise,
+                  ),
                   const SizedBox(height: 8),
                 ],
               ),
@@ -231,40 +236,7 @@ class _WorkoutExerciseScreenState extends State<WorkoutExerciseScreen> {
   // ── Área de vídeo ─────────────────────────────────────────────────────────
 
   Widget _buildVideoArea(bool isWide) {
-    final double height = isWide ? 240 : 180;
-
-    return Container(
-      width: double.infinity,
-      height: height,
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border),
-      ),
-      child: _exercise.videoUrl != null
-          ? const Center(
-              child: Icon(Icons.play_circle_outline_rounded,
-                  color: AppColors.primary, size: 64),
-            )
-          : Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.videocam_off_rounded,
-                    color: AppColors.textSecondary.withValues(alpha: 0.4),
-                    size: 48),
-                const SizedBox(height: 10),
-                const Text(
-                  'VÍDEO PRÓXIMAMENTE',
-                  style: TextStyle(
-                    color: AppColors.textSecondary,
-                    fontSize: 12,
-                    letterSpacing: 1.5,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-    );
+    return VideoAreaWidget(videoUrl: _exercise.videoUrl, isWide: isWide);
   }
 
   Widget _buildVideoTags() {
@@ -350,45 +322,6 @@ class _WorkoutExerciseScreenState extends State<WorkoutExerciseScreen> {
     );
   }
 
-  // ── Botones de control ────────────────────────────────────────────────────
-
-  Widget _buildControlButtons() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        _ControlButton(
-          icon: _isPaused ? Icons.play_arrow_rounded : Icons.pause_rounded,
-          color: AppColors.primary,
-          onTap: _togglePause,
-          tooltip: _isPaused ? 'Continuar' : 'Pausar',
-        ),
-        const SizedBox(width: 28),
-        _ControlButton(
-          icon: Icons.stop_rounded,
-          color: Colors.redAccent,
-          onTap: _stopSession,
-          tooltip: 'Detener sesión',
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSkipLink() {
-    return TextButton.icon(
-      onPressed: _skipExercise,
-      icon: const Icon(Icons.skip_next_rounded,
-          color: AppColors.textSecondary, size: 18),
-      label: const Text(
-        'OMITIR EJERCICIO',
-        style: TextStyle(
-          color: AppColors.textSecondary,
-          fontSize: 13,
-          letterSpacing: 1,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-    );
-  }
 }
 
 // ─── Widgets locales ──────────────────────────────────────────────────────────
@@ -463,46 +396,6 @@ class _StatCard extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _ControlButton extends StatelessWidget {
-  final IconData icon;
-  final Color color;
-  final VoidCallback onTap;
-  final String tooltip;
-
-  const _ControlButton({
-    required this.icon,
-    required this.color,
-    required this.onTap,
-    required this.tooltip,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Tooltip(
-      message: tooltip,
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          width: 64,
-          height: 64,
-          decoration: BoxDecoration(
-            color: color,
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: color.withValues(alpha: 0.35),
-                blurRadius: 16,
-                spreadRadius: 2,
-              ),
-            ],
-          ),
-          child: Icon(icon, color: Colors.white, size: 30),
-        ),
       ),
     );
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/widgets/app_button.dart';
+import '../../../../shared/widgets/video_area_widget.dart';
 import '../../models/routine_detail_model.dart';
 import 'workout_preparation_screen.dart';
 import '../../services/workout_session_service.dart';
@@ -124,39 +125,7 @@ class SessionPausedScreen extends StatelessWidget {
   // ── Área de vídeo ────────────────────────────────────────────────────────
 
   Widget _buildVideoArea(bool isWide) {
-    final double height = isWide ? 240 : 180;
-    return Container(
-      width: double.infinity,
-      height: height,
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border),
-      ),
-      child: exercise.videoUrl != null
-          ? const Center(
-              child: Icon(Icons.play_circle_outline_rounded,
-                  color: AppColors.primary, size: 64),
-            )
-          : Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.videocam_off_rounded,
-                    color: AppColors.textSecondary.withValues(alpha: 0.4),
-                    size: 48),
-                const SizedBox(height: 10),
-                const Text(
-                  'VÍDEO PRÓXIMAMENTE',
-                  style: TextStyle(
-                    color: AppColors.textSecondary,
-                    fontSize: 12,
-                    letterSpacing: 1.5,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-    );
+    return VideoAreaWidget(videoUrl: exercise.videoUrl, isWide: isWide);
   }
 
   // ── Título ────────────────────────────────────────────────────────────────

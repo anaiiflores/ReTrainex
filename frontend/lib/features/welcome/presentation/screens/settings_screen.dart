@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/strings/locale_manager.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../profile/presentation/screens/user_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   final VoidCallback? onLocaleChanged;
@@ -183,7 +184,9 @@ class _SettingsScreenState extends State<SettingsScreen>
           iconBg: true,
           title: LocaleManager.strings.settingsPersonalData,
           subtitle: LocaleManager.strings.settingsPersonalDataSub,
-          onTap: () {},
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => const UserScreen()),
+          ),
         ),
         const _TileDivider(),
         _SettingsTile(

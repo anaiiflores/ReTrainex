@@ -49,6 +49,18 @@ class RoutineService {
 
   // ── Métodos públicos ──────────────────────────────────────────────────────
 
+  Future<RoutineModel?> getTodaySession() async {
+    await Future.delayed(const Duration(milliseconds: 300));
+    try {
+      return _mockRoutines.firstWhere((r) => r.status == RoutineStatus.today);
+    } catch (_) {
+      return null;
+    }
+    // Reemplazar con:
+    // final response = await apiClient.get('/routines/today');
+    // return response != null ? RoutineModel.fromJson(response) : null;
+  }
+
   Future<List<RoutineModel>> getWeeklyRoutines() async {
     await Future.delayed(const Duration(milliseconds: 600));
     return _mockRoutines;

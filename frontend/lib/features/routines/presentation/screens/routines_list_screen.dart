@@ -19,6 +19,7 @@ class _RoutinesListScreenState extends State<RoutinesListScreen> {
   bool _isLoading = false;
   String? _errorMessage;
   List<RoutineModel> _routines = [];
+  RoutineModel? _todaySession;
 
   final RoutineService _routineService = RoutineService();
 
@@ -42,7 +43,11 @@ class _RoutinesListScreenState extends State<RoutinesListScreen> {
 
     try {
       final result = await _routineService.getWeeklyRoutines();
-      setState(() => _routines = result);
+      final today = await _routineService.getTodaySession();
+      setState(() {
+        _routines = result;
+        _todaySession = today;
+      });
     } catch (_) {
       setState(() => _errorMessage = 'No se pudieron cargar las rutinas');
     } finally {
@@ -52,10 +57,11 @@ class _RoutinesListScreenState extends State<RoutinesListScreen> {
 
   // ── Navegación ────────────────────────────────────────────────────────────
 
-  void _openRoutineDetail(RoutineModel routine) {
+  void _openTodaySession() {
+    if (_todaySession == null) return;
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => RoutineDetailScreen(routineId: routine.id),
+        builder: (_) => RoutineDetailScreen(routineId: _todaySession!.id),
       ),
     );
   }
@@ -93,8 +99,8 @@ class _RoutinesListScreenState extends State<RoutinesListScreen> {
                 padding: const EdgeInsets.only(bottom: 14),
                 child: RoutineCardWidget(
                   routine: r,
-                  onStartTap: r.status == RoutineStatus.today
-                      ? () => _openRoutineDetail(r)
+                  onStartTap: r.id == _todaySession?.id
+                      ? _openTodaySession
                       : null,
                 ),
               ),

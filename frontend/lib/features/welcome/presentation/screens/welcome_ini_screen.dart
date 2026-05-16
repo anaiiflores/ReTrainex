@@ -8,6 +8,7 @@ import '../../../routines/widgets/countdown_ring_widget.dart';
 import '../../models/dashboard_model.dart';
 import '../../services/dashboard_service.dart';
 import '../../../../core/strings/locale_manager.dart';
+import '../../../../shared/widgets/app_button.dart';
 import 'notifications_screen.dart';
 import 'progress_screen.dart';
 import 'schedule_planning_screen.dart';
@@ -395,38 +396,11 @@ class _WelcomeIniScreenState extends State<WelcomeIniScreen> {
   }
 
   Widget _buildVerDetallesButton() {
-    return SizedBox(
-      width: double.infinity,
+    return AppGradientButton(
+      label: LocaleManager.strings.viewDetails,
+      onPressed: () => setState(() => _currentIndex = 1),
       height: 48,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [AppColors.primary, AppColors.secondary],
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
-          ),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: ElevatedButton(
-          onPressed: () => setState(() => _currentIndex = 1),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.transparent,
-            foregroundColor: Colors.white,
-            shadowColor: Colors.transparent,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            elevation: 0,
-          ),
-          child: Text(
-            LocaleManager.strings.viewDetails,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w800,
-              letterSpacing: 2,
-            ),
-          ),
-        ),
-      ),
+      borderRadius: 12,
     );
   }
 

@@ -8,6 +8,7 @@ import '../../services/routine_service.dart';
 import '../../services/workout_session_service.dart';
 import '../../widgets/exercise_card_widget.dart';
 import 'workout_preparation_screen.dart';
+import 'session_paused.dart';
 
 const Color _kAccent = Color(0xFF6B5CF6); // violeta de sesión activa
 
@@ -163,10 +164,10 @@ class _RoutineDetailScreenState extends State<RoutineDetailScreen> {
             child: ExerciseCardWidget(
               exercise: entry.value,
               onPlayTap: () {
-                WorkoutSessionService.markStart();
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (_) => WorkoutPreparationScreen(
+                    builder: (_) => SessionPausedScreen(
+                      exercise: entry.value,
                       exercises: detail.exercises,
                       currentIndex: entry.key,
                     ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../shared/widgets/app_button.dart';
 
 class SchedulePlanningScreen extends StatefulWidget {
   const SchedulePlanningScreen({super.key});
@@ -251,39 +252,12 @@ class _SchedulePlanningScreenState extends State<SchedulePlanningScreen> {
   // ── Botón empezar ─────────────────────────────────────────────────────────
 
   Widget _buildStartButton(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
+    return AppGradientButton(
+      label: 'EMPEZAR',
+      onPressed: () => Navigator.of(context).pop(),
+      icon: Icons.rocket_launch_rounded,
       height: 58,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [AppColors.primary, AppColors.secondary],
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
-          ),
-          borderRadius: BorderRadius.circular(30),
-        ),
-        child: ElevatedButton.icon(
-          onPressed: () => Navigator.of(context).pop(),
-          icon: const Icon(Icons.rocket_launch_rounded, size: 22),
-          label: const Text(
-            'EMPEZAR',
-            style: TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 2,
-            ),
-          ),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.transparent,
-            foregroundColor: Colors.white,
-            shadowColor: Colors.transparent,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30)),
-            elevation: 0,
-          ),
-        ),
-      ),
+      borderRadius: 30,
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/widgets/app_bottom_nav.dart';
+import '../../../../shared/widgets/app_button.dart';
 import '../../services/workout_session_service.dart';
 
 class WorkoutCompleteScreen extends StatefulWidget {
@@ -179,19 +180,19 @@ class _WorkoutCompleteScreenState extends State<WorkoutCompleteScreen> {
       children: [
         Expanded(
           child: _StatCard(
-            icon: Icons.fitness_center_rounded,
-            iconColor: AppColors.primary,
-            value: '${widget.exerciseCount}',
-            label: 'EJERCICIOS',
+            icon: Icons.timer_rounded,
+            iconColor: Colors.orangeAccent,
+            value: _formatDuration(_elapsedSeconds),
+            label: 'DURACIÓN',
           ),
         ),
         const SizedBox(width: 12),
         Expanded(
           child: _StatCard(
-            icon: Icons.timer_rounded,
-            iconColor: Colors.orangeAccent,
-            value: _formatDuration(_elapsedSeconds),
-            label: 'DURACIÓN',
+            icon: Icons.fitness_center_rounded,
+            iconColor: AppColors.primary,
+            label: 'EJERCICIOS',
+            value: '${widget.exerciseCount}',
           ),
         ),
       ],
@@ -263,9 +264,8 @@ class _WorkoutCompleteScreenState extends State<WorkoutCompleteScreen> {
                 height: 10,
                 margin: const EdgeInsets.only(right: 6),
                 decoration: BoxDecoration(
-                  color: i < _streakDays
-                      ? Colors.orangeAccent
-                      : AppColors.border,
+                  color:
+                      i < _streakDays ? Colors.orangeAccent : AppColors.border,
                   shape: BoxShape.circle,
                 ),
               ),
@@ -317,28 +317,12 @@ class _WorkoutCompleteScreenState extends State<WorkoutCompleteScreen> {
   // ── Botón volver al inicio ────────────────────────────────────────────────
 
   Widget _buildHomeButton() {
-    return SizedBox(
-      width: double.infinity,
+    return AppSolidButton(
+      label: 'VOLVER AL INICIO',
+      onPressed: _goHome,
+      icon: Icons.home_rounded,
       height: 56,
-      child: ElevatedButton.icon(
-        onPressed: _goHome,
-        icon: const Icon(Icons.home_rounded, size: 22),
-        label: const Text(
-          'VOLVER AL INICIO',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w900,
-            letterSpacing: 1.5,
-          ),
-        ),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primary,
-          foregroundColor: Colors.white,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          elevation: 0,
-        ),
-      ),
+      borderRadius: 16,
     );
   }
 }
@@ -367,29 +351,33 @@ class _StatCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: AppColors.border),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
         children: [
           Icon(icon, color: iconColor, size: 22),
-          const SizedBox(height: 10),
-          Text(
-            value,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 26,
-              fontWeight: FontWeight.w900,
-              height: 1,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: const TextStyle(
-              color: AppColors.textSecondary,
-              fontSize: 11,
-              letterSpacing: 1.5,
-              fontWeight: FontWeight.w600,
-            ),
+          const SizedBox(width: 12),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: const TextStyle(
+                  color: AppColors.textSecondary,
+                  fontSize: 11,
+                  letterSpacing: 1.5,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                value,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 26,
+                  fontWeight: FontWeight.w900,
+                  height: 1,
+                ),
+              ),
+            ],
           ),
         ],
       ),

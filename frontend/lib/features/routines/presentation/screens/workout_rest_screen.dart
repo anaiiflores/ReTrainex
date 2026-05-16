@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/widgets/app_bottom_nav.dart';
+import '../../../../shared/widgets/app_button.dart';
 import '../../models/routine_detail_model.dart';
 import '../../widgets/countdown_ring_widget.dart';
 import 'workout_preparation_screen.dart';
@@ -258,23 +259,14 @@ class _WorkoutRestScreenState extends State<WorkoutRestScreen> {
   // ── Botón +20s ────────────────────────────────────────────────────────────
 
   Widget _buildAddTimeButton() {
-    return OutlinedButton.icon(
+    return AppOutlinedButton(
+      label: '+20 SEGUNDOS',
       onPressed: _addTime,
-      icon: const Icon(Icons.add_rounded, size: 18),
-      label: const Text(
-        '+20 SEGUNDOS',
-        style: TextStyle(
-          fontSize: 13,
-          fontWeight: FontWeight.w700,
-          letterSpacing: 1,
-        ),
-      ),
-      style: OutlinedButton.styleFrom(
-        foregroundColor: AppColors.secondary,
-        side: BorderSide(color: AppColors.secondary.withValues(alpha: 0.5)),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      ),
+      icon: Icons.add_rounded,
+      height: 44,
+      borderRadius: 10,
+      borderColor: AppColors.secondary.withValues(alpha: 0.5),
+      foregroundColor: AppColors.secondary,
     );
   }
 
@@ -350,26 +342,9 @@ class _WorkoutRestScreenState extends State<WorkoutRestScreen> {
   // ── Botón omitir descanso ─────────────────────────────────────────────────
 
   Widget _buildSkipButton() {
-    return SizedBox(
-      width: double.infinity,
-      height: 52,
-      child: OutlinedButton(
-        onPressed: _skipRest,
-        style: OutlinedButton.styleFrom(
-          foregroundColor: Colors.white,
-          side: const BorderSide(color: AppColors.border, width: 1.5),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-        ),
-        child: const Text(
-          'OMITIR DESCANSO',
-          style: TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 1,
-          ),
-        ),
-      ),
+    return AppOutlinedButton(
+      label: 'OMITIR DESCANSO',
+      onPressed: _skipRest,
     );
   }
 }

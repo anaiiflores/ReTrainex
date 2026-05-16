@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/widgets/app_bottom_nav.dart';
+import '../../../../shared/widgets/app_button.dart';
 import '../../models/routine_detail_model.dart';
 import '../../services/workout_session_service.dart';
 import '../../widgets/countdown_ring_widget.dart';
@@ -227,26 +228,9 @@ class _WorkoutPreparationScreenState extends State<WorkoutPreparationScreen> {
   Widget _buildSkipButton() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: SizedBox(
-        width: double.infinity,
-        height: 52,
-        child: OutlinedButton(
-          onPressed: _skipPreparation,
-          style: OutlinedButton.styleFrom(
-            foregroundColor: Colors.white,
-            side: const BorderSide(color: AppColors.border, width: 1.5),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-          ),
-          child: const Text(
-            'OMITIR PREPARACIÓN',
-            style: TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 1,
-            ),
-          ),
-        ),
+      child: AppOutlinedButton(
+        label: 'OMITIR PREPARACIÓN',
+        onPressed: _skipPreparation,
       ),
     );
   }

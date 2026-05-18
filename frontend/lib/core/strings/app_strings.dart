@@ -51,6 +51,14 @@ abstract class AppStrings {
   String get noSessionsScheduled;
   List<String> get monthNames;
   List<String> get weekDayShort;
+  List<String> get weekDayMedium;
+
+  // ── Form ──────────────────────────────────────────────────────────────────
+  String get formPlanTitle;
+  String get formPlanSubtitle;
+  String get formSelectDays;
+  String get formActivityTime;
+  String get formStart;
 
   // ── Settings ──────────────────────────────────────────────────────────────
   String get settingsNotifications;

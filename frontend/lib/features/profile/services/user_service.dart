@@ -7,6 +7,7 @@ class UserService {
     userName: 'María',
     age: 34, // en años
     weight: 62.5, // en kilos
+    routineDays: [0, 2, 4], // Lun, Mié, Vie
     routine: RoutineModel(
       id: 'r2',
       day: 'MIÉRCOLES',

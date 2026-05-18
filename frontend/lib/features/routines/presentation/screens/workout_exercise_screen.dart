@@ -7,6 +7,7 @@ import '../../../../shared/widgets/workout_controls_widget.dart';
 import '../../models/routine_detail_model.dart';
 import '../../services/workout_session_service.dart';
 import '../../widgets/countdown_ring_widget.dart';
+import '../../widgets/skip_reason_sheet.dart';
 import 'workout_complete_screen.dart';
 import 'workout_rest_screen.dart';
 
@@ -39,13 +40,14 @@ class _WorkoutExerciseScreenState extends State<WorkoutExerciseScreen> {
 
   ExerciseModel get _exercise => widget.exercises[widget.currentIndex];
   int get _totalExercises => widget.exercises.length;
+  bool get _isTimeless => _totalSeconds == 0;
 
   @override
   void initState() {
     super.initState();
     _totalSeconds = _exercise.effectiveDurationSeconds;
     _secondsRemaining = _totalSeconds;
-    _startTimer();
+    if (!_isTimeless) _startTimer();
   }
 
   @override
@@ -72,6 +74,10 @@ class _WorkoutExerciseScreenState extends State<WorkoutExerciseScreen> {
   }
 
   void _togglePause() {
+    if (_isTimeless) {
+      _onExerciseComplete();
+      return;
+    }
     setState(() => _isPaused = !_isPaused);
     if (_isPaused) {
       _timer?.cancel();
@@ -121,6 +127,37 @@ class _WorkoutExerciseScreenState extends State<WorkoutExerciseScreen> {
     _onExerciseComplete();
   }
 
+  Future<void> _onSkipPressed() async {
+    _timer?.cancel();
+    setState(() => _isPaused = true);
+
+    final reason = await showModalBottomSheet<SkipReason>(
+      context: context,
+      backgroundColor: AppColors.card,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) => const SkipReasonSheet(),
+    );
+
+    if (!mounted) return;
+
+    if (reason == null) {
+      setState(() => _isPaused = false);
+      if (!_isTimeless) _startTimer();
+      return;
+    }
+
+    if (reason == SkipReason.pain) {
+      // TODO: mostrar formulario de dolor
+      setState(() => _isPaused = false);
+      if (!_isTimeless) _startTimer();
+      return;
+    }
+
+    _skipExercise();
+  }
+
   // ── Build ─────────────────────────────────────────────────────────────────
 
   @override
@@ -156,9 +193,10 @@ class _WorkoutExerciseScreenState extends State<WorkoutExerciseScreen> {
                   const SizedBox(height: 28),
                   WorkoutControlsWidget(
                     isPaused: _isPaused,
+                    nextMode: _isTimeless,
                     onPause: _togglePause,
                     onStop: _stopSession,
-                    onSkip: _skipExercise,
+                    onSkip: () { _onSkipPressed(); },
                   ),
                   const SizedBox(height: 8),
                 ],
@@ -264,23 +302,23 @@ class _WorkoutExerciseScreenState extends State<WorkoutExerciseScreen> {
       child: Stack(
         alignment: Alignment.center,
         children: [
-          CountdownRingWidget(progress: progress, size: ringSize),
+          CountdownRingWidget(progress: _isTimeless ? 1.0 : progress, size: ringSize),
           Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                '$_secondsRemaining',
+                _isTimeless ? '∞' : '$_secondsRemaining',
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: countFontSize,
+                  fontSize: _isTimeless ? countFontSize * 1.1 : countFontSize,
                   fontWeight: FontWeight.w900,
                   height: 1,
                 ),
               ),
               const SizedBox(height: 4),
-              const Text(
-                'SEGUNDOS',
-                style: TextStyle(
+              Text(
+                _isTimeless ? 'SIN LÍMITE' : 'SEGUNDOS',
+                style: const TextStyle(
                   color: AppColors.textSecondary,
                   fontSize: 11,
                   letterSpacing: 2,

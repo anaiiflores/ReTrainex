@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../../../core/strings/locale_manager.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../shared/widgets/time_picker_field.dart';
+import '../../../../shared/widgets/week_day_selector.dart';
 import '../../../profile/presentation/screens/user_screen.dart';
+import '../../../profile/services/user_service.dart';
 
 class SettingsScreen extends StatefulWidget {
   final VoidCallback? onLocaleChanged;
@@ -106,6 +109,8 @@ class _SettingsScreenState extends State<SettingsScreen>
               const SizedBox(height: 10),
               _tile(5, _buildProfileCard()),
               const SizedBox(height: 36),
+              _buildDevSection(),
+              const SizedBox(height: 28),
               _tile(6, _buildFooter()),
               const SizedBox(height: 16),
             ],
@@ -153,15 +158,20 @@ class _SettingsScreenState extends State<SettingsScreen>
             )),
         const _TileDivider(),
         _tile(
-            3,
-            _SettingsTile(
-              icon: Icons.access_time_rounded,
-              iconColor: AppColors.secondary,
-              title: LocaleManager.strings.settingsSchedule,
-              subtitle: _remindersEnabled ? _notificationTime : '—',
-              enabled: _remindersEnabled,
-              onTap: _remindersEnabled ? _pickTime : null,
-            )),
+          3,
+          Opacity(
+            opacity: _remindersEnabled ? 1.0 : 0.4,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              child: TimePickerField(
+                time: _notificationTime,
+                onChanged: _remindersEnabled
+                    ? (t) => setState(() => _notificationTime = t)
+                    : (_) {},
+              ),
+            ),
+          ),
+        ),
         const _TileDivider(),
         _SettingsTile(
           icon: Icons.help_outline_rounded,
@@ -210,6 +220,24 @@ class _SettingsScreenState extends State<SettingsScreen>
             });
             widget.onLocaleChanged?.call();
           },
+        ),
+      ],
+    );
+  }
+
+  // ── DEV ───────────────────────────────────────────────────────────────────
+
+  Widget _buildDevSection() {
+    return _Card(
+      children: [
+        _SettingsTile(
+          icon: Icons.developer_mode_rounded,
+          iconColor: Colors.orangeAccent,
+          title: 'Test de formulario',
+          subtitle: 'Test del selector de días',
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => const _WeekDaySelectorTestScreen()),
+          ),
         ),
       ],
     );
@@ -278,34 +306,6 @@ class _SettingsScreenState extends State<SettingsScreen>
 
   // ── Acciones ───────────────────────────────────────────────────────────────
 
-  Future<void> _pickTime() async {
-    final parts = _notificationTime.split(' ');
-    final hm = parts[0].split(':');
-    int hour = int.parse(hm[0]);
-    final isPm = parts.length > 1 && parts[1] == 'PM';
-    if (isPm && hour != 12) hour += 12;
-    if (!isPm && hour == 12) hour = 0;
-
-    final picked = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay(hour: hour, minute: int.parse(hm[1])),
-      builder: (ctx, child) => Theme(
-        data: Theme.of(ctx).copyWith(
-          colorScheme: const ColorScheme.dark(
-            primary: AppColors.primary,
-            surface: AppColors.card,
-            onSurface: Colors.white,
-          ),
-        ),
-        child: child!,
-      ),
-    );
-    if (!mounted || picked == null) return;
-    final h = picked.hourOfPeriod == 0 ? 12 : picked.hourOfPeriod;
-    final m = picked.minute.toString().padLeft(2, '0');
-    final period = picked.period == DayPeriod.am ? 'AM' : 'PM';
-    setState(() => _notificationTime = '$h:$m $period');
-  }
 
   void _showFaq() {
     showModalBottomSheet(
@@ -498,7 +498,6 @@ class _SettingsTile extends StatefulWidget {
   final bool iconBg;
   final String title;
   final String? subtitle;
-  final bool enabled;
   final VoidCallback? onTap;
 
   const _SettingsTile({
@@ -507,7 +506,6 @@ class _SettingsTile extends StatefulWidget {
     this.iconBg = false,
     required this.title,
     this.subtitle,
-    this.enabled = true,
     this.onTap,
   });
 
@@ -538,7 +536,7 @@ class _SettingsTileState extends State<_SettingsTile>
   }
 
   Future<void> _onTap() async {
-    if (widget.onTap == null || !widget.enabled) return;
+    if (widget.onTap == null) return;
     await _ctrl.reverse();
     _ctrl.forward();
     widget.onTap!();
@@ -552,7 +550,7 @@ class _SettingsTileState extends State<_SettingsTile>
         behavior: HitTestBehavior.opaque,
         onTap: _onTap,
         child: Opacity(
-          opacity: widget.enabled ? 1.0 : 0.4,
+          opacity: 1.0,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             child: Row(
@@ -599,6 +597,141 @@ class _SettingsTileState extends State<_SettingsTile>
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+// ── WeekDaySelector Test Screen ───────────────────────────────────────────────
+
+class _WeekDaySelectorTestScreen extends StatefulWidget {
+  const _WeekDaySelectorTestScreen();
+
+  @override
+  State<_WeekDaySelectorTestScreen> createState() =>
+      _WeekDaySelectorTestScreenState();
+}
+
+class _WeekDaySelectorTestScreenState
+    extends State<_WeekDaySelectorTestScreen> {
+  Set<int> _selectedDays = {};
+  String _activityTime = '10:00 AM';
+  final UserService _userService = UserService();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadDays();
+  }
+
+  Future<void> _loadDays() async {
+    final user = await _userService.getUser();
+    if (mounted) setState(() => _selectedDays = user.routineDays.toSet());
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      appBar: AppBar(
+        backgroundColor: AppColors.background,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded,
+              color: Colors.white, size: 20),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        centerTitle: true,
+        title: const Text(
+          'TEST DE FORMULARIO',
+          style: TextStyle(
+            color: Colors.orangeAccent,
+            fontSize: 14,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 1.5,
+          ),
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              LocaleManager.strings.formPlanTitle,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 22,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              LocaleManager.strings.formPlanSubtitle,
+              style: const TextStyle(
+                color: AppColors.textSecondary,
+                fontSize: 14,
+              ),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              LocaleManager.strings.formSelectDays,
+              style: const TextStyle(
+                color: AppColors.primary,
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.5,
+              ),
+            ),
+            const SizedBox(height: 12),
+            WeekDaySelector(
+              multiSelect: true,
+              initialSelected: _selectedDays,
+              onChanged: (days) => setState(() => _selectedDays = days),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              LocaleManager.strings.formActivityTime,
+              style: const TextStyle(
+                color: AppColors.primary,
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.5,
+              ),
+            ),
+            const SizedBox(height: 12),
+            TimePickerField(
+              time: _activityTime,
+              onChanged: (t) => setState(() => _activityTime = t),
+            ),
+            const SizedBox(height: 32),
+            SizedBox(
+              width: double.infinity,
+              height: 54,
+              child: ElevatedButton.icon(
+                onPressed: () {},
+                icon: const Icon(Icons.rocket_launch_rounded, size: 20),
+                label: Text(
+                  LocaleManager.strings.formStart,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 2,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  elevation: 0,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

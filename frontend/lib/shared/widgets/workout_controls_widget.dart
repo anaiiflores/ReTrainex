@@ -9,6 +9,8 @@ class WorkoutControlsWidget extends StatelessWidget {
   final VoidCallback onStop;
   final VoidCallback? onSkip;
   final String skipLabel;
+  /// Cuando es true el botón de pausa/play se reemplaza por "siguiente ejercicio".
+  final bool nextMode;
 
   const WorkoutControlsWidget({
     super.key,
@@ -17,6 +19,7 @@ class WorkoutControlsWidget extends StatelessWidget {
     required this.onStop,
     this.onSkip,
     this.skipLabel = 'OMITIR EJERCICIO',
+    this.nextMode = false,
   });
 
   @override
@@ -25,10 +28,14 @@ class WorkoutControlsWidget extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         WorkoutControlButton(
-          icon: isPaused ? Icons.play_arrow_rounded : Icons.pause_rounded,
+          icon: nextMode
+              ? Icons.arrow_forward_rounded
+              : (isPaused ? Icons.play_arrow_rounded : Icons.pause_rounded),
           color: AppColors.primary,
           onTap: onPause,
-          tooltip: isPaused ? 'Continuar' : 'Pausar',
+          tooltip: nextMode
+              ? 'Siguiente ejercicio'
+              : (isPaused ? 'Continuar' : 'Pausar'),
         ),
         const SizedBox(width: 28),
         WorkoutControlButton(

@@ -52,6 +52,13 @@ class AppStringsEs implements AppStrings {
     'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
   ];
   @override List<String> get weekDayShort => ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
+  @override List<String> get weekDayMedium => ['LUN', 'MAR', 'MIÉ', 'JUE', 'VIE', 'SÁB', 'DOM'];
+
+  @override String get formPlanTitle => 'Planifica tu éxito';
+  @override String get formPlanSubtitle => 'Configura tu rutina';
+  @override String get formSelectDays => 'Selecciona los días';
+  @override String get formActivityTime => 'Hora de la actividad';
+  @override String get formStart => 'EMPEZAR';
 
   @override String get settingsNotifications => 'Notificaciones';
   @override String get settingsProfile => 'Perfil';

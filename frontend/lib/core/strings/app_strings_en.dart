@@ -84,4 +84,22 @@ class AppStringsEn implements AppStrings {
   @override String get faq3Answer => 'Your physiotherapist has designed a specific plan for you. Follow the assigned days for best results.';
   @override String get faq4Question => 'How do I change my reminder schedule?';
   @override String get faq4Answer => 'Go to Settings → Notifications → Schedule and select your preferred time.';
+
+  @override String get clinicalEvalTitle => 'CLINICAL EVALUATION';
+  @override String get clinicalPainReported => 'PAIN REPORTED';
+  @override String get clinicalPhysioWillReceive => 'Your physiotherapist will receive this information.';
+  @override String get clinicalHowDoYouFeel => 'HOW ARE YOU FEELING TODAY?';
+  @override String get clinicalPainScaleHint => '0 = no pain  ·  10 = maximum pain';
+  @override String get clinicalHowIsThePain => 'PAIN TYPE';
+  @override String get clinicalWhenDidItStart => 'HOW OFTEN DOES IT APPEAR?';
+  @override String get clinicalSendToPhysio => 'SEND';
+  @override String get clinicalCancel => 'CANCEL';
+  @override List<String> get clinicalPainTypes => ['Stabbing', 'Dull', 'Oppressive', 'Electric'];
+  @override List<String> get clinicalTimingLabels => ['Before the exercise', 'At the start', 'During', 'After finishing'];
+  @override String get clinicalPreciseIntensity => 'Precise intensity';
+  @override List<String> get clinicalFrequencyOptions => ['Occasional', 'Intermittent', 'Constant'];
+  @override String get clinicalHowAffectsSleep => 'HOW DOES IT AFFECT YOUR SLEEP?';
+  @override String get clinicalSleepHint => '0 = little  ·  10 = a lot';
+  @override String get clinicalAdditionalNotes => 'Additional notes (optional)';
+  @override String get clinicalNotesHint => 'Write any other details here...';
 }

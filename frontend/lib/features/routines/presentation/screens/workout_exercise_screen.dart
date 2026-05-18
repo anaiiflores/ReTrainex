@@ -8,6 +8,7 @@ import '../../models/routine_detail_model.dart';
 import '../../services/workout_session_service.dart';
 import '../../widgets/countdown_ring_widget.dart';
 import '../../widgets/skip_reason_sheet.dart';
+import 'clinical_evaluation_screen.dart';
 import 'workout_complete_screen.dart';
 import 'workout_rest_screen.dart';
 
@@ -149,9 +150,18 @@ class _WorkoutExerciseScreenState extends State<WorkoutExerciseScreen> {
     }
 
     if (reason == SkipReason.pain) {
-      // TODO: mostrar formulario de dolor
-      setState(() => _isPaused = false);
-      if (!_isTimeless) _startTimer();
+      final submitted = await Navigator.of(context).push<bool>(
+        MaterialPageRoute(
+          builder: (_) => ClinicalEvaluationScreen(exerciseName: _exercise.name),
+        ),
+      );
+      if (!mounted) return;
+      if (submitted == true) {
+        _skipExercise();
+      } else {
+        setState(() => _isPaused = false);
+        if (!_isTimeless) _startTimer();
+      }
       return;
     }
 

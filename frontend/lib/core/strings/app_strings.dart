@@ -85,4 +85,23 @@ abstract class AppStrings {
   String get faq3Answer;
   String get faq4Question;
   String get faq4Answer;
+
+  // ── Clinical evaluation ───────────────────────────────────────────────────
+  String get clinicalEvalTitle;
+  String get clinicalPainReported;
+  String get clinicalPhysioWillReceive;
+  String get clinicalHowDoYouFeel;
+  String get clinicalPainScaleHint;
+  String get clinicalHowIsThePain;
+  String get clinicalWhenDidItStart;
+  String get clinicalSendToPhysio;
+  String get clinicalCancel;
+  List<String> get clinicalPainTypes;
+  List<String> get clinicalTimingLabels;
+  String get clinicalPreciseIntensity;
+  List<String> get clinicalFrequencyOptions;
+  String get clinicalHowAffectsSleep;
+  String get clinicalSleepHint;
+  String get clinicalAdditionalNotes;
+  String get clinicalNotesHint;
 }

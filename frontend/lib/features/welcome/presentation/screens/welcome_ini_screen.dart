@@ -37,6 +37,8 @@ class _WelcomeIniScreenState extends State<WelcomeIniScreen> {
   final DashboardService _dashboardService = DashboardService();
   final UserService _userService = UserService();
 
+  String get _displayName => _user?.userName ?? widget.userName;
+
   // ── AppBar configs por tab ────────────────────────────────────────────────
   List<_AppBarConfig> get _appBarConfigs => [
         _AppBarConfig(
@@ -140,7 +142,7 @@ class _WelcomeIniScreenState extends State<WelcomeIniScreen> {
       actions: [
         if (cfg.showBell) ...[
           Text(
-            widget.userName,
+            _displayName,
             style: const TextStyle(
               color: Colors.white,
               fontSize: 14,
@@ -281,7 +283,7 @@ class _WelcomeIniScreenState extends State<WelcomeIniScreen> {
 
   Widget _buildDashGreeting(bool wide) {
     return Text(
-      LocaleManager.strings.greeting(widget.userName),
+      LocaleManager.strings.greeting(_displayName),
       textAlign: TextAlign.center,
       style: TextStyle(
         color: Colors.white,
@@ -496,7 +498,7 @@ class _WelcomeIniScreenState extends State<WelcomeIniScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          LocaleManager.strings.greeting(widget.userName),
+          LocaleManager.strings.greeting(_displayName),
           style: TextStyle(
             color: Colors.white,
             fontSize: wide ? 36 : 30,
@@ -648,7 +650,7 @@ class _WelcomeIniScreenState extends State<WelcomeIniScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              '¡HOLA, ${widget.userName}!',
+              LocaleManager.strings.greeting(_displayName),
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.white,

@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/widgets/app_bottom_nav_widget.dart';
-import '../../../../shared/widgets/app_button_widget.dart';
+import '../../../../shared/widgets/workout_controls_widget.dart';
 import '../../models/routine_detail_model.dart';
 import '../../../../shared/widgets/countdown_ring_widget.dart';
 import 'workout_preparation_screen.dart';
@@ -122,12 +122,10 @@ class _WorkoutRestScreenState extends State<WorkoutRestScreen> {
                   _buildTitle(isWide),
                   SizedBox(height: isWide ? 40 : 28),
                   _buildRing(progress, isWide),
-                  const SizedBox(height: 20),
-                  _buildAddTimeButton(),
                   const SizedBox(height: 28),
                   _buildNextExerciseCard(),
                   const SizedBox(height: 28),
-                  _buildSkipButton(),
+                  _buildControls(),
                   const SizedBox(height: 8),
                 ],
               ),
@@ -258,15 +256,24 @@ class _WorkoutRestScreenState extends State<WorkoutRestScreen> {
 
   // ── Botón +20s ────────────────────────────────────────────────────────────
 
-  Widget _buildAddTimeButton() {
-    return AppOutlinedButton(
-      label: '+20 SEGUNDOS',
-      onPressed: _addTime,
-      icon: Icons.add_rounded,
-      height: 44,
-      borderRadius: 10,
-      borderColor: AppColors.secondary.withValues(alpha: 0.5),
-      foregroundColor: AppColors.secondary,
+  Widget _buildControls() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        WorkoutControlButton(
+          icon: Icons.more_time_rounded,
+          color: AppColors.secondary,
+          onTap: _addTime,
+          tooltip: '+20 segundos',
+        ),
+        const SizedBox(width: 28),
+        WorkoutControlButton(
+          icon: Icons.skip_next_rounded,
+          color: AppColors.textSecondary,
+          onTap: _skipRest,
+          tooltip: 'Omitir descanso',
+        ),
+      ],
     );
   }
 
@@ -337,12 +344,4 @@ class _WorkoutRestScreenState extends State<WorkoutRestScreen> {
     );
   }
 
-  // ── Botón omitir descanso ─────────────────────────────────────────────────
-
-  Widget _buildSkipButton() {
-    return AppOutlinedButton(
-      label: 'OMITIR DESCANSO',
-      onPressed: _skipRest,
-    );
-  }
 }

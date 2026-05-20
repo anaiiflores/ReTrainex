@@ -297,7 +297,6 @@ class _WelcomeIniScreenState extends State<WelcomeIniScreen> {
   Widget _buildProgressRing(DashboardModel dash, bool wide) {
     final double size = wide ? 220 : 190;
     final double fontSize = wide ? 52 : 44;
-    final double progress = dash.progressPercentage / 100;
 
     return SizedBox(
       width: size,
@@ -305,12 +304,13 @@ class _WelcomeIniScreenState extends State<WelcomeIniScreen> {
       child: Stack(
         alignment: Alignment.center,
         children: [
-          CountdownRingWidget(progress: progress, size: size, strokeWidth: 10),
+          CountdownRingWidget(
+              progress: dash.weeklyProgress, size: size, strokeWidth: 10),
           Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                '${dash.progressPercentage}%',
+                '${(dash.weeklyProgress * 100).round()}%',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: fontSize,

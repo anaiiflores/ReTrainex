@@ -38,14 +38,12 @@ class _ProgressScreenState extends State<ProgressScreen> {
   }
 
   List<CalendarSessionModel> _completedSessionsForMonth({DateTime? exclude}) {
-    final today = DateTime.now();
-    final todayDate = DateTime(today.year, today.month, today.day);
     return _sessions
         .where((s) {
           final d = DateTime(s.date.year, s.date.month, s.date.day);
+          if (!s.completed) return false;
           if (s.date.year != _focusedMonth.year) return false;
           if (s.date.month != _focusedMonth.month) return false;
-          if (d.isAfter(todayDate)) return false;
           if (exclude != null &&
               d == DateTime(exclude.year, exclude.month, exclude.day)) {
             return false;
@@ -318,11 +316,18 @@ class _ProgressScreenState extends State<ProgressScreen> {
             width: 36,
             height: 36,
             decoration: BoxDecoration(
-              color: Colors.greenAccent.withValues(alpha: 0.12),
+              color: session.completed
+                  ? Colors.greenAccent.withValues(alpha: 0.12)
+                  : AppColors.primary.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: const Icon(Icons.check_rounded,
-                color: Colors.greenAccent, size: 18),
+            child: Icon(
+              session.completed
+                  ? Icons.check_rounded
+                  : Icons.fitness_center_rounded,
+              color: session.completed ? Colors.greenAccent : AppColors.primary,
+              size: 18,
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(

@@ -52,6 +52,8 @@ class DashboardModel {
   final int progressPercentage;  // 0–100
   final int completedSessions;
   final int totalSessions;
+  final int weeklyCompletedSessions;
+  final int weeklyTotalSessions;
   final bool hasUnreadNotification;
   final NextSessionModel? nextSession;
   final String? reminder;
@@ -59,12 +61,17 @@ class DashboardModel {
   final String? assignmentTitle;
   final String? physioName;
 
+  double get weeklyProgress =>
+      weeklyTotalSessions > 0 ? weeklyCompletedSessions / weeklyTotalSessions : 0.0;
+
   const DashboardModel({
     required this.userName,
     required this.status,
     this.progressPercentage = 0,
     this.completedSessions = 0,
     this.totalSessions = 0,
+    this.weeklyCompletedSessions = 0,
+    this.weeklyTotalSessions = 0,
     this.hasUnreadNotification = false,
     this.nextSession,
     this.reminder,
@@ -84,6 +91,8 @@ class DashboardModel {
       progressPercentage: json['progress_percentage'] as int? ?? 0,
       completedSessions: json['completed_sessions'] as int? ?? 0,
       totalSessions: json['total_sessions'] as int? ?? 0,
+      weeklyCompletedSessions: json['weekly_completed_sessions'] as int? ?? 0,
+      weeklyTotalSessions: json['weekly_total_sessions'] as int? ?? 0,
       hasUnreadNotification: json['has_unread_notification'] as bool? ?? false,
       nextSession: json['next_session'] != null
           ? NextSessionModel.fromJson(
@@ -101,6 +110,8 @@ class DashboardModel {
         'progress_percentage': progressPercentage,
         'completed_sessions': completedSessions,
         'total_sessions': totalSessions,
+        'weekly_completed_sessions': weeklyCompletedSessions,
+        'weekly_total_sessions': weeklyTotalSessions,
         'has_unread_notification': hasUnreadNotification,
         if (nextSession != null) 'next_session': nextSession!.toJson(),
         if (reminder != null) 'reminder': reminder,

@@ -9,6 +9,7 @@ import '../../services/workout_session_service.dart';
 import '../../widgets/countdown_ring_widget.dart';
 import '../../widgets/skip_reason_sheet.dart';
 import 'clinical_evaluation_screen.dart';
+import 'session_paused.dart';
 import 'workout_complete_screen.dart';
 import 'workout_rest_screen.dart';
 
@@ -34,7 +35,8 @@ class _WorkoutExerciseScreenState extends State<WorkoutExerciseScreen> {
   late int _secondsRemaining;
   late int _totalSeconds;
   bool _isPaused = false;
-  bool _isStopped = false; // evita que el timer complete la navegación si el usuario paró
+  bool _isStopped =
+      false; // evita que el timer complete la navegación si el usuario paró
   Timer? _timer;
 
   final WorkoutSessionService _sessionService = WorkoutSessionService();
@@ -128,6 +130,28 @@ class _WorkoutExerciseScreenState extends State<WorkoutExerciseScreen> {
     _onExerciseComplete();
   }
 
+  Future<void> _openDetails() async {
+    final wasRunning = !_isTimeless && !_isPaused;
+    if (wasRunning) {
+      _timer?.cancel();
+      setState(() => _isPaused = true);
+    }
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => SessionPausedScreen(
+          exercise: _exercise,
+          exercises: widget.exercises,
+          currentIndex: widget.currentIndex,
+        ),
+      ),
+    );
+    if (!mounted) return;
+    if (wasRunning) {
+      setState(() => _isPaused = false);
+      _startTimer();
+    }
+  }
+
   Future<void> _onSkipPressed() async {
     _timer?.cancel();
     setState(() => _isPaused = true);
@@ -152,7 +176,8 @@ class _WorkoutExerciseScreenState extends State<WorkoutExerciseScreen> {
     if (reason == SkipReason.pain) {
       final submitted = await Navigator.of(context).push<bool>(
         MaterialPageRoute(
-          builder: (_) => ClinicalEvaluationScreen(exerciseName: _exercise.name),
+          builder: (_) =>
+              ClinicalEvaluationScreen(exerciseName: _exercise.name),
         ),
       );
       if (!mounted) return;
@@ -206,7 +231,9 @@ class _WorkoutExerciseScreenState extends State<WorkoutExerciseScreen> {
                     nextMode: _isTimeless,
                     onPause: _togglePause,
                     onStop: _stopSession,
-                    onSkip: () { _onSkipPressed(); },
+                    onSkip: () {
+                      _onSkipPressed();
+                    },
                   ),
                   const SizedBox(height: 8),
                 ],
@@ -290,12 +317,11 @@ class _WorkoutExerciseScreenState extends State<WorkoutExerciseScreen> {
   Widget _buildVideoTags() {
     return Row(
       children: [
-        _Tag(label: 'VIDEO HD', color: AppColors.primary),
+        _Tag(label: 'VIDEO HD', color: const Color.fromARGB(139, 149, 88, 203)),
         const SizedBox(width: 8),
-        _Tag(
-          label: _exercise.angle ?? 'FRONTAL',
-          color: AppColors.textSecondary,
-        ),
+        _Tag(label: _exercise.angle ?? 'FRONTAL', color: AppColors.secondary),
+        const SizedBox(width: 8),
+        _Tag(label: 'DETALLES', color: AppColors.primary, onTap: _openDetails),
       ],
     );
   }
@@ -312,7 +338,8 @@ class _WorkoutExerciseScreenState extends State<WorkoutExerciseScreen> {
       child: Stack(
         alignment: Alignment.center,
         children: [
-          CountdownRingWidget(progress: _isTimeless ? 1.0 : progress, size: ringSize),
+          CountdownRingWidget(
+              progress: _isTimeless ? 1.0 : progress, size: ringSize),
           Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -346,8 +373,7 @@ class _WorkoutExerciseScreenState extends State<WorkoutExerciseScreen> {
 
   Widget _buildStatsRow() {
     final rhythm = _exercise.rhythm ?? 'NORMAL';
-    final progressLabel =
-        '${widget.currentIndex + 1} / $_totalExercises';
+    final progressLabel = '${widget.currentIndex + 1} / $_totalExercises';
 
     return Row(
       children: [
@@ -369,7 +395,6 @@ class _WorkoutExerciseScreenState extends State<WorkoutExerciseScreen> {
       ],
     );
   }
-
 }
 
 // ─── Widgets locales ──────────────────────────────────────────────────────────
@@ -377,12 +402,13 @@ class _WorkoutExerciseScreenState extends State<WorkoutExerciseScreen> {
 class _Tag extends StatelessWidget {
   final String label;
   final Color color;
+  final VoidCallback? onTap;
 
-  const _Tag({required this.label, required this.color});
+  const _Tag({required this.label, required this.color, this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    final container = Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.12),
@@ -399,6 +425,8 @@ class _Tag extends StatelessWidget {
         ),
       ),
     );
+    if (onTap == null) return container;
+    return GestureDetector(onTap: onTap, child: container);
   }
 }
 

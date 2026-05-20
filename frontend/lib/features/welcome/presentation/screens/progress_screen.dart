@@ -37,6 +37,25 @@ class _ProgressScreenState extends State<ProgressScreen> {
     ).toList();
   }
 
+  List<CalendarSessionModel> _completedSessionsForMonth({DateTime? exclude}) {
+    final today = DateTime.now();
+    final todayDate = DateTime(today.year, today.month, today.day);
+    return _sessions
+        .where((s) {
+          final d = DateTime(s.date.year, s.date.month, s.date.day);
+          if (s.date.year != _focusedMonth.year) return false;
+          if (s.date.month != _focusedMonth.month) return false;
+          if (d.isAfter(todayDate)) return false;
+          if (exclude != null &&
+              d == DateTime(exclude.year, exclude.month, exclude.day)) {
+            return false;
+          }
+          return true;
+        })
+        .toList()
+      ..sort((a, b) => b.date.compareTo(a.date));
+  }
+
   void _previousMonth() {
     setState(() {
       _focusedMonth = DateTime(_focusedMonth.year, _focusedMonth.month - 1);
@@ -61,10 +80,12 @@ class _ProgressScreenState extends State<ProgressScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildCalendar(),
+              const SizedBox(height: 16),
               if (_selectedDay != null) ...[
-                const SizedBox(height: 16),
-                _buildSelectedDayInfo(),
+                _buildSelectedDayCard(_selectedDay!),
+                const SizedBox(height: 10),
               ],
+              _buildCompletedSessionsList(),
             ],
           ),
         ),
@@ -153,11 +174,11 @@ class _ProgressScreenState extends State<ProgressScreen> {
         final isToday = date.year == today.year &&
             date.month == today.month &&
             date.day == today.day;
-        final selected = _selectedDay;
-        final isSelected = selected != null &&
-            selected.year == date.year &&
-            selected.month == date.month &&
-            selected.day == date.day;
+        final sel = _selectedDay;
+        final isSelected = sel != null &&
+            sel.year == date.year &&
+            sel.month == date.month &&
+            sel.day == date.day;
         final daySessions = _sessionsForDay(date);
         cells.add(_buildDayCell(date, day, isToday, isSelected, daySessions));
       }
@@ -177,7 +198,6 @@ class _ProgressScreenState extends State<ProgressScreen> {
       List<CalendarSessionModel> daySessions) {
     Color bgColor = Colors.transparent;
     Color textColor = Colors.white;
-
     if (isSelected) {
       bgColor = AppColors.primary;
       textColor = Colors.white;
@@ -195,55 +215,43 @@ class _ProgressScreenState extends State<ProgressScreen> {
       }),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 150),
-        decoration: BoxDecoration(
-          color: bgColor,
-          shape: BoxShape.circle,
-        ),
-        child: Stack(
-          alignment: Alignment.center,
+        decoration: BoxDecoration(color: bgColor, shape: BoxShape.circle),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                if (hasCompleted)
-                  Icon(
-                    Icons.check_rounded,
-                    size: 14,
-                    color: isSelected ? Colors.white : Colors.greenAccent,
-                  )
-                else
-                  Text(
-                    '$day',
-                    style: TextStyle(
-                      color: textColor,
-                      fontSize: 10,
-                      fontWeight:
-                          isToday || isSelected ? FontWeight.w700 : FontWeight.w400,
-                    ),
-                  ),
-                if (!hasCompleted && hasUpcoming)
-                  Container(
-                    width: 4,
-                    height: 4,
-                    margin: const EdgeInsets.only(top: 1),
-                    decoration: BoxDecoration(
-                      color: isSelected ? Colors.white : AppColors.secondary,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-              ],
-            ),
+            if (hasCompleted)
+              Icon(Icons.check_rounded,
+                  size: 14,
+                  color: isSelected ? Colors.white : Colors.greenAccent)
+            else
+              Text(
+                '$day',
+                style: TextStyle(
+                  color: textColor,
+                  fontSize: 10,
+                  fontWeight:
+                      isToday || isSelected ? FontWeight.w700 : FontWeight.w400,
+                ),
+              ),
+            if (!hasCompleted && hasUpcoming)
+              Container(
+                width: 4,
+                height: 4,
+                margin: const EdgeInsets.only(top: 1),
+                decoration: BoxDecoration(
+                  color: isSelected ? Colors.white : AppColors.secondary,
+                  shape: BoxShape.circle,
+                ),
+              ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildSelectedDayInfo() {
-    final day = _selectedDay;
-    if (day == null) return const SizedBox.shrink();
+  Widget _buildSelectedDayCard(DateTime day) {
     final monthName = LocaleManager.strings.monthNames[day.month - 1];
-    final label = LocaleManager.current == AppLocale.es
+    final dateLabel = LocaleManager.current == AppLocale.es
         ? '${day.day} de $monthName de ${day.year}'
         : '$monthName ${day.day}, ${day.year}';
     final daySessions = _sessionsForDay(day);
@@ -254,13 +262,13 @@ class _ProgressScreenState extends State<ProgressScreen> {
       decoration: BoxDecoration(
         color: AppColors.card,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.4)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            label.toUpperCase(),
+            dateLabel.toUpperCase(),
             style: const TextStyle(
               color: AppColors.primary,
               fontSize: 12,
@@ -273,44 +281,74 @@ class _ProgressScreenState extends State<ProgressScreen> {
             Text(
               LocaleManager.strings.noSessionsScheduled,
               style: const TextStyle(
-                color: AppColors.textSecondary,
-                fontSize: 14,
-              ),
+                  color: AppColors.textSecondary, fontSize: 14),
             )
           else
-            ...daySessions.map((s) => _buildSessionRow(s)),
+            ...daySessions.map((s) => _buildSessionCard(s, showDate: false)),
         ],
       ),
     );
   }
 
-  Widget _buildSessionRow(CalendarSessionModel session) {
-    final dotColor = session.completed ? Colors.greenAccent : AppColors.secondary;
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
+  Widget _buildCompletedSessionsList() {
+    final completed = _completedSessionsForMonth(exclude: _selectedDay);
+    if (completed.isEmpty) return const SizedBox.shrink();
+    return Column(
+      children: completed.map((s) => _buildSessionCard(s)).toList(),
+    );
+  }
+
+  Widget _buildSessionCard(CalendarSessionModel session, {bool showDate = true}) {
+    final monthName = LocaleManager.strings.monthNames[session.date.month - 1];
+    final dateLabel = LocaleManager.current == AppLocale.es
+        ? '${session.date.day} de $monthName'
+        : '$monthName ${session.date.day}';
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      decoration: BoxDecoration(
+        color: AppColors.card,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.border),
+      ),
       child: Row(
         children: [
           Container(
-            width: 8,
-            height: 8,
-            decoration: BoxDecoration(color: dotColor, shape: BoxShape.circle),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              session.title,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-              ),
+            width: 36,
+            height: 36,
+            decoration: BoxDecoration(
+              color: Colors.greenAccent.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(10),
             ),
+            child: const Icon(Icons.check_rounded,
+                color: Colors.greenAccent, size: 18),
           ),
-          Text(
-            '${session.time}  ·  ${session.durationMinutes} min',
-            style: const TextStyle(
-              color: AppColors.textSecondary,
-              fontSize: 12,
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  session.title,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  showDate
+                      ? '${dateLabel.toUpperCase()}  ·  ${session.time}  ·  ${session.durationMinutes} min'
+                      : '${session.time}  ·  ${session.durationMinutes} min',
+                  style: const TextStyle(
+                    color: AppColors.textSecondary,
+                    fontSize: 11,
+                    letterSpacing: 0.3,
+                  ),
+                ),
+              ],
             ),
           ),
         ],

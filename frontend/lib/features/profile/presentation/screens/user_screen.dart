@@ -56,7 +56,8 @@ class _UserScreenState extends State<UserScreen> {
         ),
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
+          ? const Center(
+              child: CircularProgressIndicator(color: AppColors.primary))
           : _user == null
               ? const SizedBox.shrink()
               : _buildBody(isWide, _user!),
@@ -74,7 +75,8 @@ class _UserScreenState extends State<UserScreen> {
       ),
       child: Center(
         child: ConstrainedBox(
-          constraints: BoxConstraints(maxWidth: isWide ? 560.0 : double.infinity),
+          constraints:
+              BoxConstraints(maxWidth: isWide ? 560.0 : double.infinity),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -85,9 +87,17 @@ class _UserScreenState extends State<UserScreen> {
               _buildPersonalDataCard(user),
               if (user.routine != null) ...[
                 const SizedBox(height: 28),
-                _buildSectionLabel(Icons.fitness_center_rounded, _label('Rutina asignada', 'Assigned routine')),
+                _buildSectionLabel(Icons.fitness_center_rounded,
+                    _label('Rutina asignada', 'Assigned routine')),
                 const SizedBox(height: 10),
                 _buildRoutineCard(user),
+              ],
+              if (user.physioName != null) ...[
+                const SizedBox(height: 28),
+                _buildSectionLabel(Icons.medical_services_rounded,
+                    _label('Fisioterapeuta', 'Physiotherapist')),
+                const SizedBox(height: 10),
+                _buildPhysioCard(user.physioName!),
               ],
               const SizedBox(height: 16),
             ],
@@ -116,18 +126,29 @@ class _UserScreenState extends State<UserScreen> {
             decoration: BoxDecoration(
               color: AppColors.primary.withValues(alpha: 0.15),
               shape: BoxShape.circle,
-              border: Border.all(color: AppColors.primary.withValues(alpha: 0.4), width: 2),
+              border: Border.all(
+                  color: AppColors.primary.withValues(alpha: 0.4), width: 2),
+              image: user.profileImageUrl != null
+                  ? DecorationImage(
+                      image: NetworkImage(user.profileImageUrl!),
+                      fit: BoxFit.cover,
+                    )
+                  : null,
             ),
-            child: Center(
-              child: Text(
-                user.userName.isNotEmpty ? user.userName[0].toUpperCase() : '?',
-                style: const TextStyle(
-                  color: AppColors.primary,
-                  fontSize: 34,
-                  fontWeight: FontWeight.w900,
-                ),
-              ),
-            ),
+            child: user.profileImageUrl == null
+                ? Center(
+                    child: Text(
+                      user.userName.isNotEmpty
+                          ? user.userName[0].toUpperCase()
+                          : '?',
+                      style: const TextStyle(
+                        color: AppColors.primary,
+                        fontSize: 34,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  )
+                : null,
           ),
           const SizedBox(height: 14),
           Text(
@@ -184,6 +205,55 @@ class _UserScreenState extends State<UserScreen> {
             label: _label('Peso', 'Weight'),
             value: user.weight != null ? '${user.weight} kg' : noData,
           ),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: Divider(height: 1, color: AppColors.border),
+          ),
+          _DataRow(
+            icon: Icons.height_rounded,
+            iconColor: AppColors.secondary,
+            label: _label('Altura', 'Height'),
+            value: user.height != null
+                ? '${user.height!.toStringAsFixed(0)} cm'
+                : noData,
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ── Fisioterapeuta ────────────────────────────────────────────────────────
+
+  Widget _buildPhysioCard(String name) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: AppColors.card,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: AppColors.secondary.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Icon(Icons.person_rounded,
+                color: AppColors.secondary, size: 22),
+          ),
+          const SizedBox(width: 14),
+          Text(
+            name,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 15,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
         ],
       ),
     );
@@ -210,7 +280,8 @@ class _UserScreenState extends State<UserScreen> {
               color: AppColors.primary.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Icon(Icons.route_rounded, color: AppColors.primary, size: 22),
+            child: const Icon(Icons.route_rounded,
+                color: AppColors.primary, size: 22),
           ),
           const SizedBox(width: 14),
           Expanded(

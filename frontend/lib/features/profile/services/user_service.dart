@@ -5,8 +5,11 @@ class UserService {
   static final UserModel _mockUser = UserModel(
     id: 'u1',
     userName: 'María',
-    age: 34, // en años
+    birthDate: DateTime(1992, 12, 1), // 1 de diciembre de 1992 cuando nació
     weight: 62.5, // en kilos
+    height: 164.0, // en centímetros
+    physioName: 'Anaii Penev Gordo',
+    profileImageUrl: null,
     routineDays: [0, 2, 4], // Lun, Mié, Vie
     routine: RoutineModel(
       id: 'r2',

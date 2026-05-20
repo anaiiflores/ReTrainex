@@ -137,6 +137,7 @@ class _WorkoutExerciseScreenState extends State<WorkoutExerciseScreen> {
           exercise: _exercise,
           exercises: widget.exercises,
           currentIndex: widget.currentIndex,
+          fromWorkout: true,
         ),
       ),
     );

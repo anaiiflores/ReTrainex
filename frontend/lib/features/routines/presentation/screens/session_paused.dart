@@ -10,12 +10,14 @@ class SessionPausedScreen extends StatelessWidget {
   final ExerciseModel exercise;
   final List<ExerciseModel> exercises;
   final int currentIndex;
+  final bool fromWorkout;
 
   const SessionPausedScreen({
     super.key,
     required this.exercise,
     required this.exercises,
     required this.currentIndex,
+    this.fromWorkout = false,
   });
 
   String _formatDuration(int seconds) {
@@ -68,9 +70,13 @@ class SessionPausedScreen extends StatelessWidget {
                   _buildTipsCard(),
                   const SizedBox(height: 32),
                   AppGradientButton(
-                    label: 'INICIAR EJERCICIO',
-                    onPressed: () => _startExercise(context),
-                    icon: Icons.play_arrow_rounded,
+                    label: fromWorkout ? 'VOLVER AL EJERCICIO' : 'INICIAR EJERCICIO',
+                    onPressed: fromWorkout
+                        ? () => Navigator.of(context).pop()
+                        : () => _startExercise(context),
+                    icon: fromWorkout
+                        ? Icons.arrow_back_rounded
+                        : Icons.play_arrow_rounded,
                     height: 56,
                   ),
                   const SizedBox(height: 8),

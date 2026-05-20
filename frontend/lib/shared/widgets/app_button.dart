@@ -10,6 +10,7 @@ class AppGradientButton extends StatelessWidget {
   final IconData? icon;
   final double height;
   final double borderRadius;
+  final Color textColor;
 
   const AppGradientButton({
     super.key,
@@ -18,6 +19,7 @@ class AppGradientButton extends StatelessWidget {
     this.icon,
     this.height = 52,
     this.borderRadius = 14,
+    this.textColor = Colors.white,
   });
 
   @override
@@ -38,7 +40,7 @@ class AppGradientButton extends StatelessWidget {
           onPressed: onPressed,
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.transparent,
-            foregroundColor: Colors.white,
+            foregroundColor: textColor,
             shadowColor: Colors.transparent,
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(borderRadius)),

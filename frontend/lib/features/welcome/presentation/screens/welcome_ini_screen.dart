@@ -35,27 +35,27 @@ class _WelcomeIniScreenState extends State<WelcomeIniScreen> {
 
   // ── AppBar configs por tab ────────────────────────────────────────────────
   List<_AppBarConfig> get _appBarConfigs => [
-    _AppBarConfig(
-        icon: Icons.bolt,
-        label: LocaleManager.strings.appName,
-        color: AppColors.primary,
-        showBell: true),
-    _AppBarConfig(
-        icon: Icons.route_rounded,
-        label: LocaleManager.strings.navRoutines,
-        color: AppColors.secondary,
-        showBell: false),
-    _AppBarConfig(
-        icon: Icons.trending_up_rounded,
-        label: LocaleManager.strings.navProgress,
-        color: AppColors.secondary,
-        showBell: false),
-    _AppBarConfig(
-        icon: Icons.settings_rounded,
-        label: LocaleManager.strings.navSettings,
-        color: AppColors.secondary,
-        showBell: false),
-  ];
+        _AppBarConfig(
+            icon: Icons.bolt,
+            label: LocaleManager.strings.appName,
+            color: AppColors.primary,
+            showBell: true),
+        _AppBarConfig(
+            icon: Icons.route_rounded,
+            label: LocaleManager.strings.navRoutines,
+            color: AppColors.secondary,
+            showBell: false),
+        _AppBarConfig(
+            icon: Icons.trending_up_rounded,
+            label: LocaleManager.strings.navProgress,
+            color: AppColors.secondary,
+            showBell: false),
+        _AppBarConfig(
+            icon: Icons.settings_rounded,
+            label: LocaleManager.strings.navSettings,
+            color: AppColors.secondary,
+            showBell: false),
+      ];
 
   @override
   void initState() {
@@ -182,10 +182,18 @@ class _WelcomeIniScreenState extends State<WelcomeIniScreen> {
             letterSpacing: 1,
           ),
           destinations: [
-            NavigationRailDestination(icon: Icon(kAppNavItems[0].icon), label: Text(LocaleManager.strings.navHome)),
-            NavigationRailDestination(icon: Icon(kAppNavItems[1].icon), label: Text(LocaleManager.strings.navRoutines)),
-            NavigationRailDestination(icon: Icon(kAppNavItems[2].icon), label: Text(LocaleManager.strings.navProgress)),
-            NavigationRailDestination(icon: Icon(kAppNavItems[3].icon), label: Text(LocaleManager.strings.navSettings)),
+            NavigationRailDestination(
+                icon: Icon(kAppNavItems[0].icon),
+                label: Text(LocaleManager.strings.navHome)),
+            NavigationRailDestination(
+                icon: Icon(kAppNavItems[1].icon),
+                label: Text(LocaleManager.strings.navRoutines)),
+            NavigationRailDestination(
+                icon: Icon(kAppNavItems[2].icon),
+                label: Text(LocaleManager.strings.navProgress)),
+            NavigationRailDestination(
+                icon: Icon(kAppNavItems[3].icon),
+                label: Text(LocaleManager.strings.navSettings)),
           ],
         ),
         const VerticalDivider(width: 1, thickness: 1, color: AppColors.border),
@@ -376,11 +384,13 @@ class _WelcomeIniScreenState extends State<WelcomeIniScreen> {
             child: Row(
               children: [
                 Expanded(
-                  child: _DateTimeCard(label: LocaleManager.strings.date, value: session.date),
+                  child: _DateTimeCard(
+                      label: LocaleManager.strings.date, value: session.date),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
-                  child: _DateTimeCard(label: LocaleManager.strings.hour, value: session.time),
+                  child: _DateTimeCard(
+                      label: LocaleManager.strings.hour, value: session.time),
                 ),
               ],
             ),
@@ -401,6 +411,7 @@ class _WelcomeIniScreenState extends State<WelcomeIniScreen> {
       onPressed: () => setState(() => _currentIndex = 1),
       height: 48,
       borderRadius: 12,
+      textColor: Colors.black,
     );
   }
 
@@ -726,7 +737,7 @@ class _DateTimeCard extends StatelessWidget {
         border: Border.all(color: AppColors.border),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
             label,

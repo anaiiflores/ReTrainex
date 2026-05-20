@@ -27,7 +27,6 @@ class _ClinicalEvaluationScreenState extends State<ClinicalEvaluationScreen> {
     super.dispose();
   }
 
-
   bool get _canSubmit =>
       _painLevel != null &&
       _painTypeIndex != null &&
@@ -79,7 +78,8 @@ class _ClinicalEvaluationScreenState extends State<ClinicalEvaluationScreen> {
                     _buildSection(
                       label: s.clinicalHowAffectsSleep,
                       sublabel: s.clinicalSleepHint,
-                      child: _buildNumberScale(_sleepLevel, (v) => setState(() => _sleepLevel = v)),
+                      child: _buildNumberScale(
+                          _sleepLevel, (v) => setState(() => _sleepLevel = v)),
                     ),
                     const SizedBox(height: 24),
                     _buildNotesField(s),
@@ -220,18 +220,18 @@ class _ClinicalEvaluationScreenState extends State<ClinicalEvaluationScreen> {
   static const List<int> _painLevels = [0, 2, 5, 8, 10];
 
   static const Map<int, IconData> _painIcons = {
-    0:  Icons.sentiment_very_satisfied_rounded,
-    2:  Icons.sentiment_satisfied_rounded,
-    5:  Icons.sentiment_neutral_rounded,
-    8:  Icons.sentiment_dissatisfied_rounded,
+    0: Icons.sentiment_very_satisfied_rounded,
+    2: Icons.sentiment_satisfied_rounded,
+    5: Icons.sentiment_neutral_rounded,
+    8: Icons.sentiment_dissatisfied_rounded,
     10: Icons.sentiment_very_dissatisfied_rounded,
   };
 
   static const Map<int, Color> _painColors = {
-    0:  Color(0xFF00BFA5),
-    2:  Color(0xFF42A5F5),
-    5:  Color(0xFF7E57C2),
-    8:  Color(0xFFFF7043),
+    0: Color(0xFF00BFA5),
+    2: Color(0xFF42A5F5),
+    5: Color(0xFF7E57C2),
+    8: Color(0xFFFF7043),
     10: Color(0xFFF44336),
   };
 
@@ -248,14 +248,20 @@ class _ClinicalEvaluationScreenState extends State<ClinicalEvaluationScreen> {
             width: 58,
             padding: const EdgeInsets.symmetric(vertical: 10),
             decoration: BoxDecoration(
-              color: selected ? color.withValues(alpha: 0.15) : AppColors.surface,
+              color:
+                  selected ? color.withValues(alpha: 0.15) : AppColors.surface,
               borderRadius: BorderRadius.circular(14),
               border: Border.all(
                 color: selected ? color : AppColors.border,
                 width: selected ? 1.5 : 1,
               ),
               boxShadow: selected
-                  ? [BoxShadow(color: color.withValues(alpha: 0.35), blurRadius: 10, spreadRadius: 1)]
+                  ? [
+                      BoxShadow(
+                          color: color.withValues(alpha: 0.35),
+                          blurRadius: 10,
+                          spreadRadius: 1)
+                    ]
                   : [],
             ),
             child: Column(
@@ -283,7 +289,6 @@ class _ClinicalEvaluationScreenState extends State<ClinicalEvaluationScreen> {
     );
   }
 
-
   // ── Pain type grid ────────────────────────────────────────────────────────
 
   static const List<IconData> _painTypeIcons = [
@@ -297,15 +302,31 @@ class _ClinicalEvaluationScreenState extends State<ClinicalEvaluationScreen> {
     return Column(
       children: [
         Row(children: [
-          _PainTypeCard(icon: _painTypeIcons[0], label: labels[0], selected: _painTypeIndex == 0, onTap: () => setState(() => _painTypeIndex = 0)),
+          _PainTypeCard(
+              icon: _painTypeIcons[0],
+              label: labels[0],
+              selected: _painTypeIndex == 0,
+              onTap: () => setState(() => _painTypeIndex = 0)),
           const SizedBox(width: 10),
-          _PainTypeCard(icon: _painTypeIcons[1], label: labels[1], selected: _painTypeIndex == 1, onTap: () => setState(() => _painTypeIndex = 1)),
+          _PainTypeCard(
+              icon: _painTypeIcons[1],
+              label: labels[1],
+              selected: _painTypeIndex == 1,
+              onTap: () => setState(() => _painTypeIndex = 1)),
         ]),
         const SizedBox(height: 10),
         Row(children: [
-          _PainTypeCard(icon: _painTypeIcons[2], label: labels[2], selected: _painTypeIndex == 2, onTap: () => setState(() => _painTypeIndex = 2)),
+          _PainTypeCard(
+              icon: _painTypeIcons[2],
+              label: labels[2],
+              selected: _painTypeIndex == 2,
+              onTap: () => setState(() => _painTypeIndex = 2)),
           const SizedBox(width: 10),
-          _PainTypeCard(icon: _painTypeIcons[3], label: labels[3], selected: _painTypeIndex == 3, onTap: () => setState(() => _painTypeIndex = 3)),
+          _PainTypeCard(
+              icon: _painTypeIcons[3],
+              label: labels[3],
+              selected: _painTypeIndex == 3,
+              onTap: () => setState(() => _painTypeIndex = 3)),
         ]),
       ],
     );
@@ -350,14 +371,21 @@ class _ClinicalEvaluationScreenState extends State<ClinicalEvaluationScreen> {
             width: 58,
             padding: const EdgeInsets.symmetric(vertical: 14),
             decoration: BoxDecoration(
-              color: isSelected ? color.withValues(alpha: 0.15) : AppColors.surface,
+              color: isSelected
+                  ? color.withValues(alpha: 0.15)
+                  : AppColors.surface,
               borderRadius: BorderRadius.circular(14),
               border: Border.all(
                 color: isSelected ? color : AppColors.border,
                 width: isSelected ? 1.5 : 1,
               ),
               boxShadow: isSelected
-                  ? [BoxShadow(color: color.withValues(alpha: 0.35), blurRadius: 10, spreadRadius: 1)]
+                  ? [
+                      BoxShadow(
+                          color: color.withValues(alpha: 0.35),
+                          blurRadius: 10,
+                          spreadRadius: 1)
+                    ]
                   : [],
             ),
             child: Center(
@@ -415,7 +443,8 @@ class _ClinicalEvaluationScreenState extends State<ClinicalEvaluationScreen> {
             activeTrackColor: _intensityColor(_preciseIntensity),
             inactiveTrackColor: AppColors.border,
             thumbColor: _intensityColor(_preciseIntensity),
-            overlayColor: _intensityColor(_preciseIntensity).withValues(alpha: 0.2),
+            overlayColor:
+                _intensityColor(_preciseIntensity).withValues(alpha: 0.2),
             trackHeight: 4,
             thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
             overlayShape: const RoundSliderOverlayShape(overlayRadius: 18),
@@ -433,8 +462,12 @@ class _ClinicalEvaluationScreenState extends State<ClinicalEvaluationScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('0', style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
-              Text('10', style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
+              Text('0',
+                  style: const TextStyle(
+                      color: AppColors.textSecondary, fontSize: 11)),
+              Text('10',
+                  style: const TextStyle(
+                      color: AppColors.textSecondary, fontSize: 11)),
             ],
           ),
         ),
@@ -477,8 +510,8 @@ class _ClinicalEvaluationScreenState extends State<ClinicalEvaluationScreen> {
             ),
             filled: true,
             fillColor: AppColors.surface,
-            contentPadding: const EdgeInsets.symmetric(
-                horizontal: 16, vertical: 14),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: const BorderSide(color: AppColors.border),
@@ -489,7 +522,8 @@ class _ClinicalEvaluationScreenState extends State<ClinicalEvaluationScreen> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+              borderSide:
+                  const BorderSide(color: AppColors.primary, width: 1.5),
             ),
           ),
         ),

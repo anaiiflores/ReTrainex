@@ -81,12 +81,7 @@ class _WorkoutExerciseScreenState extends State<WorkoutExerciseScreen> {
       _onExerciseComplete();
       return;
     }
-    setState(() => _isPaused = !_isPaused);
-    if (_isPaused) {
-      _timer?.cancel();
-    } else {
-      _startTimer();
-    }
+    _openDetails();
   }
 
   void _onExerciseComplete() {

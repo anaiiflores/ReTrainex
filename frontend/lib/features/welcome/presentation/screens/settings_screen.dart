@@ -200,14 +200,6 @@ class _SettingsScreenState extends State<SettingsScreen>
         ),
         const _TileDivider(),
         _SettingsTile(
-          icon: Icons.visibility_rounded,
-          iconColor: AppColors.textSecondary,
-          title: LocaleManager.strings.settingsAccessibility,
-          subtitle: LocaleManager.strings.settingsAccessibilitySub,
-          onTap: () {},
-        ),
-        const _TileDivider(),
-        _SettingsTile(
           icon: Icons.language_rounded,
           iconColor: AppColors.textSecondary,
           title: LocaleManager.strings.settingsLanguage,

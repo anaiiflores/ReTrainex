@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../shared/widgets/app_bottom_nav.dart';
+import '../../../../shared/widgets/app_bottom_nav_widget.dart';
 import '../../../../shared/widgets/loading_widget.dart';
 import '../../../../shared/widgets/error_message_widget.dart';
 import '../../models/routine_detail_model.dart';
@@ -48,7 +48,8 @@ class _RoutineDetailScreenState extends State<RoutineDetailScreen> {
       final result = await _routineService.getRoutineDetail(widget.routineId);
       setState(() => _detail = result);
     } catch (_) {
-      setState(() => _errorMessage = 'No se pudo cargar el detalle de la sesión');
+      setState(
+          () => _errorMessage = 'No se pudo cargar el detalle de la sesión');
     } finally {
       setState(() => _isLoading = false);
     }
@@ -56,7 +57,8 @@ class _RoutineDetailScreenState extends State<RoutineDetailScreen> {
 
   // ── Acción principal ──────────────────────────────────────────────────────
 
-  Future<void> _onExerciseTap(String exerciseId, List<ExerciseModel> exercises, int index) async {
+  Future<void> _onExerciseTap(
+      String exerciseId, List<ExerciseModel> exercises, int index) async {
     final exercise = await _routineService.getExerciseDetail(exerciseId);
     if (!mounted) return;
     Navigator.of(context).push(
@@ -110,7 +112,8 @@ class _RoutineDetailScreenState extends State<RoutineDetailScreen> {
       elevation: 0,
       centerTitle: true,
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 20),
+        icon: const Icon(Icons.arrow_back_ios_new_rounded,
+            color: Colors.white, size: 20),
         onPressed: () => Navigator.of(context).pop(),
       ),
       title: Container(
@@ -152,7 +155,8 @@ class _RoutineDetailScreenState extends State<RoutineDetailScreen> {
         Expanded(
           child: Center(
             child: ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: isWide ? 680.0 : double.infinity),
+              constraints:
+                  BoxConstraints(maxWidth: isWide ? 680.0 : double.infinity),
               child: _buildScrollContent(_detail!),
             ),
           ),
@@ -173,18 +177,18 @@ class _RoutineDetailScreenState extends State<RoutineDetailScreen> {
         _buildExerciseListHeader(detail),
         const SizedBox(height: 14),
         ...detail.exercises.asMap().entries.map(
-          (entry) => Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: ExerciseCardWidget(
-              exercise: entry.value,
-              onPlayTap: () => _onExerciseTap(
-                entry.value.id,
-                detail.exercises,
-                entry.key,
+              (entry) => Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: ExerciseCardWidget(
+                  exercise: entry.value,
+                  onPlayTap: () => _onExerciseTap(
+                    entry.value.id,
+                    detail.exercises,
+                    entry.key,
+                  ),
+                ),
               ),
             ),
-          ),
-        ),
       ],
     );
   }
@@ -317,7 +321,8 @@ class _RoutineDetailScreenState extends State<RoutineDetailScreen> {
             backgroundColor: AppColors.primary,
             foregroundColor: Colors.white,
             disabledBackgroundColor: AppColors.border,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
             elevation: 0,
           ),
           child: const Text(

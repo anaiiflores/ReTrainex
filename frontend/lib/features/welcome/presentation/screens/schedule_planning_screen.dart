@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/strings/locale_manager.dart';
-import '../../../../shared/widgets/app_button.dart';
-import '../../../../shared/widgets/time_picker_field.dart';
+import '../../../../shared/widgets/app_button_widget.dart';
+import '../../../../shared/widgets/time_picker_field_widget.dart';
 
 class SchedulePlanningScreen extends StatefulWidget {
   const SchedulePlanningScreen({super.key});
@@ -70,7 +70,8 @@ class _SchedulePlanningScreenState extends State<SchedulePlanningScreen> {
       backgroundColor: AppColors.background,
       elevation: 0,
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back_rounded, color: Colors.white, size: 26),
+        icon:
+            const Icon(Icons.arrow_back_rounded, color: Colors.white, size: 26),
         onPressed: () => Navigator.of(context).pop(),
       ),
       centerTitle: true,

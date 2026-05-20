@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../../core/strings/locale_manager.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../shared/widgets/time_picker_field.dart';
-import '../../../../shared/widgets/week_day_selector.dart';
+import '../../../../shared/widgets/time_picker_field_widget.dart';
+import '../../../../shared/widgets/week_day_selector_widget.dart';
 import '../../../profile/presentation/screens/user_screen.dart';
 import '../../../profile/services/user_service.dart';
 
@@ -203,11 +203,15 @@ class _SettingsScreenState extends State<SettingsScreen>
           icon: Icons.language_rounded,
           iconColor: AppColors.textSecondary,
           title: LocaleManager.strings.settingsLanguage,
-          subtitle: LocaleManager.current == AppLocale.es ? '🇪🇸 Español' : '🇬🇧 English',
+          subtitle: LocaleManager.current == AppLocale.es
+              ? '🇪🇸 Español'
+              : '🇬🇧 English',
           onTap: () {
             setState(() {
               LocaleManager.setLocale(
-                LocaleManager.current == AppLocale.es ? AppLocale.en : AppLocale.es,
+                LocaleManager.current == AppLocale.es
+                    ? AppLocale.en
+                    : AppLocale.es,
               );
             });
             widget.onLocaleChanged?.call();
@@ -228,7 +232,8 @@ class _SettingsScreenState extends State<SettingsScreen>
           title: 'Test de formulario',
           subtitle: 'Test del selector de días',
           onTap: () => Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => const _WeekDaySelectorTestScreen()),
+            MaterialPageRoute(
+                builder: (_) => const _WeekDaySelectorTestScreen()),
           ),
         ),
       ],
@@ -283,7 +288,8 @@ class _SettingsScreenState extends State<SettingsScreen>
           const SizedBox(height: 4),
           Text(
             LocaleManager.strings.settingsVersion,
-            style: const TextStyle(color: AppColors.textSecondary, fontSize: 13),
+            style:
+                const TextStyle(color: AppColors.textSecondary, fontSize: 13),
           ),
           const SizedBox(height: 4),
           Text(
@@ -297,7 +303,6 @@ class _SettingsScreenState extends State<SettingsScreen>
   }
 
   // ── Acciones ───────────────────────────────────────────────────────────────
-
 
   void _showFaq() {
     showModalBottomSheet(
@@ -622,7 +627,6 @@ class _WeekDaySelectorTestScreenState
     if (mounted) setState(() => _selectedDays = user.routineDays.toSet());
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -736,23 +740,23 @@ class _FaqSheet extends StatelessWidget {
   const _FaqSheet();
 
   List<_FaqData> get _faqs => [
-    _FaqData(
-      question: LocaleManager.strings.faq1Question,
-      answer: LocaleManager.strings.faq1Answer,
-    ),
-    _FaqData(
-      question: LocaleManager.strings.faq2Question,
-      answer: LocaleManager.strings.faq2Answer,
-    ),
-    _FaqData(
-      question: LocaleManager.strings.faq3Question,
-      answer: LocaleManager.strings.faq3Answer,
-    ),
-    _FaqData(
-      question: LocaleManager.strings.faq4Question,
-      answer: LocaleManager.strings.faq4Answer,
-    ),
-  ];
+        _FaqData(
+          question: LocaleManager.strings.faq1Question,
+          answer: LocaleManager.strings.faq1Answer,
+        ),
+        _FaqData(
+          question: LocaleManager.strings.faq2Question,
+          answer: LocaleManager.strings.faq2Answer,
+        ),
+        _FaqData(
+          question: LocaleManager.strings.faq3Question,
+          answer: LocaleManager.strings.faq3Answer,
+        ),
+        _FaqData(
+          question: LocaleManager.strings.faq4Question,
+          answer: LocaleManager.strings.faq4Answer,
+        ),
+      ];
 
   @override
   Widget build(BuildContext context) {

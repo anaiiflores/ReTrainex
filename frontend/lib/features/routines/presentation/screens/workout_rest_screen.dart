@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../shared/widgets/app_bottom_nav.dart';
-import '../../../../shared/widgets/app_button.dart';
+import '../../../../shared/widgets/app_bottom_nav_widget.dart';
+import '../../../../shared/widgets/app_button_widget.dart';
 import '../../models/routine_detail_model.dart';
-import '../../widgets/countdown_ring_widget.dart';
+import '../../../../shared/widgets/countdown_ring_widget.dart';
 import 'workout_preparation_screen.dart';
 
 class WorkoutRestScreen extends StatefulWidget {
@@ -289,8 +289,8 @@ class _WorkoutRestScreenState extends State<WorkoutRestScreen> {
             decoration: BoxDecoration(
               color: AppColors.primary.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(10),
-              border: Border.all(
-                  color: AppColors.primary.withValues(alpha: 0.4)),
+              border:
+                  Border.all(color: AppColors.primary.withValues(alpha: 0.4)),
             ),
             child: const Icon(Icons.fitness_center_rounded,
                 color: AppColors.primary, size: 22),

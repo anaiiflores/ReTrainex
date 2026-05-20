@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../shared/widgets/app_bottom_nav.dart';
-import '../../../../shared/widgets/app_button.dart';
+import '../../../../shared/widgets/app_bottom_nav_widget.dart';
+import '../../../../shared/widgets/app_button_widget.dart';
 import '../../models/routine_detail_model.dart';
 import '../../services/workout_session_service.dart';
-import '../../widgets/countdown_ring_widget.dart';
+import '../../../../shared/widgets/countdown_ring_widget.dart';
 import 'workout_exercise_screen.dart';
 
 class WorkoutPreparationScreen extends StatefulWidget {
@@ -156,68 +156,68 @@ class _WorkoutPreparationScreenState extends State<WorkoutPreparationScreen> {
       child: ConstrainedBox(
         constraints: BoxConstraints(maxWidth: isWide ? 520.0 : double.infinity),
         child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Text(
-          'PRÓXIMO EJERCICIO',
-          style: TextStyle(
-            color: AppColors.textSecondary,
-            fontSize: 12,
-            letterSpacing: 2.5,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        const SizedBox(height: 14),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 40),
-          child: Text(
-            _exercise.name.toUpperCase(),
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: titleFontSize,
-              fontWeight: FontWeight.w900,
-              height: 1.1,
-              letterSpacing: 0.5,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text(
+              'PRÓXIMO EJERCICIO',
+              style: TextStyle(
+                color: AppColors.textSecondary,
+                fontSize: 12,
+                letterSpacing: 2.5,
+                fontWeight: FontWeight.w600,
+              ),
             ),
-          ),
-        ),
-        SizedBox(height: isWide ? 64 : 48),
-        SizedBox(
-          width: circleSize,
-          height: circleSize,
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              CountdownRingWidget(progress: progress, size: circleSize),
-              Column(
-                mainAxisSize: MainAxisSize.min,
+            const SizedBox(height: 14),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 40),
+              child: Text(
+                _exercise.name.toUpperCase(),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: titleFontSize,
+                  fontWeight: FontWeight.w900,
+                  height: 1.1,
+                  letterSpacing: 0.5,
+                ),
+              ),
+            ),
+            SizedBox(height: isWide ? 64 : 48),
+            SizedBox(
+              width: circleSize,
+              height: circleSize,
+              child: Stack(
+                alignment: Alignment.center,
                 children: [
-                  Text(
-                    '$_secondsRemaining',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: countdownFontSize,
-                      fontWeight: FontWeight.w900,
-                      height: 1,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  const Text(
-                    'PREPÁRATE',
-                    style: TextStyle(
-                      color: AppColors.textSecondary,
-                      fontSize: 12,
-                      letterSpacing: 2,
-                      fontWeight: FontWeight.w600,
-                    ),
+                  CountdownRingWidget(progress: progress, size: circleSize),
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        '$_secondsRemaining',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: countdownFontSize,
+                          fontWeight: FontWeight.w900,
+                          height: 1,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      const Text(
+                        'PREPÁRATE',
+                        style: TextStyle(
+                          color: AppColors.textSecondary,
+                          fontSize: 12,
+                          letterSpacing: 2,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
-          ),
-        ),
-      ],
+            ),
+          ],
         ),
       ),
     );

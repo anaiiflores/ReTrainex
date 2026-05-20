@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../shared/widgets/app_bottom_nav.dart';
-import '../../../../shared/widgets/app_button.dart';
+import '../../../../shared/widgets/app_bottom_nav_widget.dart';
+import '../../../../shared/widgets/app_button_widget.dart';
 import '../../services/workout_session_service.dart';
 
 class WorkoutCompleteScreen extends StatefulWidget {

@@ -1,6 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import '../../../core/theme/app_colors.dart';
+import '../../core/theme/app_colors.dart';
 
 /// Anillo de cuenta atrás reutilizable.
 /// [progress] va de 1.0 (lleno) a 0.0 (vacío).
@@ -15,8 +15,8 @@ class CountdownRingWidget extends StatelessWidget {
   const CountdownRingWidget({
     super.key,
     required this.progress,
-    this.size = 200,
-    this.strokeWidth = 9,
+    this.size = 300,
+    this.strokeWidth = 12,
     this.color,
   });
 
@@ -80,7 +80,7 @@ class _RingPainter extends CustomPainter {
 
     canvas.drawArc(
       rect,
-      -pi / 2,           // empieza desde arriba
+      -pi / 2, // empieza desde arriba
       2 * pi * progress, // barre en sentido horario
       false,
       arcPaint,

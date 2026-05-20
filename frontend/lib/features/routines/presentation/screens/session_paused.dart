@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../shared/widgets/app_button.dart';
+import '../../../../shared/widgets/app_button_widget.dart';
 import '../../../../shared/widgets/video_area_widget.dart';
 import '../../models/routine_detail_model.dart';
 import 'workout_preparation_screen.dart';
@@ -70,7 +70,9 @@ class SessionPausedScreen extends StatelessWidget {
                   _buildTipsCard(),
                   const SizedBox(height: 32),
                   AppGradientButton(
-                    label: fromWorkout ? 'VOLVER AL EJERCICIO' : 'INICIAR EJERCICIO',
+                    label: fromWorkout
+                        ? 'VOLVER AL EJERCICIO'
+                        : 'INICIAR EJERCICIO',
                     onPressed: fromWorkout
                         ? () => Navigator.of(context).pop()
                         : () => _startExercise(context),

@@ -1,10 +1,12 @@
 import '../models/dashboard_model.dart';
+import '../../profile/services/user_service.dart';
 
 class DashboardService {
   /// Endpoint real: GET /me/dashboard
   /// Devuelve nombre, estado de rutina, progreso y próxima sesión.
   Future<DashboardModel> getDashboardData() async {
     await Future.delayed(const Duration(milliseconds: 600));
+    final user = await UserService().getUser();
 
     // ── SIMULACIÓN ────────────────────────────────────────────────────────
     // Cambia `status` para simular distintos estados de la app:
@@ -25,10 +27,11 @@ class DashboardService {
         durationMinutes: 15,
         type: 'FISIOTERAPIA',
       ),
-      reminder: 'Mantén tu hidratación antes de la sesión con el Dr. Pérez.',
+      reminder:
+          'Mantén tu hidratación antes de la sesión con el Dr. ${user.physioName ?? 'tu fisioterapeuta'}.',
       // Activos solo cuando status == newAssignment:
       assignmentTitle: 'Nuevo tratamiento de ejercicios',
-      physioName: 'Dr. Pérez',
+      physioName: user.physioName,
     );
 
     // Reemplazar con llamada real:

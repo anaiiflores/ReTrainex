@@ -7,6 +7,8 @@ import '../../../routines/presentation/screens/routines_list_screen.dart';
 import '../../../routines/widgets/countdown_ring_widget.dart';
 import '../../models/dashboard_model.dart';
 import '../../services/dashboard_service.dart';
+import '../../../profile/models/user_model.dart';
+import '../../../profile/services/user_service.dart';
 import '../../../../core/strings/locale_manager.dart';
 import '../../../../shared/widgets/app_button.dart';
 import 'notifications_screen.dart';
@@ -30,8 +32,10 @@ class _WelcomeIniScreenState extends State<WelcomeIniScreen> {
   bool _isLoading = false;
   String? _errorMessage;
   DashboardModel? _dashboard;
+  UserModel? _user;
 
   final DashboardService _dashboardService = DashboardService();
+  final UserService _userService = UserService();
 
   // ── AppBar configs por tab ────────────────────────────────────────────────
   List<_AppBarConfig> get _appBarConfigs => [
@@ -60,19 +64,25 @@ class _WelcomeIniScreenState extends State<WelcomeIniScreen> {
   @override
   void initState() {
     super.initState();
-    _loadDashboard();
+    _loadData();
   }
 
   // ── Carga de datos ────────────────────────────────────────────────────────
 
-  Future<void> _loadDashboard() async {
+  Future<void> _loadData() async {
     setState(() {
       _isLoading = true;
       _errorMessage = null;
     });
     try {
-      final result = await _dashboardService.getDashboardData();
-      setState(() => _dashboard = result);
+      final results = await Future.wait([
+        _dashboardService.getDashboardData(),
+        _userService.getUser(),
+      ]);
+      setState(() {
+        _dashboard = results[0] as DashboardModel;
+        _user = results[1] as UserModel;
+      });
     } catch (_) {
       setState(() => _errorMessage = LocaleManager.strings.errorLoadingInfo);
     } finally {
@@ -219,7 +229,7 @@ class _WelcomeIniScreenState extends State<WelcomeIniScreen> {
         if (_errorMessage != null) {
           return ErrorMessageWidget(
             message: _errorMessage!,
-            onRetry: _loadDashboard,
+            onRetry: _loadData,
           );
         }
         if (_dashboard == null) return const SizedBox.shrink();
@@ -510,7 +520,7 @@ class _WelcomeIniScreenState extends State<WelcomeIniScreen> {
 
   Widget _buildAssignmentCard() {
     final title = _dashboard!.assignmentTitle ?? 'Nueva asignación';
-    final physio = _dashboard!.physioName ?? 'Dr. Pérez';
+    final physio = _user?.physioName ?? _dashboard!.physioName ?? '';
 
     return GestureDetector(
       onTap: () => Navigator.of(context).push(

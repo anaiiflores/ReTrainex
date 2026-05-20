@@ -97,7 +97,7 @@ class _UserScreenState extends State<UserScreen> {
                 _buildSectionLabel(Icons.medical_services_rounded,
                     _label('Fisioterapeuta', 'Physiotherapist')),
                 const SizedBox(height: 10),
-                _buildPhysioCard(user.physioName!),
+                _buildPhysioCard('Dr. ${user.physioName!}'),
               ],
               const SizedBox(height: 16),
             ],

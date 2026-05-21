@@ -175,6 +175,12 @@ class AppStringsEs implements AppStrings {
       'Ve a Ajustes → Notificaciones → Horario y selecciona la hora que prefieras.';
 
   @override
+  String exerciseSubtitleSeries(int series, int reps) =>
+      '$series SERIES  x  $reps REPS';
+  @override
+  String exerciseSubtitleMinutes(int minutes) => '$minutes MINUTOS';
+
+  @override
   String get routineDetailTitle => 'DETALLES DE SESIÓN';
   @override
   String get routineActiveProtocol => 'PROTOCOLO_ACTIVO';

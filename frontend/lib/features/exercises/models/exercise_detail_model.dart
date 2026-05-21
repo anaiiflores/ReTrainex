@@ -36,13 +36,6 @@ class ExerciseModel {
     this.restAfterSeconds,
   });
 
-  /// Texto descriptivo: "3 SERIES x 10 REPS" o "2 MINUTOS"
-  String get subtitle {
-    if (series != null && reps != null) return '$series SERIES  x  $reps REPS';
-    if (minutes != null) return '$minutes MINUTOS';
-    return '';
-  }
-
   /// Duración efectiva en segundos para el temporizador:
   ///  1. Si el fisio fijó totalDurationSeconds → ese valor.
   ///  2. Si es ejercicio de mantenimiento (minutes) → minutes × 60.

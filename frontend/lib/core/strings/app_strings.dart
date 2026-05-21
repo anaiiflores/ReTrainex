@@ -86,6 +86,10 @@ abstract class AppStrings {
   String get faq4Question;
   String get faq4Answer;
 
+  // ── Exercise ─────────────────────────────────────────────────────────────
+  String exerciseSubtitleSeries(int series, int reps);
+  String exerciseSubtitleMinutes(int minutes);
+
   // ── Routine detail ───────────────────────────────────────────────────────
   String get routineDetailTitle;
   String get routineActiveProtocol;

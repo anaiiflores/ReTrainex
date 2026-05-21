@@ -173,6 +173,12 @@ class AppStringsEn implements AppStrings {
       'Go to Settings → Notifications → Schedule and select your preferred time.';
 
   @override
+  String exerciseSubtitleSeries(int series, int reps) =>
+      '$series SETS  x  $reps REPS';
+  @override
+  String exerciseSubtitleMinutes(int minutes) => '$minutes MINUTES';
+
+  @override
   String get routineDetailTitle => 'SESSION DETAILS';
   @override
   String get routineActiveProtocol => 'ACTIVE_PROTOCOL';

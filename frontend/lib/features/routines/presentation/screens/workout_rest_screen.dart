@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import '../../../../core/strings/locale_manager.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/widgets/app_bottom_nav_widget.dart';
 import '../../../../shared/widgets/workout_controls_widget.dart';
@@ -326,10 +327,13 @@ class _WorkoutRestScreenState extends State<WorkoutRestScreen> {
                     letterSpacing: 0.3,
                   ),
                 ),
-                if (_nextExercise.subtitle.isNotEmpty) ...[
+                if (_nextExercise.series != null && _nextExercise.reps != null ||
+                    _nextExercise.minutes != null) ...[
                   const SizedBox(height: 2),
                   Text(
-                    _nextExercise.subtitle,
+                    _nextExercise.series != null && _nextExercise.reps != null
+                        ? LocaleManager.strings.exerciseSubtitleSeries(_nextExercise.series!, _nextExercise.reps!)
+                        : LocaleManager.strings.exerciseSubtitleMinutes(_nextExercise.minutes!),
                     style: const TextStyle(
                       color: AppColors.textSecondary,
                       fontSize: 12,

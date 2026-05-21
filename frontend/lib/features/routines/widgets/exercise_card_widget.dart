@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/strings/locale_manager.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../exercises/models/exercise_detail_model.dart';
 
@@ -41,7 +42,11 @@ class ExerciseCardWidget extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  exercise.subtitle,
+                  exercise.series != null && exercise.reps != null
+                      ? LocaleManager.strings.exerciseSubtitleSeries(exercise.series!, exercise.reps!)
+                      : exercise.minutes != null
+                          ? LocaleManager.strings.exerciseSubtitleMinutes(exercise.minutes!)
+                          : '',
                   style: const TextStyle(
                     color: AppColors.textSecondary,
                     fontSize: 12,

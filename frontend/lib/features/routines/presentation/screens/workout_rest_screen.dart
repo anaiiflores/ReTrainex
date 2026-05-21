@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/widgets/app_bottom_nav_widget.dart';
 import '../../../../shared/widgets/workout_controls_widget.dart';
-import '../../models/routine_detail_model.dart';
+import '../../../exercises/models/exercise_detail_model.dart';
 import '../../../../shared/widgets/countdown_ring_widget.dart';
 import 'workout_preparation_screen.dart';
 
@@ -343,5 +343,4 @@ class _WorkoutRestScreenState extends State<WorkoutRestScreen> {
       ),
     );
   }
-
 }

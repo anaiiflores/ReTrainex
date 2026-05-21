@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
-import '../models/routine_detail_model.dart';
+import '../../exercises/models/exercise_detail_model.dart';
 
 class ExerciseCardWidget extends StatelessWidget {
   final ExerciseModel exercise;
@@ -62,7 +62,8 @@ class ExerciseCardWidget extends StatelessWidget {
                 shape: BoxShape.circle,
                 border: Border.all(color: AppColors.border),
               ),
-              child: const Icon(Icons.play_arrow_rounded, color: Colors.white, size: 22),
+              child: const Icon(Icons.play_arrow_rounded,
+                  color: Colors.white, size: 22),
             ),
           ),
         ],

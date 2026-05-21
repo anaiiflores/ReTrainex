@@ -1,5 +1,5 @@
 import '../models/routine_model.dart';
-import '../models/routine_detail_model.dart';
+import '../../exercises/models/exercise_detail_model.dart';
 
 class RoutineService {
   // ── Mock data ─────────────────────────────────────────────────────────────
@@ -36,13 +36,20 @@ class RoutineService {
   static final RoutineDetailModel _mockDetail = RoutineDetailModel(
     id: 'rd1',
     sessionId: 'KINETIC_RECOVERY',
-    description: 'SESIÓN: KINETIC_RECOVERY. Hoy nos enfocaremos en la movilidad '
+    description:
+        'SESIÓN: KINETIC_RECOVERY. Hoy nos enfocaremos en la movilidad '
         'articular y la reducción de la tensión en el manguito rotador. '
         'Realiza cada ejercicio con calma.',
     exercises: const [
-      ExerciseModel(id: 'e1', name: 'Rotación de hombros', series: 3, reps: 10, minutes: 0),
+      ExerciseModel(
+          id: 'e1',
+          name: 'Rotación de hombros',
+          series: 3,
+          reps: 10,
+          minutes: 0),
       ExerciseModel(id: 'e2', name: 'Estiramiento Pectoral', minutes: 2),
-      ExerciseModel(id: 'e3', name: 'Rotación Interna', series: 3, reps: 15, minutes: 0),
+      ExerciseModel(
+          id: 'e3', name: 'Rotación Interna', series: 3, reps: 15, minutes: 0),
       ExerciseModel(id: 'e4', name: 'Isométrico Escapular', minutes: 5),
     ],
   );

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/widgets/app_button_widget.dart';
 import '../../../../shared/widgets/video_area_widget.dart';
-import '../../models/routine_detail_model.dart';
+import '../../../exercises/models/exercise_detail_model.dart';
 import 'workout_preparation_screen.dart';
 import '../../services/workout_session_service.dart';
 

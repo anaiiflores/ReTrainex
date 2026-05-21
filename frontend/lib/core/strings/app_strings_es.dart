@@ -175,6 +175,23 @@ class AppStringsEs implements AppStrings {
       'Ve a Ajustes → Notificaciones → Horario y selecciona la hora que prefieras.';
 
   @override
+  String get routineDetailTitle => 'DETALLES DE SESIÓN';
+  @override
+  String get routineActiveProtocol => 'PROTOCOLO_ACTIVO';
+  @override
+  String get routineSysLog => 'SYS_LOG: OBJETIVO_MISIÓN';
+  @override
+  String get routineExerciseList => 'EJE_LISTA';
+  @override
+  String routineItems(int count) => '// ${count.toString().padLeft(2, '0')} ELEMENTOS';
+  @override
+  String get loadingSession => 'Cargando sesión...';
+  @override
+  String get errorLoadingSession => 'No se pudo cargar el detalle de la sesión';
+  @override
+  String get startSession => 'INICIAR';
+
+  @override
   String get clinicalEvalTitle => 'EVALUACIÓN CLÍNICA';
   @override
   String get clinicalPainReported => 'DOLOR REPORTADO';

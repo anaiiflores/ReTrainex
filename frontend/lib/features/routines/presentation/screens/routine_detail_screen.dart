@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/strings/locale_manager.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/widgets/app_bottom_nav_widget.dart';
 import '../../../../shared/widgets/loading_widget.dart';
@@ -49,7 +50,7 @@ class _RoutineDetailScreenState extends State<RoutineDetailScreen> {
       setState(() => _detail = result);
     } catch (_) {
       setState(
-          () => _errorMessage = 'No se pudo cargar el detalle de la sesión');
+          () => _errorMessage = LocaleManager.strings.errorLoadingSession);
     } finally {
       setState(() => _isLoading = false);
     }
@@ -123,7 +124,7 @@ class _RoutineDetailScreenState extends State<RoutineDetailScreen> {
           borderRadius: BorderRadius.circular(8),
         ),
         child: Text(
-          'SESSION: $sessionLabel',
+          'SESSION: $sessionLabel', // identificador técnico, no se traduce
           style: const TextStyle(
             color: _kAccent,
             fontSize: 13,
@@ -140,7 +141,7 @@ class _RoutineDetailScreenState extends State<RoutineDetailScreen> {
   }
 
   Widget _buildBody(BuildContext context) {
-    if (_isLoading) return const LoadingWidget(message: 'Cargando sesión...');
+    if (_isLoading) return LoadingWidget(message: LocaleManager.strings.loadingSession);
 
     if (_errorMessage != null) {
       return ErrorMessageWidget(message: _errorMessage!, onRetry: _loadDetail);
@@ -198,7 +199,7 @@ class _RoutineDetailScreenState extends State<RoutineDetailScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'ACTIVE_PROTOCOL',
+          LocaleManager.strings.routineActiveProtocol,
           style: TextStyle(
             color: _kAccent.withValues(alpha: 0.8),
             fontSize: 11,
@@ -207,8 +208,8 @@ class _RoutineDetailScreenState extends State<RoutineDetailScreen> {
           ),
         ),
         const SizedBox(height: 6),
-        const Text(
-          'DETALLES DE SESIÓN',
+        Text(
+          LocaleManager.strings.routineDetailTitle,
           style: TextStyle(
             color: Colors.white,
             fontSize: 30,
@@ -247,8 +248,8 @@ class _RoutineDetailScreenState extends State<RoutineDetailScreen> {
                       ),
                     ),
                     const SizedBox(width: 8),
-                    const Text(
-                      'SYS_LOG: MISSION_OBJECTIVE',
+                    Text(
+                      LocaleManager.strings.routineSysLog,
                       style: TextStyle(
                         color: Colors.greenAccent,
                         fontSize: 11,
@@ -282,12 +283,11 @@ class _RoutineDetailScreenState extends State<RoutineDetailScreen> {
   }
 
   Widget _buildExerciseListHeader(RoutineDetailModel detail) {
-    final count = detail.exercises.length.toString().padLeft(2, '0');
     return Row(
       children: [
-        const Text(
-          'EJE_LISTA',
-          style: TextStyle(
+        Text(
+          LocaleManager.strings.routineExerciseList,
+          style: const TextStyle(
             color: Colors.white,
             fontSize: 13,
             fontWeight: FontWeight.w700,
@@ -296,7 +296,7 @@ class _RoutineDetailScreenState extends State<RoutineDetailScreen> {
         ),
         const SizedBox(width: 8),
         Text(
-          '// $count ITEMS',
+          LocaleManager.strings.routineItems(detail.exercises.length),
           style: TextStyle(
             color: _kAccent.withValues(alpha: 0.8),
             fontSize: 13,
@@ -325,9 +325,9 @@ class _RoutineDetailScreenState extends State<RoutineDetailScreen> {
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
             elevation: 0,
           ),
-          child: const Text(
-            'INICIAR',
-            style: TextStyle(
+          child: Text(
+            LocaleManager.strings.startSession,
+            style: const TextStyle(
               fontSize: 17,
               fontWeight: FontWeight.w900,
               letterSpacing: 2,

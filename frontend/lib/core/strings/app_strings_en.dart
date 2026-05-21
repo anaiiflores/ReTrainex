@@ -173,6 +173,23 @@ class AppStringsEn implements AppStrings {
       'Go to Settings → Notifications → Schedule and select your preferred time.';
 
   @override
+  String get routineDetailTitle => 'SESSION DETAILS';
+  @override
+  String get routineActiveProtocol => 'ACTIVE_PROTOCOL';
+  @override
+  String get routineSysLog => 'SYS_LOG: MISSION_OBJECTIVE';
+  @override
+  String get routineExerciseList => 'EXE_LIST';
+  @override
+  String routineItems(int count) => '// ${count.toString().padLeft(2, '0')} ITEMS';
+  @override
+  String get loadingSession => 'Loading session...';
+  @override
+  String get errorLoadingSession => 'Could not load session details';
+  @override
+  String get startSession => 'START';
+
+  @override
   String get clinicalEvalTitle => 'CLINICAL EVALUATION';
   @override
   String get clinicalPainReported => 'PAIN REPORTED';

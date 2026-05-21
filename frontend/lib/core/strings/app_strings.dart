@@ -86,6 +86,16 @@ abstract class AppStrings {
   String get faq4Question;
   String get faq4Answer;
 
+  // ── Routine detail ───────────────────────────────────────────────────────
+  String get routineDetailTitle;
+  String get routineActiveProtocol;
+  String get routineSysLog;
+  String get routineExerciseList;
+  String routineItems(int count);
+  String get loadingSession;
+  String get errorLoadingSession;
+  String get startSession;
+
   // ── Clinical evaluation ───────────────────────────────────────────────────
   String get clinicalEvalTitle;
   String get clinicalPainReported;

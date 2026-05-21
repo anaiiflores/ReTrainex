@@ -1,5 +1,5 @@
 import '../models/routine_model.dart';
-import '../../exercises/models/exercise_detail_model.dart';
+import '../models/routine_detail_model.dart';
 
 class RoutineService {
   // ── Mock data ─────────────────────────────────────────────────────────────

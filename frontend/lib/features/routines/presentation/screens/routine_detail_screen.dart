@@ -4,7 +4,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/widgets/app_bottom_nav_widget.dart';
 import '../../../../shared/widgets/loading_widget.dart';
 import '../../../../shared/widgets/error_message_widget.dart';
-import '../../../exercises/models/exercise_detail_model.dart';
+import '../../models/routine_detail_model.dart';
 import '../../services/routine_service.dart';
 import '../../services/workout_session_service.dart';
 import '../../widgets/exercise_card_widget.dart';

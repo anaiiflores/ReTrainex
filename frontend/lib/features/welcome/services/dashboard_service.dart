@@ -64,7 +64,7 @@ class DashboardService {
     final completedDays = <int>{};
     for (final rt in weeklyRoutines) {
       if (rt.status == r.RoutineStatus.completed) {
-        completedDays.add(_weekdayFromDayName(rt.day));
+        completedDays.add(rt.weekday);
       }
     }
 
@@ -111,26 +111,5 @@ class DashboardService {
     // Reemplazar con:
     // final response = await apiClient.get('/me/calendar-sessions');
     // return (response as List).map((j) => CalendarSessionModel.fromJson(j)).toList();
-  }
-
-  int _weekdayFromDayName(String day) {
-    switch (day.toUpperCase()) {
-      case 'LUNES':
-        return DateTime.monday;
-      case 'MARTES':
-        return DateTime.tuesday;
-      case 'MIÉRCOLES':
-        return DateTime.wednesday;
-      case 'JUEVES':
-        return DateTime.thursday;
-      case 'VIERNES':
-        return DateTime.friday;
-      case 'SÁBADO':
-        return DateTime.saturday;
-      case 'DOMINGO':
-        return DateTime.sunday;
-      default:
-        return -1;
-    }
   }
 }

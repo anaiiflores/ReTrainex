@@ -1,5 +1,5 @@
 import '../models/dashboard_model.dart';
-import '../../profile/services/user_service.dart';
+import '../../users/services/user_service.dart';
 import '../../routines/models/routine_model.dart' as r;
 import '../../routines/services/routine_service.dart';
 
@@ -54,7 +54,8 @@ class DashboardService {
     await Future.delayed(const Duration(milliseconds: 300));
     final now = DateTime.now();
     final todayMidnight = DateTime(now.year, now.month, now.day);
-    final monday = todayMidnight.subtract(Duration(days: todayMidnight.weekday - 1));
+    final monday =
+        todayMidnight.subtract(Duration(days: todayMidnight.weekday - 1));
     final weekStart = monday;
     final weekEnd = weekStart.add(const Duration(days: 7));
 
@@ -114,14 +115,22 @@ class DashboardService {
 
   int _weekdayFromDayName(String day) {
     switch (day.toUpperCase()) {
-      case 'LUNES': return DateTime.monday;
-      case 'MARTES': return DateTime.tuesday;
-      case 'MIÉRCOLES': return DateTime.wednesday;
-      case 'JUEVES': return DateTime.thursday;
-      case 'VIERNES': return DateTime.friday;
-      case 'SÁBADO': return DateTime.saturday;
-      case 'DOMINGO': return DateTime.sunday;
-      default: return -1;
+      case 'LUNES':
+        return DateTime.monday;
+      case 'MARTES':
+        return DateTime.tuesday;
+      case 'MIÉRCOLES':
+        return DateTime.wednesday;
+      case 'JUEVES':
+        return DateTime.thursday;
+      case 'VIERNES':
+        return DateTime.friday;
+      case 'SÁBADO':
+        return DateTime.saturday;
+      case 'DOMINGO':
+        return DateTime.sunday;
+      default:
+        return -1;
     }
   }
 }

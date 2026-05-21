@@ -3,8 +3,8 @@ import '../../../../core/strings/locale_manager.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/widgets/time_picker_field_widget.dart';
 import '../../../../shared/widgets/week_day_selector_widget.dart';
-import '../../../profile/presentation/screens/user_screen.dart';
-import '../../../profile/services/user_service.dart';
+import '../../../users/presentation/screens/user_screen.dart';
+import '../../../users/services/user_service.dart';
 
 class SettingsScreen extends StatefulWidget {
   final VoidCallback? onLocaleChanged;

@@ -175,6 +175,18 @@ class AppStringsEs implements AppStrings {
       'Ve a Ajustes → Notificaciones → Horario y selecciona la hora que prefieras.';
 
   @override
+  String get weeklyProgress => 'PROGRESO SEMANAL';
+  @override
+  String get progressStart => 'EMPIEZA HOY';
+  @override
+  String get progressDone => '¡LO LOGRASTE!';
+  @override
+  String get progressOnTrack => 'VAS POR BUEN CAMINO';
+  @override
+  String progressSessions(int completed, int total) =>
+      '$completed de $total sesiones completadas';
+
+  @override
   String get todaySession => 'SESIÓN DE HOY';
   @override
   String get sessionCompleted => 'SESIÓN COMPLETADA';

@@ -173,6 +173,18 @@ class AppStringsEn implements AppStrings {
       'Go to Settings → Notifications → Schedule and select your preferred time.';
 
   @override
+  String get weeklyProgress => 'WEEKLY PROGRESS';
+  @override
+  String get progressStart => 'START TODAY';
+  @override
+  String get progressDone => 'YOU DID IT!';
+  @override
+  String get progressOnTrack => 'YOU\'RE ON TRACK';
+  @override
+  String progressSessions(int completed, int total) =>
+      '$completed of $total sessions completed';
+
+  @override
   String get todaySession => 'TODAY\'S SESSION';
   @override
   String get sessionCompleted => 'SESSION COMPLETED';

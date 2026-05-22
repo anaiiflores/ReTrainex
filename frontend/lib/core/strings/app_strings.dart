@@ -86,6 +86,13 @@ abstract class AppStrings {
   String get faq4Question;
   String get faq4Answer;
 
+  // ── Weekly progress card ─────────────────────────────────────────────────
+  String get weeklyProgress;
+  String get progressStart;
+  String get progressDone;
+  String get progressOnTrack;
+  String progressSessions(int completed, int total);
+
   // ── Today's session ──────────────────────────────────────────────────────
   String get todaySession;
   String get sessionCompleted;

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/strings/locale_manager.dart';
 import '../../../core/theme/app_colors.dart';
 
 class ProgressCardWidget extends StatelessWidget {
@@ -12,9 +13,9 @@ class ProgressCardWidget extends StatelessWidget {
   });
 
   String get _message {
-    if (completed == 0) return 'EMPIEZA HOY';
-    if (completed == total) return '¡LO LOGRASTE!';
-    return 'VAS POR BUEN CAMINO';
+    if (completed == 0) return LocaleManager.strings.progressStart;
+    if (completed == total) return LocaleManager.strings.progressDone;
+    return LocaleManager.strings.progressOnTrack;
   }
 
   @override
@@ -31,8 +32,8 @@ class ProgressCardWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'PROGRESO SEMANAL',
+          Text(
+            LocaleManager.strings.weeklyProgress,
             style: TextStyle(
               color: AppColors.textSecondary,
               fontSize: 12,
@@ -62,7 +63,7 @@ class ProgressCardWidget extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           Text(
-            '$completed de $total sesiones completadas',
+            LocaleManager.strings.progressSessions(completed, total),
             style: const TextStyle(
               color: AppColors.textSecondary,
               fontSize: 14,

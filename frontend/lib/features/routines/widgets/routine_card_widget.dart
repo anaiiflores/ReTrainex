@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/strings/locale_manager.dart';
 import '../../../core/theme/app_colors.dart';
 import '../models/routine_model.dart';
 
@@ -72,15 +73,15 @@ class RoutineCardWidget extends StatelessWidget {
 
     switch (routine.status) {
       case RoutineStatus.completed:
-        statusLabel = 'COMPLETADO';
+        statusLabel = LocaleManager.strings.statusCompleted;
         statusColor = Colors.greenAccent;
         break;
       case RoutineStatus.today:
-        statusLabel = 'HOY';
+        statusLabel = LocaleManager.strings.statusToday;
         statusColor = AppColors.primary;
         break;
       case RoutineStatus.upcoming:
-        statusLabel = 'PRÓXIMO';
+        statusLabel = LocaleManager.strings.statusUpcoming;
         statusColor = AppColors.textSecondary;
         break;
     }
@@ -151,9 +152,9 @@ class RoutineCardWidget extends StatelessWidget {
             minimumSize: Size.zero,
             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
           ),
-          child: const Text(
-            'INICIAR',
-            style: TextStyle(fontWeight: FontWeight.w800, letterSpacing: 1, fontSize: 13),
+          child: Text(
+            LocaleManager.strings.startSession,
+            style: const TextStyle(fontWeight: FontWeight.w800, letterSpacing: 1, fontSize: 13),
           ),
         );
       case RoutineStatus.upcoming:

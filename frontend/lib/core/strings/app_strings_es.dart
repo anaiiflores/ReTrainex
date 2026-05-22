@@ -175,6 +175,13 @@ class AppStringsEs implements AppStrings {
       'Ve a Ajustes → Notificaciones → Horario y selecciona la hora que prefieras.';
 
   @override
+  String get statusCompleted => 'COMPLETADO';
+  @override
+  String get statusToday => 'HOY';
+  @override
+  String get statusUpcoming => 'PRÓXIMO';
+
+  @override
   String get weeklyProgress => 'PROGRESO SEMANAL';
   @override
   String get progressStart => 'EMPIEZA HOY';

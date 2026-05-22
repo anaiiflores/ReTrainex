@@ -173,6 +173,13 @@ class AppStringsEn implements AppStrings {
       'Go to Settings → Notifications → Schedule and select your preferred time.';
 
   @override
+  String get statusCompleted => 'COMPLETED';
+  @override
+  String get statusToday => 'TODAY';
+  @override
+  String get statusUpcoming => 'UPCOMING';
+
+  @override
   String get weeklyProgress => 'WEEKLY PROGRESS';
   @override
   String get progressStart => 'START TODAY';

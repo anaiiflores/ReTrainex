@@ -175,6 +175,15 @@ class AppStringsEs implements AppStrings {
       'Ve a Ajustes → Notificaciones → Horario y selecciona la hora que prefieras.';
 
   @override
+  String get skipQuestion => '¿POR QUÉ OMITES EL EJERCICIO?';
+  @override
+  String get skipDontKnow => 'No sé hacer el ejercicio';
+  @override
+  String get skipCantNow => 'No puedo hacerlo ahora';
+  @override
+  String get skipPain => 'Me duele';
+
+  @override
   String get statusCompleted => 'COMPLETADO';
   @override
   String get statusToday => 'HOY';

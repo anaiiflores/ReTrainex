@@ -1,26 +1,27 @@
 import 'package:flutter/material.dart';
+import '../../../core/strings/locale_manager.dart';
 import '../../../core/theme/app_colors.dart';
 
 enum SkipReason { dontKnow, cantNow, pain }
 
-const String _kQuestion = '¿POR QUÉ OMITES EL EJERCICIO?';
+String get _kQuestion => LocaleManager.strings.skipQuestion;
 
-const List<({String label, IconData icon, Color color, SkipReason reason})>
-    _kOptions = [
+List<({String label, IconData icon, Color color, SkipReason reason})>
+    get _kOptions => [
   (
-    label: 'No sé hacer el ejercicio',
+    label: LocaleManager.strings.skipDontKnow,
     icon: Icons.help_outline_rounded,
     color: AppColors.textSecondary,
     reason: SkipReason.dontKnow,
   ),
   (
-    label: 'No puedo hacerlo ahora',
+    label: LocaleManager.strings.skipCantNow,
     icon: Icons.schedule_rounded,
     color: AppColors.textSecondary,
     reason: SkipReason.cantNow,
   ),
   (
-    label: 'Me duele',
+    label: LocaleManager.strings.skipPain,
     icon: Icons.medical_services_outlined,
     color: Colors.redAccent,
     reason: SkipReason.pain,
@@ -38,7 +39,7 @@ class SkipReasonSheet extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             _kQuestion,
             style: TextStyle(
               color: Colors.white,

@@ -173,6 +173,15 @@ class AppStringsEn implements AppStrings {
       'Go to Settings → Notifications → Schedule and select your preferred time.';
 
   @override
+  String get skipQuestion => 'WHY ARE YOU SKIPPING THIS EXERCISE?';
+  @override
+  String get skipDontKnow => 'I don\'t know how to do it';
+  @override
+  String get skipCantNow => 'I can\'t do it right now';
+  @override
+  String get skipPain => 'It hurts';
+
+  @override
   String get statusCompleted => 'COMPLETED';
   @override
   String get statusToday => 'TODAY';

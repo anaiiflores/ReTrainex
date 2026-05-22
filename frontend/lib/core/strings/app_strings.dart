@@ -86,6 +86,12 @@ abstract class AppStrings {
   String get faq4Question;
   String get faq4Answer;
 
+  // ── Skip reason sheet ────────────────────────────────────────────────────
+  String get skipQuestion;
+  String get skipDontKnow;
+  String get skipCantNow;
+  String get skipPain;
+
   // ── Routine status ───────────────────────────────────────────────────────
   String get statusCompleted;
   String get statusToday;

@@ -3,7 +3,10 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/widgets/app_bottom_nav_widget.dart';
 import '../../../../shared/widgets/loading_widget.dart';
 import '../../../../shared/widgets/error_message_widget.dart';
+import '../../../routines/models/routine_model.dart' as rm;
+import '../../../routines/presentation/screens/routine_detail_screen.dart';
 import '../../../routines/presentation/screens/routines_list_screen.dart';
+import '../../../routines/services/routine_service.dart';
 import '../../../../shared/widgets/countdown_ring_widget.dart';
 import '../../models/dashboard_model.dart';
 import '../../services/dashboard_service.dart';
@@ -33,9 +36,11 @@ class _WelcomeIniScreenState extends State<WelcomeIniScreen> {
   String? _errorMessage;
   DashboardModel? _dashboard;
   UserModel? _user;
+  rm.RoutineModel? _todayRoutine;
 
   final DashboardService _dashboardService = DashboardService();
   final UserService _userService = UserService();
+  final RoutineService _routineService = RoutineService();
 
   String get _displayName => _user?.userName ?? widget.userName;
 
@@ -77,13 +82,20 @@ class _WelcomeIniScreenState extends State<WelcomeIniScreen> {
       _errorMessage = null;
     });
     try {
-      final results = await Future.wait([
-        _dashboardService.getDashboardData(),
-        _userService.getUser(),
-      ]);
+      final dashFuture = _dashboardService.getDashboardData();
+      final userFuture = _userService.getUser();
+      final routinesFuture = _routineService.getWeeklyRoutines();
+      final dash = await dashFuture;
+      final user = await userFuture;
+      final routines = await routinesFuture;
+      final todayWeekday = DateTime.now().weekday;
       setState(() {
-        _dashboard = results[0] as DashboardModel;
-        _user = results[1] as UserModel;
+        _dashboard = dash;
+        _user = user;
+        _todayRoutine = routines.cast<rm.RoutineModel?>().firstWhere(
+              (r) => r!.weekday == todayWeekday,
+              orElse: () => null,
+            );
       });
     } catch (_) {
       setState(() => _errorMessage = LocaleManager.strings.errorLoadingInfo);
@@ -267,8 +279,11 @@ class _WelcomeIniScreenState extends State<WelcomeIniScreen> {
               SizedBox(height: wide ? 40 : 32),
               _buildProgressRing(dash, wide),
               SizedBox(height: wide ? 40 : 28),
-              if (dash.nextSession != null)
+              _buildTodayRoutineCard(),
+              if (dash.nextSession != null) ...[
+                const SizedBox(height: 16),
                 _buildNextSessionCard(dash.nextSession!, wide),
+              ],
               if (dash.reminder != null) ...[
                 const SizedBox(height: 16),
                 _buildReminderCard(dash.reminder!),
@@ -332,6 +347,106 @@ class _WelcomeIniScreenState extends State<WelcomeIniScreen> {
               ),
             ],
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTodayRoutineCard() {
+    final routine = _todayRoutine;
+    if (routine == null) return const SizedBox.shrink();
+
+    final isCompleted = routine.status == rm.RoutineStatus.completed;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.card,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: isCompleted
+              ? Colors.greenAccent.withValues(alpha: 0.4)
+              : AppColors.primary.withValues(alpha: 0.4),
+        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: isCompleted
+                  ? Colors.greenAccent.withValues(alpha: 0.12)
+                  : AppColors.primary.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(
+              isCompleted ? Icons.check_rounded : Icons.fitness_center_rounded,
+              color: isCompleted ? Colors.greenAccent : AppColors.primary,
+              size: 22,
+            ),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  isCompleted
+                      ? LocaleManager.strings.sessionCompleted
+                      : LocaleManager.strings.todaySession,
+                  style: TextStyle(
+                    color: isCompleted ? Colors.greenAccent : AppColors.primary,
+                    fontSize: 10,
+                    letterSpacing: 2,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  routine.title.toUpperCase(),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  '${routine.minutes} MIN · ${routine.difficulty}',
+                  style: const TextStyle(
+                    color: AppColors.textSecondary,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          if (!isCompleted)
+            GestureDetector(
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => RoutineDetailScreen(routineId: routine.id),
+                ),
+              ),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                decoration: BoxDecoration(
+                  color: AppColors.primary,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  LocaleManager.strings.startSession,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 1,
+                  ),
+                ),
+              ),
+            ),
         ],
       ),
     );

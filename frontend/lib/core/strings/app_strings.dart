@@ -86,6 +86,11 @@ abstract class AppStrings {
   String get faq4Question;
   String get faq4Answer;
 
+  // ── Today's session ──────────────────────────────────────────────────────
+  String get todaySession;
+  String get sessionCompleted;
+  String get noSessionToday;
+
   // ── Exercise ─────────────────────────────────────────────────────────────
   String exerciseSubtitleSeries(int series, int reps);
   String exerciseSubtitleMinutes(int minutes);

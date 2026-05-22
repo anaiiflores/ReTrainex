@@ -173,6 +173,13 @@ class AppStringsEn implements AppStrings {
       'Go to Settings → Notifications → Schedule and select your preferred time.';
 
   @override
+  String get todaySession => 'TODAY\'S SESSION';
+  @override
+  String get sessionCompleted => 'SESSION COMPLETED';
+  @override
+  String get noSessionToday => 'No session scheduled today';
+
+  @override
   String exerciseSubtitleSeries(int series, int reps) =>
       '$series SETS  x  $reps REPS';
   @override

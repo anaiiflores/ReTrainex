@@ -175,6 +175,13 @@ class AppStringsEs implements AppStrings {
       'Ve a Ajustes → Notificaciones → Horario y selecciona la hora que prefieras.';
 
   @override
+  String get todaySession => 'SESIÓN DE HOY';
+  @override
+  String get sessionCompleted => 'SESIÓN COMPLETADA';
+  @override
+  String get noSessionToday => 'Sin sesión programada hoy';
+
+  @override
   String exerciseSubtitleSeries(int series, int reps) =>
       '$series SERIES  x  $reps REPS';
   @override

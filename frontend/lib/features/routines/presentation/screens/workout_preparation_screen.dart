@@ -1,16 +1,19 @@
-import 'dart:async';
+import 'dart:async'; // Timer — necesario para la cuenta atrás
 import 'package:flutter/material.dart';
 import '../../../../core/strings/locale_manager.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/widgets/app_bottom_nav_widget.dart';
 import '../../../exercises/models/exercise_detail_model.dart';
 import '../../services/workout_session_service.dart';
-import '../../../../shared/widgets/countdown_ring_widget.dart';
-import '../../../../shared/widgets/workout_controls_widget.dart';
-import 'workout_exercise_screen.dart';
+import '../../../../shared/widgets/countdown_ring_widget.dart';   // Anillo de cuenta atrás
+import '../../../../shared/widgets/workout_controls_widget.dart'; // Botón de skip
+import 'workout_exercise_screen.dart'; // Destino cuando termina la preparación
 
+/// Pantalla de preparación antes de iniciar un ejercicio.
+/// Muestra el nombre del próximo ejercicio y una cuenta atrás de 8 segundos (configurable).
+/// Cuando la cuenta llega a cero (o el usuario pulsa skip) navega al ejercicio.
 class WorkoutPreparationScreen extends StatefulWidget {
-  /// Lista completa de ejercicios de la sesión.
+  /// Lista completa de ejercicios de la sesión — se pasa íntegra al siguiente paso.
   final List<ExerciseModel> exercises;
 
   /// Índice del ejercicio para el que el paciente se prepara (base 0).
@@ -23,7 +26,7 @@ class WorkoutPreparationScreen extends StatefulWidget {
     super.key,
     required this.exercises,
     required this.currentIndex,
-    this.preparationSeconds = 8,
+    this.preparationSeconds = 8, // 8 segundos es el tiempo estándar de preparación
   });
 
   @override
@@ -33,58 +36,64 @@ class WorkoutPreparationScreen extends StatefulWidget {
 
 class _WorkoutPreparationScreenState extends State<WorkoutPreparationScreen> {
   // ── Estado ────────────────────────────────────────────────────────────────
-  late int _secondsRemaining;
-  Timer? _timer;
+  late int _secondsRemaining; // Segundos que quedan en la cuenta atrás
+  Timer? _timer;              // Timer periódico — se cancela en dispose para evitar memory leaks
 
   final WorkoutSessionService _sessionService = WorkoutSessionService();
 
+  /// El ejercicio para el que el usuario se está preparando.
   ExerciseModel get _exercise => widget.exercises[widget.currentIndex];
 
   @override
   void initState() {
     super.initState();
-    _secondsRemaining = widget.preparationSeconds;
-    _startCountdown();
+    _secondsRemaining = widget.preparationSeconds; // Inicializa con el tiempo configurado
+    _startCountdown(); // Arranca la cuenta atrás inmediatamente
   }
 
   @override
   void dispose() {
-    _timer?.cancel();
+    _timer?.cancel(); // Cancela el timer al destruir el widget para evitar memory leaks
     super.dispose();
   }
 
   // ── Lógica del temporizador ───────────────────────────────────────────────
 
+  /// Inicia el Timer periódico de 1 segundo.
   void _startCountdown() {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (!mounted) {
-        timer.cancel();
+        timer.cancel(); // El widget se desmontó → cancela para no llamar a setState
         return;
       }
       if (_secondsRemaining <= 1) {
-        timer.cancel();
-        _onCountdownComplete();
+        timer.cancel();          // Para el timer
+        _onCountdownComplete();  // Navega al ejercicio
       } else {
-        setState(() => _secondsRemaining--);
+        setState(() => _secondsRemaining--); // Decrementa y reconstruye el anillo
       }
     });
   }
 
+  /// Llamado cuando la cuenta atrás llega a cero (o el usuario omite la preparación).
   void _onCountdownComplete() {
-    _sessionService.onPreparationComplete(_exercise.id);
-    if (!mounted) return;
+    _sessionService.onPreparationComplete(_exercise.id); // Notifica al servicio
+    if (!mounted) return; // Verifica que el widget sigue montado antes de navegar
+    // `pushReplacement` sustituye esta pantalla por la del ejercicio
+    // (no se puede volver a la preparación con el botón de atrás)
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
         builder: (_) => WorkoutExerciseScreen(
-          exercises: widget.exercises,
-          currentIndex: widget.currentIndex,
+          exercises: widget.exercises,  // Pasa la lista completa al ejercicio
+          currentIndex: widget.currentIndex, // Mismo índice
         ),
       ),
     );
   }
 
+  /// Salta la cuenta atrás y pasa directamente al ejercicio.
   void _skipPreparation() {
-    _timer?.cancel();
+    _timer?.cancel(); // Para el timer antes de navegar
     _onCountdownComplete();
   }
 
@@ -92,6 +101,7 @@ class _WorkoutPreparationScreenState extends State<WorkoutPreparationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Fracción 0.0–1.0 para el anillo: empieza lleno (1.0) y se vacía hasta 0.0
     final progress = _secondsRemaining / widget.preparationSeconds;
 
     return Scaffold(
@@ -100,8 +110,8 @@ class _WorkoutPreparationScreenState extends State<WorkoutPreparationScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            Expanded(child: _buildContent(progress)),
-            _buildSkipButton(),
+            Expanded(child: _buildContent(progress)), // Nombre + anillo de cuenta atrás
+            _buildSkipButton(),                        // Botón para saltar la preparación
             const SizedBox(height: 24),
           ],
         ),
@@ -110,8 +120,8 @@ class _WorkoutPreparationScreenState extends State<WorkoutPreparationScreen> {
         currentIndex: 1,
         onTap: (i) {
           if (i != 1) {
-            _timer?.cancel();
-            Navigator.of(context).popUntil((route) => route.isFirst);
+            _timer?.cancel(); // Para el timer antes de abandonar la pantalla
+            Navigator.of(context).popUntil((route) => route.isFirst); // Vuelve al inicio
           }
         },
       ),
@@ -127,16 +137,16 @@ class _WorkoutPreparationScreenState extends State<WorkoutPreparationScreen> {
       centerTitle: true,
       leading: IconButton(
         icon: const Icon(Icons.close_rounded, color: Colors.white, size: 24),
-        tooltip: LocaleManager.strings.prepExit,
+        tooltip: LocaleManager.strings.prepExit, // "Salir de la sesión"
         onPressed: () {
-          _timer?.cancel();
+          _timer?.cancel(); // Cancela el timer antes de volver
           Navigator.of(context).pop();
         },
       ),
       title: Text(
-        LocaleManager.strings.prepAppBar,
+        LocaleManager.strings.prepAppBar, // "PREPARACIÓN"
         style: const TextStyle(
-          color: AppColors.secondary,
+          color: AppColors.secondary, // Verde — estado de preparación activa
           fontSize: 14,
           fontWeight: FontWeight.w700,
           letterSpacing: 1.5,
@@ -147,6 +157,7 @@ class _WorkoutPreparationScreenState extends State<WorkoutPreparationScreen> {
 
   // ── Contenido central ─────────────────────────────────────────────────────
 
+  /// Nombre del próximo ejercicio + anillo de cuenta atrás con segundos.
   Widget _buildContent(double progress) {
     final isWide = MediaQuery.of(context).size.width >= 600;
     final double circleSize = isWide ? 260 : 200;
@@ -160,7 +171,7 @@ class _WorkoutPreparationScreenState extends State<WorkoutPreparationScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              LocaleManager.strings.restNextExercise,
+              LocaleManager.strings.restNextExercise, // "PRÓXIMO EJERCICIO"
               style: const TextStyle(
                 color: AppColors.textSecondary,
                 fontSize: 12,
@@ -172,7 +183,7 @@ class _WorkoutPreparationScreenState extends State<WorkoutPreparationScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 40),
               child: Text(
-                _exercise.name.toUpperCase(),
+                _exercise.name.toUpperCase(), // Nombre en mayúsculas
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.white,
@@ -184,6 +195,7 @@ class _WorkoutPreparationScreenState extends State<WorkoutPreparationScreen> {
               ),
             ),
             SizedBox(height: isWide ? 64 : 48),
+            // Anillo con el número de segundos restantes en el centro
             SizedBox(
               width: circleSize,
               height: circleSize,
@@ -195,7 +207,7 @@ class _WorkoutPreparationScreenState extends State<WorkoutPreparationScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        '$_secondsRemaining',
+                        '$_secondsRemaining', // Número grande en el centro del anillo
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: countdownFontSize,
@@ -205,7 +217,7 @@ class _WorkoutPreparationScreenState extends State<WorkoutPreparationScreen> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        LocaleManager.strings.prepGetReady,
+                        LocaleManager.strings.prepGetReady, // "PREPÁRATE"
                         style: const TextStyle(
                           color: AppColors.textSecondary,
                           fontSize: 12,
@@ -226,13 +238,14 @@ class _WorkoutPreparationScreenState extends State<WorkoutPreparationScreen> {
 
   // ── Botón omitir ──────────────────────────────────────────────────────────
 
+  /// Botón de skip — pasa directamente al ejercicio sin esperar la cuenta atrás.
   Widget _buildSkipButton() {
     return Center(
       child: WorkoutControlButton(
         icon: Icons.skip_next_rounded,
-        color: AppColors.textSecondary,
+        color: AppColors.textSecondary, // Gris — acción secundaria, no la principal
         onTap: _skipPreparation,
-        tooltip: LocaleManager.strings.prepSkip,
+        tooltip: LocaleManager.strings.prepSkip, // "Saltar preparación"
       ),
     );
   }

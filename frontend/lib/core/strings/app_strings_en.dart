@@ -1,8 +1,12 @@
-import 'app_strings.dart';
+import 'app_strings.dart'; // Importa el contrato abstracto que esta clase debe cumplir
 
+/// Implementación inglesa de todos los textos de la app.
+/// Estructura idéntica a AppStringsEs — mismas secciones, distinto idioma.
+/// Ver AppStringsEs para comentarios sobre el propósito de cada clave.
 class AppStringsEn implements AppStrings {
   const AppStringsEn();
 
+  // ── Nav ───────────────────────────────────────────────────────────────────
   @override
   String get navHome => 'HOME';
   @override
@@ -12,6 +16,7 @@ class AppStringsEn implements AppStrings {
   @override
   String get navSettings => 'SETTINGS';
 
+  // ── General ───────────────────────────────────────────────────────────────
   @override
   String get appName => 'RETRAINEX';
   @override
@@ -21,6 +26,7 @@ class AppStringsEn implements AppStrings {
   @override
   String get errorLoadingNotifications => 'Could not load notifications';
 
+  // ── Dashboard ─────────────────────────────────────────────────────────────
   @override
   String greeting(String name) => 'Hello, $name!';
   @override
@@ -49,6 +55,7 @@ class AppStringsEn implements AppStrings {
   String get noNotificationsYet =>
       'YOU HAVE NOT RECEIVED ANY NOTIFICATIONS YET';
 
+  // ── Notifications ─────────────────────────────────────────────────────────
   @override
   String get notifications => 'Notifications';
   @override
@@ -60,6 +67,7 @@ class AppStringsEn implements AppStrings {
   @override
   String get open => 'Open →';
 
+  // ── Schedule ──────────────────────────────────────────────────────────────
   @override
   String get planYourSuccess => 'Plan your success';
   @override
@@ -85,29 +93,21 @@ class AppStringsEn implements AppStrings {
   @override
   String get sunday => 'SUN';
 
+  // ── Progress / Calendar ───────────────────────────────────────────────────
   @override
   String get noSessionsScheduled => 'No sessions scheduled';
   @override
   List<String> get monthNames => [
-        'January',
-        'February',
-        'March',
-        'April',
-        'May',
-        'June',
-        'July',
-        'August',
-        'September',
-        'October',
-        'November',
-        'December',
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December',
       ];
   @override
-  List<String> get weekDayShort => ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+  List<String> get weekDayShort => ['M', 'T', 'W', 'T', 'F', 'S', 'S']; // Iniciales en inglés
   @override
   List<String> get weekDayMedium =>
       ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
 
+  // ── Form ──────────────────────────────────────────────────────────────────
   @override
   String get formPlanTitle => 'Plan your success';
   @override
@@ -119,6 +119,7 @@ class AppStringsEn implements AppStrings {
   @override
   String get formStart => 'START';
 
+  // ── Settings ──────────────────────────────────────────────────────────────
   @override
   String get settingsNotifications => 'Notifications';
   @override
@@ -138,7 +139,7 @@ class AppStringsEn implements AppStrings {
   @override
   String get settingsLanguage => 'Language';
   @override
-  String get settingsLanguageValue => 'English';
+  String get settingsLanguageValue => 'English'; // Valor actual cuando el idioma es inglés
   @override
   String get settingsVersion => 'Version 1.0.0';
   @override
@@ -172,15 +173,17 @@ class AppStringsEn implements AppStrings {
   String get faq4Answer =>
       'Go to Settings → Notifications → Schedule and select your preferred time.';
 
+  // ── Skip reason sheet ────────────────────────────────────────────────────
   @override
   String get skipQuestion => 'WHY ARE YOU SKIPPING THIS EXERCISE?';
   @override
-  String get skipDontKnow => 'I don\'t know how to do it';
+  String get skipDontKnow => 'I don\'t know how to do it'; // Escape de comilla simple con \'
   @override
   String get skipCantNow => 'I can\'t do it right now';
   @override
   String get skipPain => 'It hurts';
 
+  // ── Routine status ───────────────────────────────────────────────────────
   @override
   String get statusCompleted => 'COMPLETED';
   @override
@@ -188,6 +191,7 @@ class AppStringsEn implements AppStrings {
   @override
   String get statusUpcoming => 'UPCOMING';
 
+  // ── Weekly progress card ─────────────────────────────────────────────────
   @override
   String get weeklyProgress => 'WEEKLY PROGRESS';
   @override
@@ -200,6 +204,7 @@ class AppStringsEn implements AppStrings {
   String progressSessions(int completed, int total) =>
       '$completed of $total sessions completed';
 
+  // ── Today's session ──────────────────────────────────────────────────────
   @override
   String get todaySession => 'TODAY\'S SESSION';
   @override
@@ -207,11 +212,14 @@ class AppStringsEn implements AppStrings {
   @override
   String get noSessionToday => 'No session scheduled today';
 
+  // ── Exercise subtitles ────────────────────────────────────────────────────
   @override
   String exerciseSubtitleSeries(int series, int reps) =>
-      '$series SETS  x  $reps REPS';
+      '$series SETS  x  $reps REPS'; // "SETS" en inglés en lugar de "SERIES"
   @override
   String exerciseSubtitleMinutes(int minutes) => '$minutes MINUTES';
+
+  // ── Workout preparation ───────────────────────────────────────────────────
   @override
   String get prepAppBar => 'WORKOUT IN PROGRESS';
   @override
@@ -221,22 +229,27 @@ class AppStringsEn implements AppStrings {
   @override
   String get prepSkip => 'Skip preparation';
 
+  // ── Register ──────────────────────────────────────────────────────────────
   @override
   String get registerTitle => 'Register';
   @override
   String get registerPlaceholder => 'Registration screen';
 
+  // ── Settings dev ──────────────────────────────────────────────────────────
   @override
   String get settingsDevTestTitle => 'Form test';
   @override
   String get settingsDevTestSub => 'Day selector test';
 
+  // ── Video area ────────────────────────────────────────────────────────────
   @override
   String get videoComingSoon => 'VIDEO COMING SOON';
 
+  // ── Error widget ──────────────────────────────────────────────────────────
   @override
   String get errorRetry => 'Retry';
 
+  // ── Workout controls ─────────────────────────────────────────────────────
   @override
   String get controlsSkipExercise => 'SKIP EXERCISE';
   @override
@@ -246,6 +259,7 @@ class AppStringsEn implements AppStrings {
   @override
   String get controlsPause => 'Pause';
 
+  // ── Exercise screen labels ────────────────────────────────────────────────
   @override
   String get exerciseCurrentLabel => 'CURRENT EXERCISE';
   @override
@@ -261,6 +275,7 @@ class AppStringsEn implements AppStrings {
   @override
   String get exerciseProgressLabel => 'PROGRESS';
 
+  // ── Routine detail ───────────────────────────────────────────────────────
   @override
   String get routineDetailTitle => 'SESSION DETAILS';
   @override
@@ -278,6 +293,7 @@ class AppStringsEn implements AppStrings {
   @override
   String get startSession => 'START';
 
+  // ── Clinical evaluation ───────────────────────────────────────────────────
   @override
   String get clinicalEvalTitle => 'CLINICAL EVALUATION';
   @override
@@ -317,6 +333,7 @@ class AppStringsEn implements AppStrings {
   @override
   String get clinicalNotesHint => 'Write any other details here...';
 
+  // ── User / Profile ────────────────────────────────────────────────────────
   @override
   String get userAssignedRoutine => 'Assigned routine';
   @override
@@ -332,12 +349,13 @@ class AppStringsEn implements AppStrings {
   @override
   String get userHeight => 'Height';
 
+  // ── Workout rest ─────────────────────────────────────────────────────────
   @override
   String get restAppBar => 'RECOVERY PHASE';
   @override
   String get restSessionLabel => 'RETRAINEX SESSION';
   @override
-  String get restTitle => 'REST\nTIME';
+  String get restTitle => 'REST\nTIME'; // '\n' fuerza salto de línea en el título
   @override
   String get restSeconds => 'SECONDS';
   @override
@@ -349,6 +367,7 @@ class AppStringsEn implements AppStrings {
   @override
   String get restNextExercise => 'NEXT EXERCISE';
 
+  // ── Session paused ────────────────────────────────────────────────────────
   @override
   String get sessionPausedTitle => 'EXERCISE DETAIL';
   @override
@@ -358,7 +377,7 @@ class AppStringsEn implements AppStrings {
   @override
   String sessionPausedRhythm(String rhythm) => 'RHYTHM ${rhythm.toUpperCase()}';
   @override
-  String get sessionPausedSeries => 'SETS';
+  String get sessionPausedSeries => 'SETS'; // "SETS" en inglés en lugar de "SERIES"
   @override
   String get sessionPausedReps => 'REPS';
   @override
@@ -372,6 +391,7 @@ class AppStringsEn implements AppStrings {
   String get sessionPausedTipsText =>
       'If you notice sharp pain, stop immediately. Breathe continuously during the exercise and consult your physiotherapist with any questions.';
 
+  // ── Login ─────────────────────────────────────────────────────────────────
   @override
   String get loginTitle => 'Login';
   @override
@@ -395,6 +415,7 @@ class AppStringsEn implements AppStrings {
   @override
   String get loginSuccess => 'Login successful (simulated for now)';
 
+  // ── Notification mock data ───────────────────────────────────────────────
   @override
   String get notifActionOpen => 'Open';
   @override
@@ -418,6 +439,7 @@ class AppStringsEn implements AppStrings {
   String get notifSessionCompleteBody =>
       'Congratulations! You completed your Monday session. You have a 5-day streak.';
 
+  // ── Workout complete ──────────────────────────────────────────────────────
   @override
   String get sessionCompleteAppBar => 'SESSION COMPLETE';
   @override
@@ -432,7 +454,7 @@ class AppStringsEn implements AppStrings {
   String get congratsMessage =>
       'Congratulations! You completed today\'s session. Keep it up to reach your goals.';
   @override
-  String streakDays(int days) => '$days-DAY STREAK';
+  String streakDays(int days) => '$days-DAY STREAK'; // "5-DAY STREAK" — orden distinto al español
   @override
   String get onFire => 'You\'re on fire! Don\'t stop.';
   @override
@@ -440,13 +462,15 @@ class AppStringsEn implements AppStrings {
   @override
   String get goHome => 'GO HOME';
 
+  // ── Time ago ─────────────────────────────────────────────────────────────
   @override
-  String timeAgoMinutes(int minutes) => '$minutes minutes ago';
+  String timeAgoMinutes(int minutes) => '$minutes minutes ago'; // Ej: "12 minutes ago"
   @override
   String timeAgoHours(int hours) => '$hours hours ago';
   @override
   String timeAgoDays(int days) => '$days days ago';
 
+  // ── Routines list ─────────────────────────────────────────────────────────
   @override
   String get routineListLoading => 'Loading routines...';
   @override

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/strings/locale_manager.dart';
 import '../../core/theme/app_colors.dart';
 
 class VideoAreaWidget extends StatelessWidget {
@@ -35,9 +36,9 @@ class VideoAreaWidget extends StatelessWidget {
                     color: AppColors.textSecondary.withValues(alpha: 0.4),
                     size: 48),
                 const SizedBox(height: 10),
-                const Text(
-                  'VÍDEO PRÓXIMAMENTE',
-                  style: TextStyle(
+                Text(
+                  LocaleManager.strings.videoComingSoon,
+                  style: const TextStyle(
                     color: AppColors.textSecondary,
                     fontSize: 12,
                     letterSpacing: 1.5,

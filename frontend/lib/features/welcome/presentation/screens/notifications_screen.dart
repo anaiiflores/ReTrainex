@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/strings/locale_manager.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/widgets/loading_widget.dart';
 import '../../../../shared/widgets/error_message_widget.dart';
@@ -34,7 +35,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       final result = await _service.getNotifications();
       setState(() => _notifications = result);
     } catch (_) {
-      setState(() => _errorMessage = 'No se pudieron cargar las notificaciones');
+      setState(() => _errorMessage = LocaleManager.strings.errorLoadingNotifications);
     } finally {
       setState(() => _isLoading = false);
     }
@@ -84,9 +85,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             color: Colors.white, size: 20),
         onPressed: () => Navigator.of(context).pop(),
       ),
-      title: const Text(
-        'Notificaciones',
-        style: TextStyle(
+      title: Text(
+        LocaleManager.strings.notifications,
+        style: const TextStyle(
           color: Colors.white,
           fontSize: 20,
           fontWeight: FontWeight.w700,
@@ -124,7 +125,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   Widget _buildBody(bool isWide) {
     if (_isLoading) {
-      return const LoadingWidget(message: 'Cargando notificaciones...');
+      return LoadingWidget(message: LocaleManager.strings.loading);
     }
     if (_errorMessage != null) {
       return ErrorMessageWidget(
@@ -133,10 +134,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       );
     }
     if (_notifications.isEmpty) {
-      return const Center(
+      return Center(
         child: Text(
-          'No tienes notificaciones',
-          style: TextStyle(color: AppColors.textSecondary, fontSize: 16),
+          LocaleManager.strings.noNotifications,
+          style: const TextStyle(color: AppColors.textSecondary, fontSize: 16),
         ),
       );
     }
@@ -156,7 +157,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           children: [
             if (unread.isNotEmpty) ...[
               _SectionHeader(
-                  label: 'NUEVAS (${unread.length})'),
+                  label: LocaleManager.strings.newNotifications(unread.length)),
               ...unread.map((n) => _NotificationCard(
                     notification: n,
                     onTap: () => _markAsRead(n.id),
@@ -164,7 +165,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   )),
             ],
             if (read.isNotEmpty) ...[
-              const _SectionHeader(label: 'ANTERIORES'),
+              _SectionHeader(label: LocaleManager.strings.previousNotifications),
               ...read.map((n) => _NotificationCard(
                     notification: n,
                     onTap: null,
@@ -319,7 +320,7 @@ class _NotificationCard extends StatelessWidget {
                           GestureDetector(
                             onTap: onAction,
                             child: Text(
-                              '${notification.actionLabel ?? 'Abrir'} →',
+                              '${notification.actionLabel ?? LocaleManager.strings.open} →',
                               style: const TextStyle(
                                 color: AppColors.primary,
                                 fontSize: 13,

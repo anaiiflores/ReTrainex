@@ -1,3 +1,4 @@
+import '../../../core/strings/locale_manager.dart';
 import '../models/notification_model.dart';
 
 class NotificationService {
@@ -5,38 +6,39 @@ class NotificationService {
   Future<List<NotificationModel>> getNotifications() async {
     await Future.delayed(const Duration(milliseconds: 400));
     final now = DateTime.now();
+    final s = LocaleManager.strings;
     return [
       NotificationModel(
         id: 'n1',
         type: NotificationType.message,
-        title: 'Mensaje del Dr. Pérez',
-        body: 'Hola María, he revisado tu progreso y se ve excelente. Sigue así con la constancia.',
+        title: s.notifMsgTitle,
+        body: s.notifMsgBody,
         isRead: false,
         createdAt: now.subtract(const Duration(hours: 2)),
       ),
       NotificationModel(
         id: 'n2',
         type: NotificationType.questionnaire,
-        title: 'Cuestionario WOMAC pendiente',
-        body: 'Por favor, completa el cuestionario de evaluación semanal para que tu fisioterapeuta pueda hacer seguimiento.',
+        title: s.notifQuestionnaireTitle,
+        body: s.notifQuestionnaireBody,
         isRead: false,
         hasAction: true,
-        actionLabel: 'Abrir',
+        actionLabel: s.notifActionOpen,
         createdAt: now.subtract(const Duration(hours: 5)),
       ),
       NotificationModel(
         id: 'n3',
         type: NotificationType.reminder,
-        title: 'Recordatorio de sesión',
-        body: 'Tu sesión de hoy comienza en 30 minutos. ¡Prepárate!',
+        title: s.notifReminderTitle,
+        body: s.notifReminderBody,
         isRead: true,
         createdAt: now.subtract(const Duration(hours: 6)),
       ),
       NotificationModel(
         id: 'n4',
         type: NotificationType.sessionComplete,
-        title: 'Sesión completada',
-        body: '¡Felicitaciones! Completaste tu sesión del Lunes. Llevas 5 días de racha.',
+        title: s.notifSessionCompleteTitle,
+        body: s.notifSessionCompleteBody,
         isRead: true,
         createdAt: now.subtract(const Duration(hours: 8)),
       ),

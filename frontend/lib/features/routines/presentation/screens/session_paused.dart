@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/strings/locale_manager.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/widgets/app_button_widget.dart';
 import '../../../../shared/widgets/video_area_widget.dart';
@@ -71,8 +72,8 @@ class SessionPausedScreen extends StatelessWidget {
                   const SizedBox(height: 32),
                   AppGradientButton(
                     label: fromWorkout
-                        ? 'VOLVER AL EJERCICIO'
-                        : 'INICIAR EJERCICIO',
+                        ? LocaleManager.strings.sessionPausedBack
+                        : LocaleManager.strings.sessionPausedStart,
                     onPressed: fromWorkout
                         ? () => Navigator.of(context).pop()
                         : () => _startExercise(context),
@@ -103,9 +104,9 @@ class SessionPausedScreen extends StatelessWidget {
             color: Colors.white, size: 20),
         onPressed: () => Navigator.of(context).pop(),
       ),
-      title: const Text(
-        'DETALLE DEL EJERCICIO',
-        style: TextStyle(
+      title: Text(
+        LocaleManager.strings.sessionPausedTitle,
+        style: const TextStyle(
           color: AppColors.primary,
           fontSize: 13,
           fontWeight: FontWeight.w700,
@@ -155,7 +156,7 @@ class SessionPausedScreen extends StatelessWidget {
         if (exercise.rhythm != null) ...[
           const SizedBox(height: 8),
           Text(
-            'RITMO ${exercise.rhythm!.toUpperCase()}',
+            LocaleManager.strings.sessionPausedRhythm(exercise.rhythm!),
             style: const TextStyle(
               color: AppColors.textSecondary,
               fontSize: 12,
@@ -177,7 +178,7 @@ class SessionPausedScreen extends StatelessWidget {
           child: _StatCard(
             icon: Icons.timer_rounded,
             iconColor: Colors.orangeAccent,
-            label: 'DURACIÓN',
+            label: LocaleManager.strings.statDuration,
             value: _formatDuration(exercise.effectiveDurationSeconds),
           ),
         ),
@@ -186,7 +187,7 @@ class SessionPausedScreen extends StatelessWidget {
           child: _StatCard(
             icon: Icons.repeat_rounded,
             iconColor: AppColors.primary,
-            label: 'SERIES',
+            label: LocaleManager.strings.sessionPausedSeries,
             value: exercise.series != null ? '${exercise.series}' : '—',
           ),
         ),
@@ -195,7 +196,7 @@ class SessionPausedScreen extends StatelessWidget {
           child: _StatCard(
             icon: Icons.format_list_numbered_rounded,
             iconColor: AppColors.secondary,
-            label: 'REPS',
+            label: LocaleManager.strings.sessionPausedReps,
             value: exercise.reps != null ? '${exercise.reps}' : '—',
           ),
         ),
@@ -217,10 +218,10 @@ class SessionPausedScreen extends StatelessWidget {
         child: const Icon(Icons.description_rounded,
             color: AppColors.primary, size: 22),
       ),
-      title: 'DESCRIPCIÓN',
-      content: const Text(
-        'Realiza el movimiento de forma lenta y controlada. Mantén la postura correcta durante toda la ejecución para maximizar los beneficios y evitar lesiones.',
-        style: TextStyle(
+      title: LocaleManager.strings.sessionPausedDescription,
+      content: Text(
+        LocaleManager.strings.sessionPausedDescriptionText,
+        style: const TextStyle(
           color: AppColors.textSecondary,
           fontSize: 14,
           height: 1.55,
@@ -241,10 +242,10 @@ class SessionPausedScreen extends StatelessWidget {
         child: const Icon(Icons.tips_and_updates_rounded,
             color: AppColors.secondary, size: 22),
       ),
-      title: 'CONSEJOS',
-      content: const Text(
-        'Si notas dolor agudo, detente de inmediato. Respira de forma continua durante el ejercicio y consulta con tu fisioterapeuta ante cualquier duda.',
-        style: TextStyle(
+      title: LocaleManager.strings.sessionPausedTips,
+      content: Text(
+        LocaleManager.strings.sessionPausedTipsText,
+        style: const TextStyle(
           color: AppColors.textSecondary,
           fontSize: 14,
           height: 1.55,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/strings/locale_manager.dart';
 import '../../../../shared/widgets/loading_widget.dart';
 import '../../../../shared/widgets/error_message_widget.dart';
 import '../../models/routine_model.dart';
@@ -49,7 +50,7 @@ class _RoutinesListScreenState extends State<RoutinesListScreen> {
         _todaySession = today;
       });
     } catch (_) {
-      setState(() => _errorMessage = 'No se pudieron cargar las rutinas');
+      setState(() => _errorMessage = LocaleManager.strings.routineListError);
     } finally {
       setState(() => _isLoading = false);
     }
@@ -71,7 +72,7 @@ class _RoutinesListScreenState extends State<RoutinesListScreen> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const LoadingWidget(message: 'Cargando rutinas...');
+      return LoadingWidget(message: LocaleManager.strings.routineListLoading);
     }
 
     if (_errorMessage != null) {

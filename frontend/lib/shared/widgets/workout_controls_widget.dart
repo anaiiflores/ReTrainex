@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/strings/locale_manager.dart';
 import '../../core/theme/app_colors.dart';
 
 /// Fila de botones circulares (pausa/play + parar) y enlace de omitir.
@@ -8,7 +9,8 @@ class WorkoutControlsWidget extends StatelessWidget {
   final VoidCallback onPause;
   final VoidCallback onStop;
   final VoidCallback? onSkip;
-  final String skipLabel;
+  /// Si es null se usa la cadena localizada por defecto.
+  final String? skipLabel;
   /// Cuando es true el botón de pausa/play se reemplaza por "siguiente ejercicio".
   final bool nextMode;
 
@@ -18,12 +20,13 @@ class WorkoutControlsWidget extends StatelessWidget {
     required this.onPause,
     required this.onStop,
     this.onSkip,
-    this.skipLabel = 'OMITIR EJERCICIO',
+    this.skipLabel,
     this.nextMode = false,
   });
 
   @override
   Widget build(BuildContext context) {
+    final s = LocaleManager.strings;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -34,15 +37,15 @@ class WorkoutControlsWidget extends StatelessWidget {
           color: AppColors.primary,
           onTap: onPause,
           tooltip: nextMode
-              ? 'Siguiente ejercicio'
-              : (isPaused ? 'Continuar' : 'Pausar'),
+              ? s.controlsNextExercise
+              : (isPaused ? s.controlsResume : s.controlsPause),
         ),
         const SizedBox(width: 28),
         WorkoutControlButton(
           icon: Icons.stop_rounded,
           color: Colors.redAccent,
           onTap: onStop,
-          tooltip: 'Detener sesión',
+          tooltip: s.restStopSession,
         ),
         if (onSkip != null) ...[
           const SizedBox(width: 28),
@@ -50,7 +53,7 @@ class WorkoutControlsWidget extends StatelessWidget {
             icon: Icons.skip_next_rounded,
             color: AppColors.textSecondary,
             onTap: onSkip!,
-            tooltip: skipLabel,
+            tooltip: skipLabel ?? s.controlsSkipExercise,
           ),
         ],
       ],

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import '../../../../core/strings/locale_manager.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/widgets/app_bottom_nav_widget.dart';
 import '../../../../shared/widgets/video_area_widget.dart';
@@ -262,9 +263,9 @@ class _WorkoutExerciseScreenState extends State<WorkoutExerciseScreen> {
         },
       ),
       centerTitle: true,
-      title: const Text(
-        'RETRAINEX',
-        style: TextStyle(
+      title: Text(
+        LocaleManager.strings.appName,
+        style: const TextStyle(
           color: AppColors.secondary,
           fontSize: 18,
           fontWeight: FontWeight.w800,
@@ -279,9 +280,9 @@ class _WorkoutExerciseScreenState extends State<WorkoutExerciseScreen> {
   Widget _buildExerciseHeader() {
     return Column(
       children: [
-        const Text(
-          'EJERCICIO ACTUAL',
-          style: TextStyle(
+        Text(
+          LocaleManager.strings.exerciseCurrentLabel,
+          style: const TextStyle(
             color: AppColors.textSecondary,
             fontSize: 11,
             letterSpacing: 2.5,
@@ -313,11 +314,11 @@ class _WorkoutExerciseScreenState extends State<WorkoutExerciseScreen> {
   Widget _buildVideoTags() {
     return Row(
       children: [
-        _Tag(label: 'VIDEO HD', color: const Color.fromARGB(139, 149, 88, 203)),
+        _Tag(label: LocaleManager.strings.exerciseVideoHd, color: const Color.fromARGB(139, 149, 88, 203)),
         const SizedBox(width: 8),
-        _Tag(label: _exercise.angle ?? 'FRONTAL', color: AppColors.secondary),
+        _Tag(label: _exercise.angle ?? LocaleManager.strings.exerciseFrontal, color: AppColors.secondary),
         const SizedBox(width: 8),
-        _Tag(label: 'DETALLES', color: AppColors.primary, onTap: _openDetails),
+        _Tag(label: LocaleManager.strings.exerciseDetails, color: AppColors.primary, onTap: _openDetails),
       ],
     );
   }
@@ -350,7 +351,9 @@ class _WorkoutExerciseScreenState extends State<WorkoutExerciseScreen> {
               ),
               const SizedBox(height: 4),
               Text(
-                _isTimeless ? 'SIN LÍMITE' : 'SEGUNDOS',
+                _isTimeless
+                    ? LocaleManager.strings.exerciseNoLimit
+                    : LocaleManager.strings.restSeconds,
                 style: const TextStyle(
                   color: AppColors.textSecondary,
                   fontSize: 11,
@@ -375,7 +378,7 @@ class _WorkoutExerciseScreenState extends State<WorkoutExerciseScreen> {
       children: [
         Expanded(
           child: _StatCard(
-            label: 'RITMO',
+            label: LocaleManager.strings.exerciseRhythmLabel,
             value: rhythm,
             valueColor: AppColors.secondary,
           ),
@@ -383,7 +386,7 @@ class _WorkoutExerciseScreenState extends State<WorkoutExerciseScreen> {
         const SizedBox(width: 12),
         Expanded(
           child: _StatCard(
-            label: 'PROGRESO',
+            label: LocaleManager.strings.exerciseProgressLabel,
             value: progressLabel,
             valueColor: Colors.white,
           ),

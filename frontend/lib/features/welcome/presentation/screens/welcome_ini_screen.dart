@@ -636,7 +636,7 @@ class _WelcomeIniScreenState extends State<WelcomeIniScreen> {
   }
 
   Widget _buildAssignmentCard() {
-    final title = _dashboard!.assignmentTitle ?? 'Nueva asignación';
+    final title = _dashboard!.assignmentTitle ?? LocaleManager.strings.newAssignment;
     final physio = _user?.physioName ?? _dashboard!.physioName ?? '';
 
     return GestureDetector(

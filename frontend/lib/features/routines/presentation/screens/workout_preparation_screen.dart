@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import '../../../../core/strings/locale_manager.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/widgets/app_bottom_nav_widget.dart';
 import '../../../exercises/models/exercise_detail_model.dart';
@@ -126,15 +127,15 @@ class _WorkoutPreparationScreenState extends State<WorkoutPreparationScreen> {
       centerTitle: true,
       leading: IconButton(
         icon: const Icon(Icons.close_rounded, color: Colors.white, size: 24),
-        tooltip: 'Salir',
+        tooltip: LocaleManager.strings.prepExit,
         onPressed: () {
           _timer?.cancel();
           Navigator.of(context).pop();
         },
       ),
-      title: const Text(
-        'WORKOUT IN PROGRESS',
-        style: TextStyle(
+      title: Text(
+        LocaleManager.strings.prepAppBar,
+        style: const TextStyle(
           color: AppColors.secondary,
           fontSize: 14,
           fontWeight: FontWeight.w700,
@@ -158,9 +159,9 @@ class _WorkoutPreparationScreenState extends State<WorkoutPreparationScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text(
-              'PRÓXIMO EJERCICIO',
-              style: TextStyle(
+            Text(
+              LocaleManager.strings.restNextExercise,
+              style: const TextStyle(
                 color: AppColors.textSecondary,
                 fontSize: 12,
                 letterSpacing: 2.5,
@@ -203,9 +204,9 @@ class _WorkoutPreparationScreenState extends State<WorkoutPreparationScreen> {
                         ),
                       ),
                       const SizedBox(height: 4),
-                      const Text(
-                        'PREPÁRATE',
-                        style: TextStyle(
+                      Text(
+                        LocaleManager.strings.prepGetReady,
+                        style: const TextStyle(
                           color: AppColors.textSecondary,
                           fontSize: 12,
                           letterSpacing: 2,
@@ -231,7 +232,7 @@ class _WorkoutPreparationScreenState extends State<WorkoutPreparationScreen> {
         icon: Icons.skip_next_rounded,
         color: AppColors.textSecondary,
         onTap: _skipPreparation,
-        tooltip: 'Omitir preparación',
+        tooltip: LocaleManager.strings.prepSkip,
       ),
     );
   }

@@ -88,14 +88,14 @@ class _UserScreenState extends State<UserScreen> {
               if (user.routine != null) ...[
                 const SizedBox(height: 28),
                 _buildSectionLabel(Icons.fitness_center_rounded,
-                    _label('Rutina asignada', 'Assigned routine')),
+                    s.userAssignedRoutine),
                 const SizedBox(height: 10),
                 _buildRoutineCard(user),
               ],
               if (user.physioName != null) ...[
                 const SizedBox(height: 28),
                 _buildSectionLabel(Icons.medical_services_rounded,
-                    _label('Fisioterapeuta', 'Physiotherapist')),
+                    s.userPhysiotherapist),
                 const SizedBox(height: 10),
                 _buildPhysioCard('Dr. ${user.physioName!}'),
               ],
@@ -178,7 +178,8 @@ class _UserScreenState extends State<UserScreen> {
   // ── Datos personales ──────────────────────────────────────────────────────
 
   Widget _buildPersonalDataCard(UserModel user) {
-    final noData = _label('No especificado', 'Not specified');
+    final s = LocaleManager.strings;
+    final noData = s.userNotSpecified;
     return Container(
       decoration: BoxDecoration(
         color: AppColors.card,
@@ -190,10 +191,8 @@ class _UserScreenState extends State<UserScreen> {
           _DataRow(
             icon: Icons.cake_rounded,
             iconColor: AppColors.secondary,
-            label: _label('Edad', 'Age'),
-            value: user.age != null
-                ? '${user.age} ${_label("años", "years")}'
-                : noData,
+            label: s.userAge,
+            value: user.age != null ? '${user.age} ${s.userYears}' : noData,
           ),
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
@@ -202,7 +201,7 @@ class _UserScreenState extends State<UserScreen> {
           _DataRow(
             icon: Icons.monitor_weight_rounded,
             iconColor: AppColors.primary,
-            label: _label('Peso', 'Weight'),
+            label: s.userWeight,
             value: user.weight != null ? '${user.weight} kg' : noData,
           ),
           const Padding(
@@ -212,7 +211,7 @@ class _UserScreenState extends State<UserScreen> {
           _DataRow(
             icon: Icons.height_rounded,
             iconColor: AppColors.secondary,
-            label: _label('Altura', 'Height'),
+            label: s.userHeight,
             value: user.height != null
                 ? '${user.height!.toStringAsFixed(0)} cm'
                 : noData,
@@ -333,8 +332,6 @@ class _UserScreenState extends State<UserScreen> {
     );
   }
 
-  String _label(String es, String en) =>
-      LocaleManager.current == AppLocale.es ? es : en;
 }
 
 // ── Data row ──────────────────────────────────────────────────────────────────

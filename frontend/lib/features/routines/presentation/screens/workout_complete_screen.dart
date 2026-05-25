@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/strings/locale_manager.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/widgets/app_bottom_nav_widget.dart';
 import '../../../../shared/widgets/app_button_widget.dart';
@@ -99,9 +100,9 @@ class _WorkoutCompleteScreenState extends State<WorkoutCompleteScreen> {
         padding: EdgeInsets.only(left: 12),
         child: Icon(Icons.flag_rounded, color: AppColors.secondary, size: 24),
       ),
-      title: const Text(
-        'SESSION COMPLETE',
-        style: TextStyle(
+      title: Text(
+        LocaleManager.strings.sessionCompleteAppBar,
+        style: const TextStyle(
           color: AppColors.secondary,
           fontSize: 14,
           fontWeight: FontWeight.w700,
@@ -150,7 +151,7 @@ class _WorkoutCompleteScreenState extends State<WorkoutCompleteScreen> {
     return Column(
       children: [
         Text(
-          '¡EXCELENTE!',
+          LocaleManager.strings.excellent,
           style: TextStyle(
             color: Colors.white,
             fontSize: isWide ? 46 : 38,
@@ -160,9 +161,9 @@ class _WorkoutCompleteScreenState extends State<WorkoutCompleteScreen> {
           ),
         ),
         const SizedBox(height: 8),
-        const Text(
-          'DÍA COMPLETADO',
-          style: TextStyle(
+        Text(
+          LocaleManager.strings.dayCompleted,
+          style: const TextStyle(
             color: AppColors.textSecondary,
             fontSize: 13,
             letterSpacing: 2.5,
@@ -183,7 +184,7 @@ class _WorkoutCompleteScreenState extends State<WorkoutCompleteScreen> {
             icon: Icons.timer_rounded,
             iconColor: Colors.orangeAccent,
             value: _formatDuration(_elapsedSeconds),
-            label: 'DURACIÓN',
+            label: LocaleManager.strings.statDuration,
           ),
         ),
         const SizedBox(width: 12),
@@ -191,7 +192,7 @@ class _WorkoutCompleteScreenState extends State<WorkoutCompleteScreen> {
           child: _StatCard(
             icon: Icons.fitness_center_rounded,
             iconColor: AppColors.primary,
-            label: 'EJERCICIOS',
+            label: LocaleManager.strings.statExercises,
             value: '${widget.exerciseCount}',
           ),
         ),
@@ -213,9 +214,9 @@ class _WorkoutCompleteScreenState extends State<WorkoutCompleteScreen> {
         child: const Icon(Icons.celebration_rounded,
             color: AppColors.primary, size: 22),
       ),
-      content: const Text(
-        '¡Felicitaciones! Has completado tu sesión de hoy. Continúa así para alcanzar tus objetivos.',
-        style: TextStyle(
+      content: Text(
+        LocaleManager.strings.congratsMessage,
+        style: const TextStyle(
           color: AppColors.textSecondary,
           fontSize: 14,
           height: 1.5,
@@ -242,7 +243,7 @@ class _WorkoutCompleteScreenState extends State<WorkoutCompleteScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'RACHA DE $_streakDays DÍAS',
+            LocaleManager.strings.streakDays(_streakDays),
             style: const TextStyle(
               color: Colors.white,
               fontSize: 16,
@@ -251,9 +252,9 @@ class _WorkoutCompleteScreenState extends State<WorkoutCompleteScreen> {
             ),
           ),
           const SizedBox(height: 4),
-          const Text(
-            '¡Estás en llamas! No te detengas.',
-            style: TextStyle(color: AppColors.textSecondary, fontSize: 13),
+          Text(
+            LocaleManager.strings.onFire,
+            style: const TextStyle(color: AppColors.textSecondary, fontSize: 13),
           ),
           const SizedBox(height: 8),
           Row(
@@ -291,9 +292,9 @@ class _WorkoutCompleteScreenState extends State<WorkoutCompleteScreen> {
       content: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'NUEVO LOGRO',
-            style: TextStyle(
+          Text(
+            LocaleManager.strings.newAchievement,
+            style: const TextStyle(
               color: AppColors.secondary,
               fontSize: 10,
               letterSpacing: 2,
@@ -318,7 +319,7 @@ class _WorkoutCompleteScreenState extends State<WorkoutCompleteScreen> {
 
   Widget _buildHomeButton() {
     return AppSolidButton(
-      label: 'VOLVER AL INICIO',
+      label: LocaleManager.strings.goHome,
       onPressed: _goHome,
       icon: Icons.home_rounded,
       height: 56,

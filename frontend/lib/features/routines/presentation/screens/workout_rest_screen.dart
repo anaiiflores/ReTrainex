@@ -152,13 +152,13 @@ class _WorkoutRestScreenState extends State<WorkoutRestScreen> {
       leading: IconButton(
         icon: const Icon(Icons.flag_rounded,
             color: AppColors.secondary, size: 24),
-        tooltip: 'Detener sesión',
+        tooltip: LocaleManager.strings.restStopSession,
         onPressed: _stopSession,
       ),
       centerTitle: true,
-      title: const Text(
-        'RECOVERY PHASE',
-        style: TextStyle(
+      title: Text(
+        LocaleManager.strings.restAppBar,
+        style: const TextStyle(
           color: AppColors.secondary,
           fontSize: 14,
           fontWeight: FontWeight.w700,
@@ -184,9 +184,9 @@ class _WorkoutRestScreenState extends State<WorkoutRestScreen> {
   Widget _buildTitle(bool isWide) {
     return Column(
       children: [
-        const Text(
-          'RETRAINEX SESSION',
-          style: TextStyle(
+        Text(
+          LocaleManager.strings.restSessionLabel,
+          style: const TextStyle(
             color: AppColors.textSecondary,
             fontSize: 11,
             letterSpacing: 2.5,
@@ -195,7 +195,7 @@ class _WorkoutRestScreenState extends State<WorkoutRestScreen> {
         ),
         const SizedBox(height: 8),
         Text(
-          'TIEMPO DE\nDESCANSO',
+          LocaleManager.strings.restTitle,
           textAlign: TextAlign.center,
           style: TextStyle(
             color: Colors.white,
@@ -239,9 +239,9 @@ class _WorkoutRestScreenState extends State<WorkoutRestScreen> {
                 ),
               ),
               const SizedBox(height: 4),
-              const Text(
-                'SEGUNDOS',
-                style: TextStyle(
+              Text(
+                LocaleManager.strings.restSeconds,
+                style: const TextStyle(
                   color: AppColors.textSecondary,
                   fontSize: 11,
                   letterSpacing: 2,
@@ -265,14 +265,14 @@ class _WorkoutRestScreenState extends State<WorkoutRestScreen> {
           icon: Icons.more_time_rounded,
           color: AppColors.secondary,
           onTap: _addTime,
-          tooltip: '+20 segundos',
+          tooltip: LocaleManager.strings.restAddTime,
         ),
         const SizedBox(width: 28),
         WorkoutControlButton(
           icon: Icons.skip_next_rounded,
           color: AppColors.textSecondary,
           onTap: _skipRest,
-          tooltip: 'Omitir descanso',
+          tooltip: LocaleManager.strings.restSkip,
         ),
       ],
     );
@@ -308,9 +308,9 @@ class _WorkoutRestScreenState extends State<WorkoutRestScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'PRÓXIMO EJERCICIO',
-                  style: TextStyle(
+                Text(
+                  LocaleManager.strings.restNextExercise,
+                  style: const TextStyle(
                     color: AppColors.textSecondary,
                     fontSize: 10,
                     letterSpacing: 2,

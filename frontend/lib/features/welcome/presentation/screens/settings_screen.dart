@@ -229,8 +229,8 @@ class _SettingsScreenState extends State<SettingsScreen>
         _SettingsTile(
           icon: Icons.developer_mode_rounded,
           iconColor: Colors.orangeAccent,
-          title: 'Test de formulario',
-          subtitle: 'Test del selector de días',
+          title: LocaleManager.strings.settingsDevTestTitle,
+          subtitle: LocaleManager.strings.settingsDevTestSub,
           onTap: () => Navigator.of(context).push(
             MaterialPageRoute(
                 builder: (_) => const _WeekDaySelectorTestScreen()),
@@ -276,9 +276,9 @@ class _SettingsScreenState extends State<SettingsScreen>
             },
           ),
           const SizedBox(height: 14),
-          const Text(
-            'ReTrainex',
-            style: TextStyle(
+          Text(
+            LocaleManager.strings.appName,
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 20,
               fontWeight: FontWeight.w900,
@@ -640,9 +640,9 @@ class _WeekDaySelectorTestScreenState
           onPressed: () => Navigator.of(context).pop(),
         ),
         centerTitle: true,
-        title: const Text(
-          'TEST DE FORMULARIO',
-          style: TextStyle(
+        title: Text(
+          LocaleManager.strings.settingsDevTestTitle.toUpperCase(),
+          style: const TextStyle(
             color: Colors.orangeAccent,
             fontSize: 14,
             fontWeight: FontWeight.w700,

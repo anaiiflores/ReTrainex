@@ -1,3 +1,5 @@
+import '../../../core/strings/locale_manager.dart';
+
 enum NotificationType { message, questionnaire, reminder, sessionComplete }
 
 class NotificationModel {
@@ -21,12 +23,13 @@ class NotificationModel {
     this.actionLabel,
   });
 
-  /// "Hace X minutos / horas / días"
+  /// "Hace X minutos / horas / días" (localizado)
   String get timeAgoText {
+    final s = LocaleManager.strings;
     final diff = DateTime.now().difference(createdAt);
-    if (diff.inMinutes < 60) return 'Hace ${diff.inMinutes} minutos';
-    if (diff.inHours < 24) return 'Hace ${diff.inHours} horas';
-    return 'Hace ${diff.inDays} días';
+    if (diff.inMinutes < 60) return s.timeAgoMinutes(diff.inMinutes);
+    if (diff.inHours < 24) return s.timeAgoHours(diff.inHours);
+    return s.timeAgoDays(diff.inDays);
   }
 
   factory NotificationModel.fromJson(Map<String, dynamic> json) {

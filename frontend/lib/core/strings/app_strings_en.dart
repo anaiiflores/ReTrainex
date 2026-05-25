@@ -212,6 +212,54 @@ class AppStringsEn implements AppStrings {
       '$series SETS  x  $reps REPS';
   @override
   String exerciseSubtitleMinutes(int minutes) => '$minutes MINUTES';
+  @override
+  String get prepAppBar => 'WORKOUT IN PROGRESS';
+  @override
+  String get prepExit => 'Exit';
+  @override
+  String get prepGetReady => 'GET READY';
+  @override
+  String get prepSkip => 'Skip preparation';
+
+  @override
+  String get registerTitle => 'Register';
+  @override
+  String get registerPlaceholder => 'Registration screen';
+
+  @override
+  String get settingsDevTestTitle => 'Form test';
+  @override
+  String get settingsDevTestSub => 'Day selector test';
+
+  @override
+  String get videoComingSoon => 'VIDEO COMING SOON';
+
+  @override
+  String get errorRetry => 'Retry';
+
+  @override
+  String get controlsSkipExercise => 'SKIP EXERCISE';
+  @override
+  String get controlsNextExercise => 'Next exercise';
+  @override
+  String get controlsResume => 'Resume';
+  @override
+  String get controlsPause => 'Pause';
+
+  @override
+  String get exerciseCurrentLabel => 'CURRENT EXERCISE';
+  @override
+  String get exerciseVideoHd => 'HD VIDEO';
+  @override
+  String get exerciseFrontal => 'FRONT';
+  @override
+  String get exerciseDetails => 'DETAILS';
+  @override
+  String get exerciseNoLimit => 'NO LIMIT';
+  @override
+  String get exerciseRhythmLabel => 'RHYTHM';
+  @override
+  String get exerciseProgressLabel => 'PROGRESS';
 
   @override
   String get routineDetailTitle => 'SESSION DETAILS';
@@ -268,4 +316,139 @@ class AppStringsEn implements AppStrings {
   String get clinicalAdditionalNotes => 'Additional notes (optional)';
   @override
   String get clinicalNotesHint => 'Write any other details here...';
+
+  @override
+  String get userAssignedRoutine => 'Assigned routine';
+  @override
+  String get userPhysiotherapist => 'Physiotherapist';
+  @override
+  String get userNotSpecified => 'Not specified';
+  @override
+  String get userAge => 'Age';
+  @override
+  String get userYears => 'years';
+  @override
+  String get userWeight => 'Weight';
+  @override
+  String get userHeight => 'Height';
+
+  @override
+  String get restAppBar => 'RECOVERY PHASE';
+  @override
+  String get restSessionLabel => 'RETRAINEX SESSION';
+  @override
+  String get restTitle => 'REST\nTIME';
+  @override
+  String get restSeconds => 'SECONDS';
+  @override
+  String get restAddTime => '+20 seconds';
+  @override
+  String get restSkip => 'Skip rest';
+  @override
+  String get restStopSession => 'Stop session';
+  @override
+  String get restNextExercise => 'NEXT EXERCISE';
+
+  @override
+  String get sessionPausedTitle => 'EXERCISE DETAIL';
+  @override
+  String get sessionPausedBack => 'BACK TO EXERCISE';
+  @override
+  String get sessionPausedStart => 'START EXERCISE';
+  @override
+  String sessionPausedRhythm(String rhythm) => 'RHYTHM ${rhythm.toUpperCase()}';
+  @override
+  String get sessionPausedSeries => 'SETS';
+  @override
+  String get sessionPausedReps => 'REPS';
+  @override
+  String get sessionPausedDescription => 'DESCRIPTION';
+  @override
+  String get sessionPausedDescriptionText =>
+      'Perform the movement slowly and in a controlled manner. Maintain correct posture throughout the exercise to maximise benefits and prevent injury.';
+  @override
+  String get sessionPausedTips => 'TIPS';
+  @override
+  String get sessionPausedTipsText =>
+      'If you notice sharp pain, stop immediately. Breathe continuously during the exercise and consult your physiotherapist with any questions.';
+
+  @override
+  String get loginTitle => 'Login';
+  @override
+  String get loginSubtitle => 'INTELLIGENT REHABILITATION';
+  @override
+  String get loginEmailHint => 'example@email.com';
+  @override
+  String get loginEmailRequired => 'Enter your email';
+  @override
+  String get loginEmailInvalid => 'Invalid email';
+  @override
+  String get loginPasswordLabel => 'Password';
+  @override
+  String get loginPasswordRequired => 'Enter your password';
+  @override
+  String get loginPasswordTooShort => 'Must be at least 6 characters';
+  @override
+  String get loginButton => 'Sign In';
+  @override
+  String get loginNoAccount => 'Don\'t have an account? Create one';
+  @override
+  String get loginSuccess => 'Login successful (simulated for now)';
+
+  @override
+  String get notifActionOpen => 'Open';
+  @override
+  String get notifMsgTitle => 'Message from Dr. Pérez';
+  @override
+  String get notifMsgBody =>
+      'Hi María, I have reviewed your progress and it looks excellent. Keep up the consistency.';
+  @override
+  String get notifQuestionnaireTitle => 'Pending WOMAC questionnaire';
+  @override
+  String get notifQuestionnaireBody =>
+      'Please complete the weekly assessment questionnaire so your physiotherapist can follow up.';
+  @override
+  String get notifReminderTitle => 'Session reminder';
+  @override
+  String get notifReminderBody =>
+      'Your session today starts in 30 minutes. Get ready!';
+  @override
+  String get notifSessionCompleteTitle => 'Session completed';
+  @override
+  String get notifSessionCompleteBody =>
+      'Congratulations! You completed your Monday session. You have a 5-day streak.';
+
+  @override
+  String get sessionCompleteAppBar => 'SESSION COMPLETE';
+  @override
+  String get excellent => 'EXCELLENT!';
+  @override
+  String get dayCompleted => 'DAY COMPLETED';
+  @override
+  String get statDuration => 'DURATION';
+  @override
+  String get statExercises => 'EXERCISES';
+  @override
+  String get congratsMessage =>
+      'Congratulations! You completed today\'s session. Keep it up to reach your goals.';
+  @override
+  String streakDays(int days) => '$days-DAY STREAK';
+  @override
+  String get onFire => 'You\'re on fire! Don\'t stop.';
+  @override
+  String get newAchievement => 'NEW ACHIEVEMENT';
+  @override
+  String get goHome => 'GO HOME';
+
+  @override
+  String timeAgoMinutes(int minutes) => '$minutes minutes ago';
+  @override
+  String timeAgoHours(int hours) => '$hours hours ago';
+  @override
+  String timeAgoDays(int days) => '$days days ago';
+
+  @override
+  String get routineListLoading => 'Loading routines...';
+  @override
+  String get routineListError => 'Could not load routines';
 }

@@ -10,11 +10,11 @@ class AppNavItem {
 
 /// Lista global de tabs de navegación principal.
 /// Se usa tanto en BottomNavigationBar (móvil) como en NavigationRail (web).
-const List<AppNavItem> kAppNavItems = [
-  AppNavItem(icon: Icons.home_rounded, label: 'INICIO'),
-  AppNavItem(icon: Icons.fitness_center_rounded, label: 'RUTINAS'),
-  AppNavItem(icon: Icons.trending_up_rounded, label: 'PROGRESO'),
-  AppNavItem(icon: Icons.settings_rounded, label: 'AJUSTES'),
+List<AppNavItem> get kAppNavItems => [
+  AppNavItem(icon: Icons.home_rounded,          label: LocaleManager.strings.navHome),
+  AppNavItem(icon: Icons.fitness_center_rounded, label: LocaleManager.strings.navRoutines),
+  AppNavItem(icon: Icons.trending_up_rounded,   label: LocaleManager.strings.navProgress),
+  AppNavItem(icon: Icons.settings_rounded,      label: LocaleManager.strings.navSettings),
 ];
 
 class AppBottomNav extends StatelessWidget {
@@ -43,12 +43,13 @@ class AppBottomNav extends StatelessWidget {
         letterSpacing: 0.8,
       ),
       unselectedLabelStyle: const TextStyle(letterSpacing: 0.8),
-      items: [
-        BottomNavigationBarItem(icon: Icon(kAppNavItems[0].icon, size: 26), activeIcon: Icon(kAppNavItems[0].icon, size: 28), label: LocaleManager.strings.navHome),
-        BottomNavigationBarItem(icon: Icon(kAppNavItems[1].icon, size: 26), activeIcon: Icon(kAppNavItems[1].icon, size: 28), label: LocaleManager.strings.navRoutines),
-        BottomNavigationBarItem(icon: Icon(kAppNavItems[2].icon, size: 26), activeIcon: Icon(kAppNavItems[2].icon, size: 28), label: LocaleManager.strings.navProgress),
-        BottomNavigationBarItem(icon: Icon(kAppNavItems[3].icon, size: 26), activeIcon: Icon(kAppNavItems[3].icon, size: 28), label: LocaleManager.strings.navSettings),
-      ],
+      items: kAppNavItems
+          .map((item) => BottomNavigationBarItem(
+                icon: Icon(item.icon, size: 26),
+                activeIcon: Icon(item.icon, size: 28),
+                label: item.label,
+              ))
+          .toList(),
     );
   }
 }

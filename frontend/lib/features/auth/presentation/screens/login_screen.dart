@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/strings/locale_manager.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -23,20 +24,20 @@ class _LoginScreenState extends State<LoginScreen> {
 
   String? _validateEmail(String? value) {
     if (value == null || value.trim().isEmpty) {
-      return 'Introduce tu correo';
+      return LocaleManager.strings.loginEmailRequired;
     }
     if (!value.contains('@')) {
-      return 'Correo no válido';
+      return LocaleManager.strings.loginEmailInvalid;
     }
     return null;
   }
 
   String? _validatePassword(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Introduce tu contraseña';
+      return LocaleManager.strings.loginPasswordRequired;
     }
     if (value.length < 6) {
-      return 'Debe tener al menos 6 caracteres';
+      return LocaleManager.strings.loginPasswordTooShort;
     }
     return null;
   }
@@ -44,8 +45,8 @@ class _LoginScreenState extends State<LoginScreen> {
   void _login() {
     if (_formKey.currentState!.validate()) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Login correcto (de momento simulado)'),
+        SnackBar(
+          content: Text(LocaleManager.strings.loginSuccess),
         ),
       );
     }
@@ -53,9 +54,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final s = LocaleManager.strings;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Login'),
+        title: Text(s.loginTitle),
         centerTitle: true,
       ),
       body: SafeArea(
@@ -73,26 +75,26 @@ class _LoginScreenState extends State<LoginScreen> {
                         image: AssetImage(
                             'assets/images/SonEspasesIcon-Zqcd-1K2.png')),
                     const SizedBox(height: 16),
-                    const Text(
-                      'ReTrainex',
+                    Text(
+                      s.appName,
                       textAlign: TextAlign.center,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 8),
-                    const Text(
-                      'REHABILITACIÓN INTELIGENTE',
+                    Text(
+                      s.loginSubtitle,
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 32),
                     TextFormField(
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
-                      decoration: const InputDecoration(
-                        labelText: 'ejemplo@email.com',
-                        prefixIcon: Icon(Icons.email_outlined),
+                      decoration: InputDecoration(
+                        labelText: s.loginEmailHint,
+                        prefixIcon: const Icon(Icons.email_outlined),
                       ),
                       validator: _validateEmail,
                     ),
@@ -101,7 +103,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       controller: _passwordController,
                       obscureText: _obscurePassword,
                       decoration: InputDecoration(
-                        labelText: 'Contraseña',
+                        labelText: s.loginPasswordLabel,
                         prefixIcon: const Icon(Icons.lock_outline),
                         suffixIcon: IconButton(
                           icon: Icon(
@@ -121,12 +123,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(height: 24),
                     ElevatedButton(
                       onPressed: _login,
-                      child: const Text('Iniciar Sesión'),
+                      child: Text(s.loginButton),
                     ),
                     const SizedBox(height: 24),
                     TextButton(
                       onPressed: () {},
-                      child: const Text('¿No tienes cuenta? Crear cuenta'),
+                      child: Text(s.loginNoAccount),
                     ),
                   ],
                 ),

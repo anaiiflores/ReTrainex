@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/strings/locale_manager.dart';
 import '../../core/theme/app_colors.dart';
 
 class ErrorMessageWidget extends StatelessWidget {
@@ -39,9 +40,9 @@ class ErrorMessageWidget extends StatelessWidget {
               TextButton.icon(
                 onPressed: onRetry,
                 icon: const Icon(Icons.refresh_rounded, color: AppColors.primary),
-                label: const Text(
-                  'Reintentar',
-                  style: TextStyle(color: AppColors.primary, fontSize: 16),
+                label: Text(
+                  LocaleManager.strings.errorRetry,
+                  style: const TextStyle(color: AppColors.primary, fontSize: 16),
                 ),
               ),
             ],

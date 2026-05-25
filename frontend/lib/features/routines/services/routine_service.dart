@@ -1,5 +1,6 @@
 import '../models/routine_model.dart';
 import '../models/routine_detail_model.dart';
+import '../../exercises/services/exercise_service.dart';
 
 class RoutineService {
   // ── Mock data ─────────────────────────────────────────────────────────────
@@ -17,11 +18,11 @@ class RoutineService {
     ),
     RoutineModel(
       id: 'r2',
-      day: 'MIÉRCOLES',
+      day: 'MARTES',
       title: 'Fortalecimiento Escapular',
       minutes: 20,
       difficulty: 'MEDIA',
-      status: RoutineStatus.today,
+      status: RoutineStatus.completed,
     ),
     RoutineModel(
       id: 'r3',
@@ -29,10 +30,12 @@ class RoutineService {
       title: 'Estiramiento Pectoral',
       minutes: 10,
       difficulty: 'BAJA',
-      status: RoutineStatus.upcoming,
+      status: RoutineStatus.today,
     ),
   ];
 
+  // Los ejercicios de la sesión se obtienen del catálogo de ExerciseService,
+  // evitando duplicar los datos en dos sitios.
   static final RoutineDetailModel _mockDetail = RoutineDetailModel(
     id: 'rd1',
     sessionId: 'KINETIC_RECOVERY',
@@ -40,18 +43,7 @@ class RoutineService {
         'SESIÓN: KINETIC_RECOVERY. Hoy nos enfocaremos en la movilidad '
         'articular y la reducción de la tensión en el manguito rotador. '
         'Realiza cada ejercicio con calma.',
-    exercises: const [
-      ExerciseModel(
-          id: 'e1',
-          name: 'Rotación de hombros',
-          series: 3,
-          reps: 10,
-          minutes: 0),
-      ExerciseModel(id: 'e2', name: 'Estiramiento Pectoral', minutes: 2),
-      ExerciseModel(
-          id: 'e3', name: 'Rotación Interna', series: 3, reps: 15, minutes: 0),
-      ExerciseModel(id: 'e4', name: 'Isométrico Escapular', minutes: 5),
-    ],
+    exercises: ExerciseService.mockExercises,
   );
 
   // ── Métodos públicos ──────────────────────────────────────────────────────
@@ -82,13 +74,5 @@ class RoutineService {
     // Reemplazar con:
     // final response = await apiClient.get('/routines/$routineId/detail');
     // return RoutineDetailModel.fromJson(response);
-  }
-
-  Future<ExerciseModel> getExerciseDetail(String id) async {
-    await Future.delayed(const Duration(milliseconds: 400));
-    return _mockDetail.exercises.firstWhere((e) => e.id == id);
-    // Reemplazar con:
-    // final response = await apiClient.get('/exercises/$id');
-    // return ExerciseModel.fromJson(response);
   }
 }

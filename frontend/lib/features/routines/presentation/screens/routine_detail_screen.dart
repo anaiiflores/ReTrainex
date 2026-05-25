@@ -7,6 +7,7 @@ import '../../../../shared/widgets/error_message_widget.dart';
 import '../../models/routine_detail_model.dart';
 import '../../services/routine_service.dart';
 import '../../services/workout_session_service.dart';
+import '../../../exercises/services/exercise_service.dart';
 import '../../widgets/exercise_card_widget.dart';
 import 'workout_preparation_screen.dart';
 import 'session_paused.dart';
@@ -60,7 +61,7 @@ class _RoutineDetailScreenState extends State<RoutineDetailScreen> {
 
   Future<void> _onExerciseTap(
       String exerciseId, List<ExerciseModel> exercises, int index) async {
-    final exercise = await _routineService.getExerciseDetail(exerciseId);
+    final exercise = await ExerciseService().getExerciseDetail(exerciseId);
     if (!mounted) return;
     Navigator.of(context).push(
       MaterialPageRoute(

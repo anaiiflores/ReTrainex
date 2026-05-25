@@ -18,16 +18,26 @@ class RoutineModel {
   });
 
   /// Equivalente a DateTime.weekday (1=lunes … 7=domingo).
+  /// Acepta el nombre del día en español o en inglés (mayúsculas o minúsculas).
   /// Devuelve -1 si el valor de [day] no es reconocido.
   int get weekday {
     switch (day.toUpperCase()) {
-      case 'LUNES':     return DateTime.monday;
-      case 'MARTES':    return DateTime.tuesday;
-      case 'MIÉRCOLES': return DateTime.wednesday;
-      case 'JUEVES':    return DateTime.thursday;
-      case 'VIERNES':   return DateTime.friday;
-      case 'SÁBADO':    return DateTime.saturday;
-      case 'DOMINGO':   return DateTime.sunday;
+      case 'LUNES':
+      case 'MONDAY':    return DateTime.monday;
+      case 'MARTES':
+      case 'TUESDAY':   return DateTime.tuesday;
+      case 'MIÉRCOLES':
+      case 'MIERCOLES':
+      case 'WEDNESDAY': return DateTime.wednesday;
+      case 'JUEVES':
+      case 'THURSDAY':  return DateTime.thursday;
+      case 'VIERNES':
+      case 'FRIDAY':    return DateTime.friday;
+      case 'SÁBADO':
+      case 'SABADO':
+      case 'SATURDAY':  return DateTime.saturday;
+      case 'DOMINGO':
+      case 'SUNDAY':    return DateTime.sunday;
       default:          return -1;
     }
   }

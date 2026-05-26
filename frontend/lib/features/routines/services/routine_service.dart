@@ -1,4 +1,4 @@
-import '../models/routine_model.dart';         // RoutineModel y RoutineStatus
+import '../models/routine_model.dart'; // RoutineModel y RoutineStatus
 import '../models/routine_detail_model.dart'; // RoutineDetailModel con lista de ejercicios
 import '../../exercises/services/exercise_service.dart'; // Catálogo de ejercicios mock
 
@@ -24,7 +24,7 @@ class RoutineService {
       title: 'Fortalecimiento Escapular',
       minutes: 20,
       difficulty: 'MEDIA',
-      status: RoutineStatus.completed, // También completada
+      status: RoutineStatus.today, // También completada
     ),
     RoutineModel(
       id: 'r3',
@@ -32,7 +32,8 @@ class RoutineService {
       title: 'Estiramiento Pectoral',
       minutes: 10,
       difficulty: 'BAJA',
-      status: RoutineStatus.today, // Toca hoy → resaltada con botón "INICIAR"
+      status:
+          RoutineStatus.upcoming, // Toca hoy → resaltada con botón "INICIAR"
     ),
   ];
 
@@ -40,12 +41,13 @@ class RoutineService {
   /// para no duplicar los datos del ejercicio en dos sitios.
   static final RoutineDetailModel _mockDetail = RoutineDetailModel(
     id: 'rd1',
-    sessionId: 'KINETIC_RECOVERY',       // Nombre de la sesión de tratamiento
+    sessionId: 'KINETIC_RECOVERY', // Nombre de la sesión de tratamiento
     description:
         'SESIÓN: KINETIC_RECOVERY. Hoy nos enfocaremos en la movilidad '
         'articular y la reducción de la tensión en el manguito rotador. '
         'Realiza cada ejercicio con calma.',
-    exercises: ExerciseService.mockExercises, // Lista de ejercicios del catálogo compartido
+    exercises: ExerciseService
+        .mockExercises, // Lista de ejercicios del catálogo compartido
   );
 
   // ── Métodos públicos ──────────────────────────────────────────────────────
@@ -53,7 +55,8 @@ class RoutineService {
   /// Devuelve la rutina de hoy si existe, o null si no hay ninguna programada.
   /// `async` permite usar `await`; el `try/catch` atrapa `StateError` de `firstWhere`.
   Future<RoutineModel?> getTodaySession() async {
-    await Future.delayed(const Duration(milliseconds: 300)); // Latencia simulada
+    await Future.delayed(
+        const Duration(milliseconds: 300)); // Latencia simulada
     try {
       // `firstWhere` lanza StateError si no hay ninguna con status == today
       return _mockRoutines.firstWhere((r) => r.status == RoutineStatus.today);
@@ -67,7 +70,8 @@ class RoutineService {
 
   /// Devuelve la lista de rutinas de la semana actual (todas las programadas).
   Future<List<RoutineModel>> getWeeklyRoutines() async {
-    await Future.delayed(const Duration(milliseconds: 600)); // Simula más latencia
+    await Future.delayed(
+        const Duration(milliseconds: 600)); // Simula más latencia
     return _mockRoutines;
     // TODO: Reemplazar con:
     // final response = await apiClient.get('/routines/weekly');

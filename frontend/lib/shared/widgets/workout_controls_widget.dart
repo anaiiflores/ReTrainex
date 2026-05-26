@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/strings/locale_manager.dart';
 import '../../core/theme/app_colors.dart';
+import 'workout_control_button_widget.dart'; // WorkoutControlButton — extraído a su propio archivo
 
 /// Fila de botones circulares de control de sesión: play/pausa, stop y (opcional) skip.
 /// Se usa en WorkoutExerciseScreen y WorkoutPreparationScreen.
@@ -66,46 +67,4 @@ class WorkoutControlsWidget extends StatelessWidget {
   }
 }
 
-/// Botón circular individual de control de sesión.
-/// Extraído a su propia clase para poder reutilizarlo fuera de WorkoutControlsWidget
-/// (ej. en WorkoutPreparationScreen para el botón de omitir preparación).
-class WorkoutControlButton extends StatelessWidget {
-  final IconData icon;        // Icono del botón
-  final Color color;          // Color del fondo circular
-  final VoidCallback onTap;   // Acción al pulsar
-  final String tooltip;       // Texto de ayuda (accesibilidad + dispositivos con cursor)
-
-  const WorkoutControlButton({
-    super.key,
-    required this.icon,
-    required this.color,
-    required this.onTap,
-    required this.tooltip,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Tooltip(
-      message: tooltip, // Se muestra al mantener pulsado (móvil) o al pasar el cursor (web)
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          width: 64,
-          height: 64,
-          decoration: BoxDecoration(
-            color: color,
-            shape: BoxShape.circle, // Botón perfectamente redondo
-            boxShadow: [
-              BoxShadow(
-                color: color.withValues(alpha: 0.35), // Halo del mismo color del botón
-                blurRadius: 16,
-                spreadRadius: 2,
-              ),
-            ],
-          ),
-          child: Icon(icon, color: Colors.white, size: 30), // Icono blanco sobre el color del botón
-        ),
-      ),
-    );
-  }
-}
+// WorkoutControlButton está definido en workout_control_button_widget.dart

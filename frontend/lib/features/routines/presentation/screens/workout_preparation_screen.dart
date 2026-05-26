@@ -6,7 +6,7 @@ import '../../../../shared/widgets/app_bottom_nav_widget.dart';
 import '../../../exercises/models/exercise_detail_model.dart';
 import '../../services/workout_session_service.dart';
 import '../../../../shared/widgets/countdown_ring_widget.dart';   // Anillo de cuenta atrás
-import '../../../../shared/widgets/workout_controls_widget.dart'; // Botón de skip
+import '../../../../shared/widgets/workout_control_button_widget.dart'; // WorkoutControlButton (botón de skip)
 import 'workout_exercise_screen.dart'; // Destino cuando termina la preparación
 
 /// Pantalla de preparación antes de iniciar un ejercicio.

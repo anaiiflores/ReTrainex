@@ -1,61 +1,14 @@
+import 'next_session_model.dart'; // NextSessionModel — campo opcional de DashboardModel
+
+export 'calendar_session_model.dart'; // Re-exporta para no romper imports existentes
+export 'next_session_model.dart';     // Re-exporta para no romper imports existentes
+
 /// Estado de la rutina del usuario en el dashboard.
 /// Controla qué bloque de bienvenida se muestra en WelcomeIniScreen.
 enum RoutineStatus {
   none,          // El usuario no tiene ninguna rutina asignada todavía
   newAssignment, // El fisio acaba de asignar una rutina nueva (se muestra card de presentación)
   active,        // Rutina en curso — se muestran progreso y acciones del día
-}
-
-/// Datos de una sesión para el calendario de progreso.
-/// Cada elemento del calendario semanal/mensual es un CalendarSessionModel.
-class CalendarSessionModel {
-  final DateTime date;          // Fecha exacta de la sesión (año, mes, día)
-  final String title;           // Nombre de la rutina de esa sesión
-  final String time;            // Hora de inicio formateada ("10:30 AM")
-  final int durationMinutes;    // Duración de la sesión en minutos
-  final bool completed;         // true → sesión completada; false → perdida o pendiente
-
-  const CalendarSessionModel({
-    required this.date,
-    required this.title,
-    required this.time,
-    required this.durationMinutes,
-    required this.completed,
-  });
-}
-
-/// Datos de la próxima sesión programada.
-/// Se muestra en la tarjeta "Próxima sesión" del dashboard.
-class NextSessionModel {
-  final String date;           // Fecha formateada para mostrar ("15 OCT")
-  final String time;           // Hora formateada ("10:30 AM")
-  final int durationMinutes;   // Duración estimada en minutos
-  final String type;           // Tipo de sesión ("FISIOTERAPIA", "EJERCICIO", etc.)
-
-  const NextSessionModel({
-    required this.date,
-    required this.time,
-    required this.durationMinutes,
-    required this.type,
-  });
-
-  /// Crea un NextSessionModel a partir del JSON del backend.
-  factory NextSessionModel.fromJson(Map<String, dynamic> json) {
-    return NextSessionModel(
-      date: json['date'] as String,
-      time: json['time'] as String,
-      durationMinutes: json['duration_minutes'] as int,
-      type: json['type'] as String,
-    );
-  }
-
-  /// Serializa el modelo para enviarlo al backend.
-  Map<String, dynamic> toJson() => {
-        'date': date,
-        'time': time,
-        'duration_minutes': durationMinutes,
-        'type': type,
-      };
 }
 
 /// Modelo principal del dashboard de bienvenida.

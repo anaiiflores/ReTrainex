@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/strings/locale_manager.dart';      // Textos localizados
 import '../../../../core/theme/app_colors.dart';            // Paleta de colores
 import '../../../../shared/widgets/app_bottom_nav_widget.dart';   // Barra de navegación inferior
-import '../../../../shared/widgets/workout_controls_widget.dart'; // Botones +20s y skip
+import '../../../../shared/widgets/workout_control_button_widget.dart'; // WorkoutControlButton (+20s y skip)
 import '../../../exercises/models/exercise_detail_model.dart';    // ExerciseModel
 import '../../../../shared/widgets/countdown_ring_widget.dart';   // Anillo de cuenta atrás verde
 import 'workout_preparation_screen.dart'; // Destino cuando termina el descanso

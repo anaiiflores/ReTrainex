@@ -13,21 +13,65 @@ class DashboardService {
     // Pausa simulada de red (600 ms) antes de comenzar a procesar
     await Future.delayed(const Duration(milliseconds: 600));
 
-    // Lanza ambas peticiones en paralelo para reducir el tiempo de espera total
-    final userFuture = UserService().getUser(); // Carga el perfil del usuario
-    final routinesFuture = RoutineService()
-        .getWeeklyRoutines(); // Carga rutinas de la semana actual
+    // Lanza las tres peticiones en paralelo para reducir el tiempo de espera total
+    final userFuture         = UserService().getUser();
+    final routinesFuture     = RoutineService().getWeeklyRoutines();
+    final todaySessionFuture = RoutineService().getTodaySession();
 
-    // Espera a que ambas completen
-    final user = await userFuture;
-    final routines = await routinesFuture;
+    final user         = await userFuture;
+    final routines     = await routinesFuture;
+    final todaySession = await todaySessionFuture;
 
     // Calcula el progreso semanal contando rutinas completadas en la semana actual
-    final weeklyTotal =
-        routines.length; // Total de rutinas planificadas esta semana
+    final weeklyTotal     = routines.length;
     final weeklyCompleted = routines
         .where((rt) => rt.status == r.RoutineStatus.completed)
-        .length; // Cuántas están completadas
+        .length;
+
+    // ── Próxima sesión ─────────────────────────────────────────────────────
+    // Solo se muestra cuando HOY NO es día de sesión.
+    // Si todaySession != null el usuario ya tiene su sesión hoy → no necesita saber cuándo es la próxima.
+    // Si todaySession == null buscamos la rutina no completada más cercana y calculamos su fecha real.
+    NextSessionModel? nextSession;
+    if (todaySession == null) {
+      final today        = DateTime.now();
+      final todayWeekday = today.weekday; // 1 = lunes … 7 = domingo
+
+      int? minDaysAhead;
+      r.RoutineModel? nextRoutine;
+
+      for (final rt in routines) {
+        if (rt.status == r.RoutineStatus.completed) continue; // Las completadas ya no cuentan
+
+        // Días que quedan hasta el día de la semana de esta rutina
+        int daysAhead = rt.weekday - todayWeekday;
+        if (daysAhead <= 0) daysAhead += 7; // Si ya pasó (o es hoy sin status "today") → siguiente semana
+
+        if (minDaysAhead == null || daysAhead < minDaysAhead) {
+          minDaysAhead = daysAhead;
+          nextRoutine  = rt;
+        }
+      }
+
+      if (nextRoutine != null && minDaysAhead != null) {
+        final nextDate = today.add(Duration(days: minDaysAhead));
+
+        // Abreviaturas de mes en mayúsculas para el formato "27 MAY"
+        // Hardcodeadas en español; en producción vendrán localizadas del backend
+        const monthAbbr = [
+          'ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN',
+          'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC',
+        ];
+
+        nextSession = NextSessionModel(
+          date:            '${nextDate.day} ${monthAbbr[nextDate.month - 1]}',
+          time:            '10:30 AM',              // Hora mock — vendrá del backend
+          durationMinutes: nextRoutine.minutes,      // Duración real de esa rutina
+          type:            'EJERCICIO',
+        );
+      }
+    }
+    // Si todaySession != null → nextSession queda null y no se renderiza la tarjeta
 
     // ── SIMULACIÓN ────────────────────────────────────────────────────────
     // Cambia `status` para probar distintos estados de la pantalla de bienvenida:
@@ -36,31 +80,19 @@ class DashboardService {
     //   RoutineStatus.active        → dashboard completo con progreso y próxima sesión
     // ─────────────────────────────────────────────────────────────────────
     return DashboardModel(
-      userName:
-          'MARÍA', // Hardcodeado — en producción vendrá de `user.userName`
-      status:
-          RoutineStatus.active, // Estado activo: muestra el dashboard completo
-      progressPercentage: 0, // 0% de progreso total (pendiente de backend real)
-      completedSessions: 0, // Sesiones completadas en el tratamiento
-      totalSessions: 10, // Total de sesiones planificadas en el tratamiento
-      weeklyCompletedSessions:
-          weeklyCompleted, // Calculado a partir de RoutineService
-      weeklyTotalSessions: weeklyTotal, // Total semanal real
-      hasUnreadNotification: false, // Sin notificaciones sin leer en este mock
-      nextSession: const NextSessionModel(
-        date: '27 MAY', // Fecha de la próxima sesión con el fisio
-        time: '10:30 AM', // Hora de la cita
-        durationMinutes: 15, // Duración estimada de la sesión
-        type:
-            'FISIOTERAPIA', // Tipo de sesión (con el fisio, no ejercicio propio)
-      ),
-      // Recordatorio personalizado usando el nombre del fisio del perfil de usuario
+      userName:                'MARÍA', // Hardcodeado — en producción vendrá de `user.userName`
+      status:                  RoutineStatus.active,
+      progressPercentage:      0,
+      completedSessions:       0,
+      totalSessions:           10,
+      weeklyCompletedSessions: weeklyCompleted,
+      weeklyTotalSessions:     weeklyTotal,
+      hasUnreadNotification:   false,
+      nextSession:             nextSession, // null si hoy es día de sesión; computed si no
       reminder:
           'Mantén tu hidratación antes de la sesión con el Dr. ${user.physioName ?? 'tu fisioterapeuta'}.',
-      // Los siguientes campos solo son relevantes cuando status == newAssignment:
-      assignmentTitle:
-          'Nuevo tratamiento de ejercicios', // Título de la nueva rutina asignada
-      physioName: user.physioName, // Nombre del fisio que asignó la rutina
+      assignmentTitle: 'Nuevo tratamiento de ejercicios',
+      physioName:      user.physioName,
     );
 
     // TODO: Reemplazar con llamada real:

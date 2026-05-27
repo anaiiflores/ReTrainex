@@ -332,6 +332,8 @@ class AppStringsEn implements AppStrings {
   String get clinicalAdditionalNotes => 'Additional notes (optional)';
   @override
   String get clinicalNotesHint => 'Write any other details here...';
+  @override
+  String get clinicalSubmitSuccess => 'Evaluation sent to the physiotherapist';
 
   // ── User / Profile ────────────────────────────────────────────────────────
   @override

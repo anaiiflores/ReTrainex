@@ -271,4 +271,5 @@ abstract class AppStrings {
   String get clinicalSleepHint;           // Hint escala sueño
   String get clinicalAdditionalNotes;     // Sección 5: notas libres
   String get clinicalNotesHint;           // Placeholder del campo de texto libre
+  String get clinicalSubmitSuccess;       // SnackBar de confirmación de envío
 }

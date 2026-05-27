@@ -4,7 +4,8 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/widgets/app_bottom_nav_widget.dart';    // Barra de navegación inferior
 import '../../../../shared/widgets/loading_widget.dart';
 import '../../../../shared/widgets/error_message_widget.dart';
-import '../../models/routine_detail_model.dart';                   // RoutineDetailModel + ExerciseModel (re-exportado)
+import '../../models/routine_detail_model.dart';                   // RoutineDetailModel
+import '../../../exercises/models/exercise_detail_model.dart';      // ExerciseModel
 import '../../services/routine_service.dart';
 import '../../services/workout_session_service.dart';
 import '../../../exercises/services/exercise_service.dart';        // Para cargar el detalle de un ejercicio al pulsar play

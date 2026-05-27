@@ -2,23 +2,21 @@
 /// Controla el aspecto visual de la tarjeta en RoutinesListScreen.
 enum RoutineStatus {
   completed, // Ya realizada este ciclo → tick verde, no se puede iniciar
-  today,     // Toca hoy → resaltada en azul, botón "INICIAR" visible
-  upcoming,  // Día futuro → bloqueada con icono de candado
+  today, // Toca hoy → resaltada en azul, botón "INICIAR" visible
+  upcoming, // Día futuro → bloqueada con icono de candado
 }
 
 /// Representa una rutina asignada a un día concreto de la semana.
 /// Cada elemento de la lista semanal en RoutinesListScreen es un RoutineModel.
 class RoutineModel {
-  final String id;         // Identificador único → 'r1', 'r2' (viene del backend)
-  final String day;        // Nombre del día en texto → 'LUNES', 'MONDAY' (bilingüe)
-  final String title;      // Nombre de la rutina → 'Movilidad de Hombro'
-  final int minutes;       // Duración estimada en minutos → 15
+  final String id; // Identificador único → 'r1', 'r2' (viene del backend)
+  final String day; // Nombre del día en texto → 'LUNES', 'MONDAY' (bilingüe)
+  final String title; // Nombre de la rutina → 'Movilidad de Hombro'
+  final int minutes; // Duración estimada en minutos → 15
   final String difficulty; // Nivel de dificultad → 'BAJA' | 'MEDIA' | 'ALTA'
   final RoutineStatus status; // Estado actual de la rutina en la semana actual
 
-  /// Constructor constante: todos los campos son obligatorios.
-  /// `const` permite crear instancias en tiempo de compilación (más eficiente
-  /// que `new` — útil en listas mock de RoutineService).
+  /// todos los campos son obligatorios.
   const RoutineModel({
     required this.id,
     required this.day,
@@ -37,27 +35,27 @@ class RoutineModel {
     switch (day.toUpperCase()) {
       case 'LUNES':
       case 'MONDAY':
-        return DateTime.monday;    // 1
+        return DateTime.monday; // 1
       case 'MARTES':
       case 'TUESDAY':
-        return DateTime.tuesday;   // 2
+        return DateTime.tuesday; // 2
       case 'MIÉRCOLES':
       case 'MIERCOLES': // Variante sin tilde por si el backend no la codifica correctamente
       case 'WEDNESDAY':
         return DateTime.wednesday; // 3
       case 'JUEVES':
       case 'THURSDAY':
-        return DateTime.thursday;  // 4
+        return DateTime.thursday; // 4
       case 'VIERNES':
       case 'FRIDAY':
-        return DateTime.friday;    // 5
+        return DateTime.friday; // 5
       case 'SÁBADO':
       case 'SABADO': // Variante sin tilde
       case 'SATURDAY':
-        return DateTime.saturday;  // 6
+        return DateTime.saturday; // 6
       case 'DOMINGO':
       case 'SUNDAY':
-        return DateTime.sunday;    // 7
+        return DateTime.sunday; // 7
       default:
         return -1; // Valor desconocido → no coincidirá con ningún weekday real
     }
@@ -76,8 +74,8 @@ class RoutineModel {
       // Ej: 'completed' → RoutineStatus.completed
       status: RoutineStatus.values.firstWhere(
         (e) => e.name == json['status'],
-        orElse: () =>
-            RoutineStatus.upcoming, // Fallback seguro si el valor es desconocido
+        orElse: () => RoutineStatus
+            .upcoming, // Fallback seguro si el valor es desconocido
       ),
     );
   }
@@ -89,6 +87,7 @@ class RoutineModel {
         'title': title,
         'minutes': minutes,
         'difficulty': difficulty,
-        'status': status.name, // Enum → String: RoutineStatus.completed → 'completed'
+        'status':
+            status.name, // Enum → String: RoutineStatus.completed → 'completed'
       };
 }

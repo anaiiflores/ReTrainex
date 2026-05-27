@@ -1,9 +1,4 @@
-import '../../../features/exercises/models/exercise_detail_model.dart'; // Importa ExerciseModel
-
-/// Re-exporta ExerciseModel para que quien importe RoutineDetailModel
-/// también tenga acceso a ExerciseModel sin necesidad de un import adicional.
-/// Patrón barrel: simplifica los imports en las pantallas que usan ambos modelos.
-export '../../../features/exercises/models/exercise_detail_model.dart';
+import '../../../features/exercises/models/exercise_detail_model.dart'; // ExerciseModel — usado en la lista de ejercicios
 
 /// Modelo del detalle completo de una rutina.
 /// Se usa en RoutineDetailScreen para mostrar la descripción y la lista de ejercicios.

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../../../core/strings/app_strings.dart';    // AppStrings — tipo del parámetro `s`
+import '../../../../core/strings/app_strings.dart'; // AppStrings — tipo del parámetro `s`
 import '../../../../core/strings/locale_manager.dart'; // LocaleManager.strings — textos localizados
-import '../../../../core/theme/app_colors.dart';       // Paleta de colores
+import '../../../../core/theme/app_colors.dart'; // Paleta de colores
 
 /// Pantalla de evaluación clínica del dolor.
 /// Se abre cuando el paciente omite un ejercicio por "dolor" (SkipReason.pain).
@@ -18,15 +18,18 @@ class ClinicalEvaluationScreen extends StatefulWidget {
       _ClinicalEvaluationScreenState();
 }
 
-class _ClinicalEvaluationScreenState
-    extends State<ClinicalEvaluationScreen> {
+class _ClinicalEvaluationScreenState extends State<ClinicalEvaluationScreen> {
   // ── Estado de los selectores ──────────────────────────────────────────────
-  int? _painLevel;       // Nivel de dolor seleccionado (0, 2, 5, 8 o 10); null = sin selección
-  int? _painTypeIndex;   // Índice del tipo de dolor (0-3); null = sin selección
-  int? _timingIndex;     // Índice de cuándo empezó el dolor (0-2); null = sin selección
-  int? _sleepLevel;      // Nivel de impacto en el sueño (0, 2, 5, 8 o 10); null = sin selección
+  int?
+      _painLevel; // Nivel de dolor seleccionado (0, 2, 5, 8 o 10); null = sin selección
+  int? _painTypeIndex; // Índice del tipo de dolor (0-3); null = sin selección
+  int?
+      _timingIndex; // Índice de cuándo empezó el dolor (0-2); null = sin selección
+  int?
+      _sleepLevel; // Nivel de impacto en el sueño (0, 2, 5, 8 o 10); null = sin selección
   double _preciseIntensity = 0.0; // Intensidad precisa con el slider (0.0–10.0)
-  final TextEditingController _notesController = TextEditingController(); // Notas adicionales
+  final TextEditingController _notesController =
+      TextEditingController(); // Notas adicionales
 
   @override
   void dispose() {
@@ -37,16 +40,52 @@ class _ClinicalEvaluationScreenState
   /// El formulario solo es válido si el usuario ha seleccionado los 4 campos obligatorios.
   /// El slider y las notas son opcionales.
   bool get _canSubmit =>
-      _painLevel != null &&      // Escala de dolor seleccionada
-      _painTypeIndex != null &&  // Tipo de dolor seleccionado
-      _timingIndex != null &&    // Momento de inicio seleccionado
-      _sleepLevel != null;       // Impacto en el sueño seleccionado
+      _painLevel != null && // Escala de dolor seleccionada
+      _painTypeIndex != null && // Tipo de dolor seleccionado
+      _timingIndex != null && // Momento de inicio seleccionado
+      _sleepLevel != null; // Impacto en el sueño seleccionado
 
-  /// Envía la evaluación al fisioterapeuta y cierra la pantalla devolviendo `true`.
-  void _submit() {
-    // TODO: enviar evaluación al backend
+  /// Envía la evaluación al fisioterapeuta.
+  /// Muestra un SnackBar verde de confirmación y cierra la pantalla tras 1 s.
+  Future<void> _submit() async {
     // Ejemplo: await clinicalService.submitEvaluation(ClinicalEvaluation(...));
-    Navigator.of(context).pop(true); // `true` indica que el formulario fue enviado
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        duration: const Duration(milliseconds: 1000),
+        backgroundColor:
+            const Color.fromARGB(255, 30, 168, 40), // Verde claro de fondo
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(14)),
+        ),
+        content: Row(
+          children: [
+            const Icon(Icons.check_circle_rounded,
+                color: Color(0xFF69F0AE), // Verde claro — icono de éxito
+                size: 22),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                LocaleManager.strings.clinicalSubmitSuccess,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    // Espera a que el SnackBar sea visible antes de cerrar la pantalla.
+    // `mounted` evita usar el context si el widget fue destruido durante la espera.
+    await Future.delayed(const Duration(milliseconds: 1500));
+    if (!mounted) return;
+    Navigator.of(context)
+        .pop(true); // `true` indica que el formulario fue enviado
   }
 
   @override
@@ -66,11 +105,12 @@ class _ClinicalEvaluationScreenState
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildHeader(s),                 // Tarjeta roja con el ejercicio y aviso al fisio
+                    _buildHeader(
+                        s), // Tarjeta roja con el ejercicio y aviso al fisio
                     const SizedBox(height: 28),
                     // Sección 1: escala de emoticonos del dolor (0–10)
                     _buildSection(
-                      label: s.clinicalHowDoYouFeel,  // "¿CÓMO TE SIENTES?"
+                      label: s.clinicalHowDoYouFeel, // "¿CÓMO TE SIENTES?"
                       sublabel: s.clinicalPainScaleHint, // Pista de la escala
                       child: _buildPainScale(),
                     ),
@@ -80,19 +120,22 @@ class _ClinicalEvaluationScreenState
                     const SizedBox(height: 24),
                     // Sección 3: cuadrícula 2×2 de tipos de dolor
                     _buildSection(
-                      label: s.clinicalHowIsThePain,  // "¿CÓMO ES EL DOLOR?"
-                      child: _buildPainTypeGrid(s.clinicalPainTypes), // Lista de 4 tipos
+                      label: s.clinicalHowIsThePain, // "¿CÓMO ES EL DOLOR?"
+                      child: _buildPainTypeGrid(
+                          s.clinicalPainTypes), // Lista de 4 tipos
                     ),
                     const SizedBox(height: 24),
                     // Sección 4: fila de 3 opciones de frecuencia/momento
                     _buildSection(
                       label: s.clinicalWhenDidItStart, // "¿CUÁNDO EMPEZÓ?"
-                      child: _buildFrequencyOptions(s.clinicalFrequencyOptions), // Lista de 3 opciones
+                      child: _buildFrequencyOptions(
+                          s.clinicalFrequencyOptions), // Lista de 3 opciones
                     ),
                     const SizedBox(height: 24),
                     // Sección 5: escala numérica del impacto en el sueño
                     _buildSection(
-                      label: s.clinicalHowAffectsSleep, // "¿CÓMO AFECTA TU SUEÑO?"
+                      label:
+                          s.clinicalHowAffectsSleep, // "¿CÓMO AFECTA TU SUEÑO?"
                       sublabel: s.clinicalSleepHint,
                       child: _buildNumberScale(
                           _sleepLevel, (v) => setState(() => _sleepLevel = v)),
@@ -104,7 +147,8 @@ class _ClinicalEvaluationScreenState
                 ),
               ),
             ),
-            _buildActions(s), // Botones "ENVIAR" y "CANCELAR" fijos en la parte inferior
+            _buildActions(
+                s), // Botones "ENVIAR" y "CANCELAR" fijos en la parte inferior
           ],
         ),
       ),
@@ -122,7 +166,8 @@ class _ClinicalEvaluationScreenState
       leading: IconButton(
         icon: const Icon(Icons.arrow_back_ios_new_rounded,
             color: Colors.white, size: 20),
-        onPressed: () => Navigator.of(context).pop(false), // Cancela y devuelve false
+        onPressed: () =>
+            Navigator.of(context).pop(false), // Cancela y devuelve false
       ),
       centerTitle: true,
       title: Text(
@@ -146,7 +191,9 @@ class _ClinicalEvaluationScreenState
       decoration: BoxDecoration(
         color: Colors.redAccent.withValues(alpha: 0.08), // Fondo rojo muy suave
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.redAccent.withValues(alpha: 0.3)), // Borde rojo semitransparente
+        border: Border.all(
+            color: Colors.redAccent
+                .withValues(alpha: 0.3)), // Borde rojo semitransparente
       ),
       child: Row(
         children: [
@@ -177,7 +224,8 @@ class _ClinicalEvaluationScreenState
                 ),
                 const SizedBox(height: 3),
                 Text(
-                  widget.exerciseName.toUpperCase(), // Nombre del ejercicio en mayúsculas
+                  widget.exerciseName
+                      .toUpperCase(), // Nombre del ejercicio en mayúsculas
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 15,
@@ -205,9 +253,9 @@ class _ClinicalEvaluationScreenState
   /// Contenedor de sección reutilizable: muestra el `label` azul, el `sublabel` gris
   /// opcional y a continuación el widget de contenido (`child`).
   Widget _buildSection({
-    required String label,    // Título de la sección en azul
-    String? sublabel,         // Descripción opcional en gris
-    required Widget child,    // Control de selección (escala, cuadrícula, etc.)
+    required String label, // Título de la sección en azul
+    String? sublabel, // Descripción opcional en gris
+    required Widget child, // Control de selección (escala, cuadrícula, etc.)
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -245,19 +293,19 @@ class _ClinicalEvaluationScreenState
 
   // Iconos de emoticonos para cada nivel — de muy satisfecho a muy insatisfecho.
   static const Map<int, IconData> _painIcons = {
-    0: Icons.sentiment_very_satisfied_rounded,   // Sin dolor
-    2: Icons.sentiment_satisfied_rounded,         // Dolor leve
-    5: Icons.sentiment_neutral_rounded,           // Dolor moderado
-    8: Icons.sentiment_dissatisfied_rounded,      // Dolor intenso
+    0: Icons.sentiment_very_satisfied_rounded, // Sin dolor
+    2: Icons.sentiment_satisfied_rounded, // Dolor leve
+    5: Icons.sentiment_neutral_rounded, // Dolor moderado
+    8: Icons.sentiment_dissatisfied_rounded, // Dolor intenso
     10: Icons.sentiment_very_dissatisfied_rounded, // Dolor muy intenso
   };
 
   // Colores semafóricos para cada nivel de dolor.
   static const Map<int, Color> _painColors = {
-    0: Color(0xFF00BFA5),  // Verde azulado — sin dolor
-    2: Color(0xFF42A5F5),  // Azul — dolor leve
-    5: Color(0xFF7E57C2),  // Violeta — dolor moderado
-    8: Color(0xFFFF7043),  // Naranja rojizo — dolor intenso
+    0: Color(0xFF00BFA5), // Verde azulado — sin dolor
+    2: Color(0xFF42A5F5), // Azul — dolor leve
+    5: Color(0xFF7E57C2), // Violeta — dolor moderado
+    8: Color(0xFFFF7043), // Naranja rojizo — dolor intenso
     10: Color(0xFFF44336), // Rojo — dolor muy intenso
   };
 
@@ -265,14 +313,19 @@ class _ClinicalEvaluationScreenState
   /// El seleccionado muestra un halo de color y el icono más grande.
   Widget _buildPainScale() {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween, // Distribuye uniformemente
+      mainAxisAlignment:
+          MainAxisAlignment.spaceBetween, // Distribuye uniformemente
       children: _painLevels.map((i) {
-        final selected = _painLevel == i; // Verdadero si este nivel está seleccionado
-        final color = _painColors[i]!;    // Color del nivel (nunca null gracias al `!`)
+        final selected =
+            _painLevel == i; // Verdadero si este nivel está seleccionado
+        final color =
+            _painColors[i]!; // Color del nivel (nunca null gracias al `!`)
         return GestureDetector(
-          onTap: () => setState(() => _painLevel = i), // Actualiza el nivel seleccionado
+          onTap: () =>
+              setState(() => _painLevel = i), // Actualiza el nivel seleccionado
           child: AnimatedContainer(
-            duration: const Duration(milliseconds: 150), // Animación suave al seleccionar
+            duration: const Duration(
+                milliseconds: 150), // Animación suave al seleccionar
             width: 58,
             padding: const EdgeInsets.symmetric(vertical: 10),
             decoration: BoxDecoration(
@@ -281,7 +334,9 @@ class _ClinicalEvaluationScreenState
                   selected ? color.withValues(alpha: 0.15) : AppColors.surface,
               borderRadius: BorderRadius.circular(14),
               border: Border.all(
-                color: selected ? color : AppColors.border, // Borde de color o gris
+                color: selected
+                    ? color
+                    : AppColors.border, // Borde de color o gris
                 width: selected ? 1.5 : 1, // Borde más grueso al seleccionar
               ),
               // Halo de color solo cuando está seleccionado
@@ -299,7 +354,9 @@ class _ClinicalEvaluationScreenState
               children: [
                 Icon(
                   _painIcons[i], // Emoticono correspondiente al nivel
-                  color: selected ? color : AppColors.textSecondary, // Color temático o gris
+                  color: selected
+                      ? color
+                      : AppColors.textSecondary, // Color temático o gris
                   size: selected ? 34 : 28, // Más grande al seleccionar
                 ),
                 const SizedBox(height: 5),
@@ -323,10 +380,10 @@ class _ClinicalEvaluationScreenState
 
   // Iconos para los 4 tipos de dolor: punzante, pulsátil, opresivo, eléctrico.
   static const List<IconData> _painTypeIcons = [
-    Icons.push_pin_rounded,  // Punzante — como un alfiler
-    Icons.waves_rounded,     // Pulsátil — ondas
-    Icons.compress_rounded,  // Opresivo — compresión
-    Icons.bolt_rounded,      // Eléctrico — rayo
+    Icons.push_pin_rounded, // Punzante — como un alfiler
+    Icons.waves_rounded, // Pulsátil — ondas
+    Icons.compress_rounded, // Opresivo — compresión
+    Icons.bolt_rounded, // Eléctrico — rayo
   ];
 
   /// Cuadrícula 2×2 de tarjetas de tipo de dolor.
@@ -338,13 +395,13 @@ class _ClinicalEvaluationScreenState
         Row(children: [
           _PainTypeCard(
               icon: _painTypeIcons[0],
-              label: labels[0],                   // "Punzante"
+              label: labels[0], // "Punzante"
               selected: _painTypeIndex == 0,
               onTap: () => setState(() => _painTypeIndex = 0)),
           const SizedBox(width: 10),
           _PainTypeCard(
               icon: _painTypeIcons[1],
-              label: labels[1],                   // "Pulsátil"
+              label: labels[1], // "Pulsátil"
               selected: _painTypeIndex == 1,
               onTap: () => setState(() => _painTypeIndex = 1)),
         ]),
@@ -353,13 +410,13 @@ class _ClinicalEvaluationScreenState
         Row(children: [
           _PainTypeCard(
               icon: _painTypeIcons[2],
-              label: labels[2],                   // "Opresivo"
+              label: labels[2], // "Opresivo"
               selected: _painTypeIndex == 2,
               onTap: () => setState(() => _painTypeIndex = 2)),
           const SizedBox(width: 10),
           _PainTypeCard(
               icon: _painTypeIcons[3],
-              label: labels[3],                   // "Eléctrico"
+              label: labels[3], // "Eléctrico"
               selected: _painTypeIndex == 3,
               onTap: () => setState(() => _painTypeIndex = 3)),
         ]),
@@ -372,8 +429,8 @@ class _ClinicalEvaluationScreenState
   // Iconos para las 3 opciones de frecuencia/momento del dolor.
   static const List<IconData> _frequencyIcons = [
     Icons.brightness_low_rounded, // Poco frecuente / reciente
-    Icons.sync_rounded,            // Recurrente / cíclico
-    Icons.all_inclusive_rounded,   // Constante / siempre
+    Icons.sync_rounded, // Recurrente / cíclico
+    Icons.all_inclusive_rounded, // Constante / siempre
   ];
 
   /// Fila de 3 tarjetas para indicar cuándo empezó el dolor.
@@ -381,12 +438,14 @@ class _ClinicalEvaluationScreenState
   Widget _buildFrequencyOptions(List<String> labels) {
     final items = <Widget>[]; // Lista mutable de widgets para el Row
     for (int i = 0; i < labels.length; i++) {
-      if (i > 0) items.add(const SizedBox(width: 10)); // Separador entre tarjetas
+      if (i > 0)
+        items.add(const SizedBox(width: 10)); // Separador entre tarjetas
       items.add(_PainTypeCard(
         icon: _frequencyIcons[i],
-        label: labels[i],                       // "Ahora", "Recurrente", "Siempre"
+        label: labels[i], // "Ahora", "Recurrente", "Siempre"
         selected: _timingIndex == i,
-        onTap: () => setState(() => _timingIndex = i), // Actualiza el índice de frecuencia
+        onTap: () => setState(
+            () => _timingIndex = i), // Actualiza el índice de frecuencia
       ));
     }
     return Row(children: items); // Row con las 3 tarjetas
@@ -404,10 +463,12 @@ class _ClinicalEvaluationScreenState
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: _scaleLevels.map((i) {
-        final isSelected = selected == i; // Verdadero si este nivel está seleccionado
-        final color = _painColors[i]!;   // Color semafórico del nivel
+        final isSelected =
+            selected == i; // Verdadero si este nivel está seleccionado
+        final color = _painColors[i]!; // Color semafórico del nivel
         return GestureDetector(
-          onTap: () => onChanged(i), // Llama al callback con el valor seleccionado
+          onTap: () =>
+              onChanged(i), // Llama al callback con el valor seleccionado
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 150),
             width: 58,
@@ -474,9 +535,11 @@ class _ClinicalEvaluationScreenState
               duration: const Duration(milliseconds: 150),
               child: Text(
                 formatted,
-                key: ValueKey(formatted), // Clave única para cada valor formateado
+                key: ValueKey(
+                    formatted), // Clave única para cada valor formateado
                 style: TextStyle(
-                  color: _intensityColor(_preciseIntensity), // Verde/naranja/rojo
+                  color:
+                      _intensityColor(_preciseIntensity), // Verde/naranja/rojo
                   fontSize: 18,
                   fontWeight: FontWeight.w900,
                 ),
@@ -488,14 +551,17 @@ class _ClinicalEvaluationScreenState
         // `SliderTheme` personaliza los colores del slider según la intensidad actual
         SliderTheme(
           data: SliderTheme.of(context).copyWith(
-            activeTrackColor: _intensityColor(_preciseIntensity),  // Pista activa (izquierda)
-            inactiveTrackColor: AppColors.border,                   // Pista inactiva (derecha)
-            thumbColor: _intensityColor(_preciseIntensity),         // Manija del slider
-            overlayColor:
-                _intensityColor(_preciseIntensity).withValues(alpha: 0.2), // Halo al pulsar
-            trackHeight: 4,                                          // Grosor de la pista
-            thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),   // Manija circular de 8 px
-            overlayShape: const RoundSliderOverlayShape(overlayRadius: 18),   // Halo de 18 px
+            activeTrackColor:
+                _intensityColor(_preciseIntensity), // Pista activa (izquierda)
+            inactiveTrackColor: AppColors.border, // Pista inactiva (derecha)
+            thumbColor: _intensityColor(_preciseIntensity), // Manija del slider
+            overlayColor: _intensityColor(_preciseIntensity)
+                .withValues(alpha: 0.2), // Halo al pulsar
+            trackHeight: 4, // Grosor de la pista
+            thumbShape: const RoundSliderThumbShape(
+                enabledThumbRadius: 8), // Manija circular de 8 px
+            overlayShape: const RoundSliderOverlayShape(
+                overlayRadius: 18), // Halo de 18 px
           ),
           child: Slider(
             value: _preciseIntensity,
@@ -529,7 +595,7 @@ class _ClinicalEvaluationScreenState
   Color _intensityColor(double value) {
     if (value <= 3) return const Color(0xFF00BFA5); // Verde azulado — leve
     if (value <= 6) return const Color(0xFFFF7043); // Naranja rojizo — moderado
-    return const Color(0xFFF44336);                  // Rojo — severo
+    return const Color(0xFFF44336); // Rojo — severo
   }
 
   // ── Notes field ──────────────────────────────────────────────────────────
@@ -551,9 +617,11 @@ class _ClinicalEvaluationScreenState
         ),
         const SizedBox(height: 12),
         TextField(
-          controller: _notesController, // Controla el texto para poder leerlo al enviar
-          minLines: 2,   // Altura mínima de 2 líneas
-          maxLines: 5,   // Se expande hasta 5 líneas antes de hacer scroll interno
+          controller:
+              _notesController, // Controla el texto para poder leerlo al enviar
+          minLines: 2, // Altura mínima de 2 líneas
+          maxLines:
+              5, // Se expande hasta 5 líneas antes de hacer scroll interno
           style: const TextStyle(color: Colors.white, fontSize: 14),
           decoration: InputDecoration(
             hintText: s.clinicalNotesHint, // "Describe dónde duele..."
@@ -562,7 +630,7 @@ class _ClinicalEvaluationScreenState
               fontSize: 14,
             ),
             filled: true,
-            fillColor: AppColors.surface,   // Fondo oscuro del campo
+            fillColor: AppColors.surface, // Fondo oscuro del campo
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             // Borde estático sin foco
@@ -602,7 +670,8 @@ class _ClinicalEvaluationScreenState
             width: double.infinity,
             height: 52,
             child: ElevatedButton.icon(
-              onPressed: _canSubmit ? _submit : null, // Deshabilitado si faltan campos
+              onPressed:
+                  _canSubmit ? _submit : null, // Deshabilitado si faltan campos
               icon: const Icon(Icons.send_rounded, size: 18),
               label: Text(
                 s.clinicalSendToPhysio, // "ENVIAR AL FISIO"
@@ -613,10 +682,12 @@ class _ClinicalEvaluationScreenState
                 ),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,               // Azul cuando activo
+                backgroundColor: AppColors.primary, // Azul cuando activo
                 foregroundColor: Colors.white,
-                disabledBackgroundColor: AppColors.border,        // Gris cuando deshabilitado
-                disabledForegroundColor: AppColors.textSecondary, // Texto gris cuando deshabilitado
+                disabledBackgroundColor:
+                    AppColors.border, // Gris cuando deshabilitado
+                disabledForegroundColor:
+                    AppColors.textSecondary, // Texto gris cuando deshabilitado
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(14)),
                 elevation: 0,
@@ -628,7 +699,8 @@ class _ClinicalEvaluationScreenState
             width: double.infinity,
             height: 52,
             child: ElevatedButton.icon(
-              onPressed: () => Navigator.of(context).pop(false), // Cancela y devuelve false
+              onPressed: () =>
+                  Navigator.of(context).pop(false), // Cancela y devuelve false
               icon: const Icon(Icons.close_rounded, size: 18),
               label: Text(
                 s.clinicalCancel, // "CANCELAR"
@@ -639,7 +711,8 @@ class _ClinicalEvaluationScreenState
                 ),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.redAccent, // Rojo — acción de cancelación
+                backgroundColor:
+                    Colors.redAccent, // Rojo — acción de cancelación
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(14)),
@@ -659,10 +732,11 @@ class _ClinicalEvaluationScreenState
 /// Usada tanto para los tipos de dolor (cuadrícula 2×2) como para las opciones de frecuencia (fila de 3).
 /// `Expanded` hace que la tarjeta ocupe la fracción del Row que le corresponde.
 class _PainTypeCard extends StatelessWidget {
-  final IconData icon;          // Icono que representa la opción
-  final String label;           // Texto descriptivo de la opción
-  final bool selected;          // Si está seleccionada actualmente
-  final VoidCallback onTap;     // Acción al pulsar (actualiza el índice en el padre)
+  final IconData icon; // Icono que representa la opción
+  final String label; // Texto descriptivo de la opción
+  final bool selected; // Si está seleccionada actualmente
+  final VoidCallback
+      onTap; // Acción al pulsar (actualiza el índice en el padre)
 
   const _PainTypeCard({
     required this.icon,
@@ -678,7 +752,9 @@ class _PainTypeCard extends StatelessWidget {
       child: GestureDetector(
         onTap: onTap,
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 150), // Transición suave al seleccionar/deseleccionar
+          duration: const Duration(
+              milliseconds:
+                  150), // Transición suave al seleccionar/deseleccionar
           padding: const EdgeInsets.symmetric(vertical: 18),
           decoration: BoxDecoration(
             // Fondo azul suave cuando seleccionado, oscuro cuando no
@@ -687,7 +763,9 @@ class _PainTypeCard extends StatelessWidget {
                 : AppColors.surface,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: selected ? AppColors.primary : AppColors.border, // Borde azul o gris
+              color: selected
+                  ? AppColors.primary
+                  : AppColors.border, // Borde azul o gris
               width: selected ? 1.5 : 1,
             ),
           ),
@@ -696,13 +774,17 @@ class _PainTypeCard extends StatelessWidget {
             children: [
               Icon(
                 icon,
-                color: selected ? AppColors.primary : AppColors.textSecondary, // Azul o gris
-                size: 32, // Tamaño fijo (no cambia al seleccionar, a diferencia de la escala de dolor)
+                color: selected
+                    ? AppColors.primary
+                    : AppColors.textSecondary, // Azul o gris
+                size:
+                    32, // Tamaño fijo (no cambia al seleccionar, a diferencia de la escala de dolor)
               ),
               const SizedBox(height: 10),
               Text(
                 label,
-                textAlign: TextAlign.center, // Centra el texto para etiquetas largas
+                textAlign:
+                    TextAlign.center, // Centra el texto para etiquetas largas
                 style: TextStyle(
                   color: selected ? Colors.white : AppColors.textSecondary,
                   fontSize: 13,

@@ -39,16 +39,18 @@ class RoutineService {
 
   /// Detalle mock de la sesión: reutiliza el catálogo de ExerciseService
   /// para no duplicar los datos del ejercicio en dos sitios.
-  static final RoutineDetailModel _mockDetail = RoutineDetailModel(
-    id: 'rd1',
-    sessionId: 'KINETIC_RECOVERY', // Nombre de la sesión de tratamiento
-    description:
-        'SESIÓN: KINETIC_RECOVERY. Hoy nos enfocaremos en la movilidad '
-        'articular y la reducción de la tensión en el manguito rotador. '
-        'Realiza cada ejercicio con calma.',
-    exercises: ExerciseService
-        .mockExercises, // Lista de ejercicios del catálogo compartido
-  );
+  /// Es un getter (no `static final`) para que lea `ExerciseService.mockExercises`
+  /// después de que ExerciseService.initialize() lo haya poblado en main().
+  static RoutineDetailModel get _mockDetail => RoutineDetailModel(
+        id: 'rd1',
+        sessionId: 'KINETIC_RECOVERY', // Nombre de la sesión de tratamiento
+        description:
+            'SESIÓN: KINETIC_RECOVERY. Hoy nos enfocaremos en la movilidad '
+            'articular y la reducción de la tensión en el manguito rotador. '
+            'Realiza cada ejercicio con calma.',
+        exercises: ExerciseService
+            .mockExercises, // Lista de ejercicios del catálogo compartido
+      );
 
   // ── Métodos públicos ──────────────────────────────────────────────────────
 

@@ -14,64 +14,84 @@ class DashboardService {
     await Future.delayed(const Duration(milliseconds: 600));
 
     // Lanza las tres peticiones en paralelo para reducir el tiempo de espera total
-    final userFuture         = UserService().getUser();
-    final routinesFuture     = RoutineService().getWeeklyRoutines();
+    final userFuture = UserService().getUser();
+    final routinesFuture = RoutineService().getWeeklyRoutines();
     final todaySessionFuture = RoutineService().getTodaySession();
 
-    final user         = await userFuture;
-    final routines     = await routinesFuture;
+    final user = await userFuture;
+    final routines = await routinesFuture;
     final todaySession = await todaySessionFuture;
 
     // Calcula el progreso semanal contando rutinas completadas en la semana actual
-    final weeklyTotal     = routines.length;
-    final weeklyCompleted = routines
-        .where((rt) => rt.status == r.RoutineStatus.completed)
-        .length;
+    final weeklyTotal = routines.length;
+    final weeklyCompleted =
+        routines.where((rt) => rt.status == r.RoutineStatus.completed).length;
 
     // ── Próxima sesión ─────────────────────────────────────────────────────
-    // Solo se muestra cuando HOY NO es día de sesión.
-    // Si todaySession != null el usuario ya tiene su sesión hoy → no necesita saber cuándo es la próxima.
-    // Si todaySession == null buscamos la rutina no completada más cercana y calculamos su fecha real.
+    // Se muestra siempre: si hoy hay sesión → se muestra la de hoy;
+    // si no → se busca la rutina no completada más cercana y se calcula su fecha real.
+    // Abreviaturas de mes en mayúsculas para el formato "27 MAY"
+    // Hardcodeadas en español; en producción vendrán localizadas del backend
+    const monthAbbr = [
+      'ENE',
+      'FEB',
+      'MAR',
+      'ABR',
+      'MAY',
+      'JUN',
+      'JUL',
+      'AGO',
+      'SEP',
+      'OCT',
+      'NOV',
+      'DIC',
+    ];
+    final today = DateTime.now();
+    final todayWeekday = today.weekday; // 1 = lunes … 7 = domingo
     NextSessionModel? nextSession;
-    if (todaySession == null) {
-      final today        = DateTime.now();
-      final todayWeekday = today.weekday; // 1 = lunes … 7 = domingo
 
+    if (todaySession != null) {
+      // Hoy toca sesión → mostrar la sesión de hoy directamente
+      nextSession = NextSessionModel(
+        date: '${today.day} ${monthAbbr[today.month - 1]}',
+        time: '20:00 AM', // Hora mock — vendrá del backend
+        durationMinutes:
+            todaySession.minutes, // Duración real de la sesión de hoy
+        type: 'EJERCICIO',
+      );
+    } else {
+      // Hoy no hay sesión → buscar la próxima rutina no completada más cercana
       int? minDaysAhead;
       r.RoutineModel? nextRoutine;
 
       for (final rt in routines) {
-        if (rt.status == r.RoutineStatus.completed) continue; // Las completadas ya no cuentan
+        if (rt.status == r.RoutineStatus.completed) {
+          continue; // Las completadas ya no cuentan
+        }
 
         // Días que quedan hasta el día de la semana de esta rutina
         int daysAhead = rt.weekday - todayWeekday;
-        if (daysAhead <= 0) daysAhead += 7; // Si ya pasó (o es hoy sin status "today") → siguiente semana
+        if (daysAhead <= 0) {
+          daysAhead +=
+              7; // Si ya pasó (o es hoy sin status "today") → siguiente semana
+        }
 
         if (minDaysAhead == null || daysAhead < minDaysAhead) {
           minDaysAhead = daysAhead;
-          nextRoutine  = rt;
+          nextRoutine = rt;
         }
       }
 
       if (nextRoutine != null && minDaysAhead != null) {
         final nextDate = today.add(Duration(days: minDaysAhead));
-
-        // Abreviaturas de mes en mayúsculas para el formato "27 MAY"
-        // Hardcodeadas en español; en producción vendrán localizadas del backend
-        const monthAbbr = [
-          'ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN',
-          'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC',
-        ];
-
         nextSession = NextSessionModel(
-          date:            '${nextDate.day} ${monthAbbr[nextDate.month - 1]}',
-          time:            '10:30 AM',              // Hora mock — vendrá del backend
-          durationMinutes: nextRoutine.minutes,      // Duración real de esa rutina
-          type:            'EJERCICIO',
+          date: '${nextDate.day} ${monthAbbr[nextDate.month - 1]}',
+          time: '10:30 AM', // Hora mock — vendrá del backend
+          durationMinutes: nextRoutine.minutes, // Duración real de esa rutina
+          type: 'EJERCICIO',
         );
       }
     }
-    // Si todaySession != null → nextSession queda null y no se renderiza la tarjeta
 
     // ── SIMULACIÓN ────────────────────────────────────────────────────────
     // Cambia `status` para probar distintos estados de la pantalla de bienvenida:
@@ -80,19 +100,20 @@ class DashboardService {
     //   RoutineStatus.active        → dashboard completo con progreso y próxima sesión
     // ─────────────────────────────────────────────────────────────────────
     return DashboardModel(
-      userName:                'MARÍA', // Hardcodeado — en producción vendrá de `user.userName`
-      status:                  RoutineStatus.active,
-      progressPercentage:      0,
-      completedSessions:       0,
-      totalSessions:           10,
+      userName:
+          'MARÍA', // Hardcodeado — en producción vendrá de `user.userName`
+      status: RoutineStatus.active,
+      progressPercentage: 0,
+      completedSessions: 0,
+      totalSessions: 10,
       weeklyCompletedSessions: weeklyCompleted,
-      weeklyTotalSessions:     weeklyTotal,
-      hasUnreadNotification:   false,
-      nextSession:             nextSession, // null si hoy es día de sesión; computed si no
+      weeklyTotalSessions: weeklyTotal,
+      hasUnreadNotification: false,
+      nextSession: nextSession, // null si hoy es día de sesión; computed si no
       reminder:
           'Mantén tu hidratación antes de la sesión con el Dr. ${user.physioName ?? 'tu fisioterapeuta'}.',
       assignmentTitle: 'Nuevo tratamiento de ejercicios',
-      physioName:      user.physioName,
+      physioName: user.physioName,
     );
 
     // TODO: Reemplazar con llamada real:

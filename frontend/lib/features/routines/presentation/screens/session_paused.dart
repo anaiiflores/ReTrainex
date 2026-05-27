@@ -158,9 +158,13 @@ class SessionPausedScreen extends StatelessWidget {
 
   // ── Área de vídeo ────────────────────────────────────────────────────────
 
-  /// Delega en VideoAreaWidget para mostrar el vídeo del ejercicio o un placeholder.
+  /// Delega en VideoAreaWidget para mostrar el vídeo, el slideshow de imágenes o un placeholder.
   Widget _buildVideoArea(bool isWide) {
-    return VideoAreaWidget(videoUrl: exercise.videoUrl, isWide: isWide);
+    return VideoAreaWidget(
+      videoUrl: exercise.videoUrl,
+      imageAssets: exercise.imageAssets, // Fotogramas locales del ejercicio
+      isWide: isWide,
+    );
   }
 
   // ── Título ────────────────────────────────────────────────────────────────

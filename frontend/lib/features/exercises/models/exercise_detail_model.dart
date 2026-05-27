@@ -12,7 +12,13 @@ class ExerciseModel {
   final int? minutes; // Duración en minutos para ejercicios de mantenimiento (null si es por reps)
 
   // ── Multimedia ───────────────────────────────────────────────────────────
-  final String? imageUrl; // URL de la imagen de portada del ejercicio (thumbnail)
+  final String? imageUrl; // URL de la imagen de portada del ejercicio (thumbnail) — vendrá del backend
+
+  /// Imágenes locales secuenciales del ejercicio (frames 0.jpg, 1.jpg…).
+  /// Se usan como slideshow cuando no hay vídeo disponible.
+  /// Ruta: assets/images/exercises/<NOMBRE_EN_MAYÚSCULAS>/<índice>.jpg
+  /// En producción se sustituirán por [videoUrl] o URLs remotas.
+  final List<String>? imageAssets;
 
   /// URL del vídeo demostrativo del ejercicio (futuro — pendiente de implementar).
   final String? videoUrl;
@@ -42,6 +48,7 @@ class ExerciseModel {
     this.reps,
     this.minutes,
     this.imageUrl,
+    this.imageAssets,
     this.videoUrl,
     this.angle,
     this.totalDurationSeconds,
@@ -70,6 +77,7 @@ class ExerciseModel {
       reps: json['reps'] as int?,
       minutes: json['minutes'] as int?,
       imageUrl: json['image_url'] as String?,
+      imageAssets: (json['image_assets'] as List<dynamic>?)?.cast<String>(),
       videoUrl: json['video_url'] as String?,
       angle: json['angle'] as String?,
       totalDurationSeconds: json['total_duration_seconds'] as int?,
@@ -87,6 +95,7 @@ class ExerciseModel {
         if (reps != null) 'reps': reps,
         if (minutes != null) 'minutes': minutes,
         if (imageUrl != null) 'image_url': imageUrl,
+        if (imageAssets != null) 'image_assets': imageAssets,
         if (videoUrl != null) 'video_url': videoUrl,
         if (angle != null) 'angle': angle,
         if (totalDurationSeconds != null)

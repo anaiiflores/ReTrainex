@@ -327,9 +327,14 @@ class _WorkoutExerciseScreenState extends State<WorkoutExerciseScreen> {
 
   // ── Área de vídeo ─────────────────────────────────────────────────────────
 
-  /// Muestra el vídeo del ejercicio si está disponible; si no, un placeholder.
+  /// Muestra el vídeo si está disponible, las imágenes del ejercicio como slideshow
+  /// si existen, o un placeholder "próximamente" si no hay ningún recurso multimedia.
   Widget _buildVideoArea(bool isWide) {
-    return VideoAreaWidget(videoUrl: _exercise.videoUrl, isWide: isWide);
+    return VideoAreaWidget(
+      videoUrl: _exercise.videoUrl,
+      imageAssets: _exercise.imageAssets, // Fotogramas locales del ejercicio
+      isWide: isWide,
+    );
   }
 
   /// Fila de tags bajo el vídeo: resolución, ángulo de cámara y acceso a detalles.
